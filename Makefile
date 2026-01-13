@@ -40,6 +40,8 @@ clean: ## Remove all containers, volumes, and networks
 install: ## Install all dependencies (composer + npm)
 	@echo "${GREEN}Installing backend dependencies...${RESET}"
 	docker compose run --rm php composer install
+	@echo "${GREEN}Preparing frontend volume permissions...${RESET}"
+	@docker run --rm -v $$(basename $$(pwd))_frontend_node_modules:/app/node_modules alpine chown -R 1000:1000 /app/node_modules 2>/dev/null || true
 	@echo "${GREEN}Installing frontend dependencies...${RESET}"
 	docker compose run --rm node npm install
 	@echo "${GREEN}All dependencies installed!${RESET}"
