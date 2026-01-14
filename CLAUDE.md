@@ -45,6 +45,11 @@ Ustaw w `backend/.env`:
 OPENAI_API_KEY=sk-twoj-klucz
 ```
 
+## Workflow
+
+**Ważne:** Przed commitowaniem i pushowaniem zmian, poczekaj na potwierdzenie od użytkownika. Użytkownik chce najpierw przetestować zmiany lokalnie, a dopiero potem dać zielone światło na commit/push.
+
 ## Wersje
 
 - **v0.0.1** - MVP z podstawową funkcjonalnością brain dump i analizy AI
+- **v0.0.2** - Edycja/usuwanie wszystkich typów danych, poprawka zachowania Brain Dump

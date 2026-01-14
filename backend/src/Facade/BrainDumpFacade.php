@@ -62,9 +62,15 @@ class BrainDumpFacade
             $dailyNote->setDate($date);
         }
 
-        $dailyNote->setRawContent($rawContent);
-        $dailyNote->clearAllItems();
+        // Append rawContent instead of replacing
+        $existingRawContent = $dailyNote->getRawContent();
+        if ($existingRawContent !== null && $existingRawContent !== '') {
+            $dailyNote->setRawContent($existingRawContent . "\n\n---\n\n" . $rawContent);
+        } else {
+            $dailyNote->setRawContent($rawContent);
+        }
 
+        // Add new items WITHOUT clearing existing ones
         foreach ($this->taskExtractor->extract($analysisResult, $dailyNote) as $task) {
             $dailyNote->addTask($task);
         }

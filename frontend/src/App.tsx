@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import {
   fetchDailyNote,
@@ -19,6 +19,7 @@ import { BrainDumpInput } from './components/brain-dump/BrainDumpInput';
 import { AnalysisResults } from './components/analysis/AnalysisResults';
 import { DaySchedule } from './components/schedule/DaySchedule';
 import { ScrollArea } from './components/ui/scroll-area';
+import type { AnalysisResponse, DailyNoteData } from './types';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -77,8 +78,72 @@ function App() {
     dispatch(deleteJournalEntry(id));
   };
 
-  const displayData = analysisPreview || dailyNote;
-  const scheduleEvents = analysisPreview?.schedule || dailyNote?.schedule || [];
+  // Merge persisted data with preview data when both exist
+  const { displayData, scheduleEvents } = useMemo((): {
+    displayData: AnalysisResponse | DailyNoteData | null;
+    scheduleEvents: DailyNoteData['schedule'];
+  } => {
+    if (!analysisPreview) {
+      return {
+        displayData: dailyNote,
+        scheduleEvents: dailyNote?.schedule || [],
+      };
+    }
+
+    if (!dailyNote) {
+      return {
+        displayData: analysisPreview,
+        scheduleEvents: analysisPreview.schedule || [],
+      };
+    }
+
+    // Merge: persisted data + preview data (preview items don't have IDs)
+    const merged = {
+      ...dailyNote,
+      tasks: {
+        today: [
+          ...dailyNote.tasks.today,
+          ...analysisPreview.tasks.today.map((t) => ({
+            ...t,
+            isCompleted: false,
+            dueDate: null,
+          })),
+        ],
+        scheduled: [
+          ...dailyNote.tasks.scheduled,
+          ...analysisPreview.tasks.scheduled.map((t) => ({
+            ...t,
+            isCompleted: false,
+            dueDate: t.dueDate || null,
+          })),
+        ],
+        someday: [
+          ...dailyNote.tasks.someday,
+          ...analysisPreview.tasks.someday.map((t) => ({
+            ...t,
+            isCompleted: false,
+            dueDate: null,
+          })),
+        ],
+      },
+      notes: [...dailyNote.notes, ...analysisPreview.notes],
+      journal: [...dailyNote.journal, ...analysisPreview.journal],
+      events: [
+        ...dailyNote.events,
+        ...analysisPreview.events.map((e) => ({
+          ...e,
+          endTime: e.endTime || null,
+        })),
+      ],
+      schedule: [...dailyNote.schedule, ...analysisPreview.schedule],
+    };
+
+    return {
+      displayData: merged,
+      scheduleEvents: merged.schedule,
+    };
+  }, [dailyNote, analysisPreview]);
+
   const isPreview = !!analysisPreview;
 
   return (
