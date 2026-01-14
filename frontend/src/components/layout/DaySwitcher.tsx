@@ -36,25 +36,32 @@ const formatDate = (dateStr: string): string => {
   });
 };
 
+// Format date as YYYY-MM-DD in local timezone
+const toLocalDateString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export function DaySwitcher({ date, onDateChange }: DaySwitcherProps) {
   const goToPrevDay = () => {
-    const prev = new Date(date + 'T00:00:00');
+    const prev = new Date(date + 'T12:00:00');
     prev.setDate(prev.getDate() - 1);
-    onDateChange(prev.toISOString().split('T')[0]);
+    onDateChange(toLocalDateString(prev));
   };
 
   const goToNextDay = () => {
-    const next = new Date(date + 'T00:00:00');
+    const next = new Date(date + 'T12:00:00');
     next.setDate(next.getDate() + 1);
-    onDateChange(next.toISOString().split('T')[0]);
+    onDateChange(toLocalDateString(next));
   };
 
   const goToToday = () => {
-    onDateChange(new Date().toISOString().split('T')[0]);
+    onDateChange(toLocalDateString(new Date()));
   };
 
-  const isToday =
-    date === new Date().toISOString().split('T')[0];
+  const isToday = date === toLocalDateString(new Date());
 
   return (
     <div className="flex items-center justify-center gap-4 py-4">

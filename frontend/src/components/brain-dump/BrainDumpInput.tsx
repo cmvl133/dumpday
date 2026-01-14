@@ -46,7 +46,7 @@ export function BrainDumpInput() {
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-lg flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           Brain Dump
@@ -55,12 +55,12 @@ export function BrainDumpInput() {
           Napisz wszystko co masz na myśli...
         </p>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-3">
+      <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
         <Textarea
           value={rawContent}
           onChange={(e) => dispatch(setRawContent(e.target.value))}
           placeholder="Dzisiaj mam spotkanie o 10:00 z Janem. Muszę dokończyć raport do piątku. Czuję się trochę zmęczony. Pamiętać o kupnie mleka. Adres klienta: ul. Przykładowa 15..."
-          className="flex-1 min-h-[300px] resize-none text-base leading-relaxed"
+          className="flex-1 resize-none text-base leading-relaxed"
         />
 
         <div className="flex items-center justify-between">

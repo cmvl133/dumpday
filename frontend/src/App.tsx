@@ -150,7 +150,7 @@ function App() {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4">
+      <main className="flex-1 container mx-auto px-4 max-w-7xl">
         <DaySwitcher date={currentDate} onDateChange={handleDateChange} />
 
         {error && (
@@ -161,13 +161,13 @@ function App() {
 
         <div className="grid grid-cols-12 gap-6 pb-8">
           {/* Left: Brain Dump */}
-          <div className="col-span-12 lg:col-span-3">
+          <div className="col-span-12 lg:col-span-3 h-[750px]">
             <BrainDumpInput />
           </div>
 
           {/* Center: Analysis Results */}
-          <div className="col-span-12 lg:col-span-5">
-            <ScrollArea className="h-[calc(100vh-200px)]">
+          <div className="col-span-12 lg:col-span-5 h-[750px]">
+            <ScrollArea className="h-full">
               {isLoading ? (
                 <div className="flex items-center justify-center h-64">
                   <p className="text-muted-foreground">Ładowanie...</p>
@@ -200,7 +200,7 @@ function App() {
           </div>
 
           {/* Right: Schedule */}
-          <div className="col-span-12 lg:col-span-4">
+          <div className="col-span-12 lg:col-span-4 h-[750px]">
             <DaySchedule
               events={scheduleEvents}
               isPreview={isPreview}

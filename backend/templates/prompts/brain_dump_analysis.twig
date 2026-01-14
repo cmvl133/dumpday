@@ -30,30 +30,67 @@ Zwróć obiekt JSON z następującą strukturą:
 Zasady ekstrakcji:
 
 ZADANIA (tasks):
-- "today": rzeczy do zrobienia dzisiaj lub wspomniane bez konkretnej daty
-- "scheduled": zadania z konkretną datą w przyszłości (np. "w przyszły czwartek", "15 stycznia")
-- "someday": rzeczy wspomniane jako "kiedyś", "może", "niedługo", "fajnie byłoby" bez pilności
+- "today": rzeczy do zrobienia DZISIAJ, bez konkretnej daty lub z wyraźnym "dzisiaj"
+- "scheduled": zadania z datą w przyszłości - ZAWSZE oblicz konkretną datę:
+  - "jutro" → data jutrzejsza ({{ current_date }} + 1 dzień)
+  - "pojutrze" → data pojutrze ({{ current_date }} + 2 dni)
+  - "za tydzień", "w przyszłym tygodniu" → odpowiednia data
+  - "w poniedziałek", "we wtorek" itd. → najbliższy taki dzień
+  - "15 stycznia", "3.02" → konkretna data
+- "someday": TYLKO rzeczy wyraźnie nieokreślone czasowo - "kiedyś", "może kiedyś", "w wolnej chwili", długoterminowe cele bez deadline'u
+
+WAŻNE dla zadań:
+- "jutro coś zrobić" → scheduled z datą jutrzejszą, NIE someday!
+- "fajnie byłoby jutro X" → scheduled z datą jutrzejszą (jest konkretny dzień)
+- "fajnie byłoby kiedyś X" → someday (brak konkretnego dnia)
+- Jeśli zadanie ma część natychmiastową i długoterminową, rozdziel je:
+  - "jutro poczytać książkę, chcę ją skończyć" → scheduled: "poczytać książkę" (jutro) + someday: "skończyć książkę [tytuł]"
+
+KONTEKST DAT - BARDZO WAŻNE:
+- Każdy akapit/zdanie analizuj NIEZALEŻNIE pod kątem daty
+- Data z jednego akapitu NIE przenosi się na kolejne akapity
+- Jeśli w danym zdaniu/akapicie NIE MA wzmianki o dacie → domyślnie "today" (dzisiaj)
+- Przykład:
+  "Jutro ugotować obiad.
+
+   Stworzyć 3 MRy do zadania X"
+  → Pierwsze zdanie: scheduled (jutro)
+  → Drugie zdanie: today (brak daty = dzisiaj)
 
 WYDARZENIA (events):
-- Spotkania, wizyty, wydarzenia z konkretnym czasem
-- Jeśli podano tylko godzinę rozpoczęcia, oszacuj sensowny czas trwania:
-  - Spotkanie biznesowe: 60 min
-  - Wizyta u lekarza/fryzjera: 60 min
-  - Krótkie spotkanie: 30 min
-  - Praca (jeśli wspomniana bez końca): do 17:00 lub 8 godzin
-- endTime oblicz jako startTime + duration
-- Dla pracy domyślnie zakładaj 8:00-17:00 z przerwą na inne wydarzenia
+- Twórz event gdy jest KONKRETNA GODZINA - nawet przybliżona:
+  - "o 10:00 mam daily" → event o 10:00
+  - "ok 11:00 zrobić X" lub "około 11 zadzwonić" → event o 11:00
+  - "rano spotkanie" → event o 9:00 (domyślnie)
+  - "po południu wizyta" → event o 14:00 (domyślnie)
+- Bloki czasowe z zakresem godzin:
+  - "8:00 - 16:00 praca w firmie X" → event 8:00-16:00
+  - "w godz. 16:00-18:00 praca w Y" → event 16:00-18:00
+- Dla eventów bez podanego końca, oszacuj czas trwania:
+  - Daily/standup: 15-30 min
+  - Spotkanie: 60 min
+  - Wizyta (lekarz/fryzjer): 60 min
+  - Krótka rozmowa/telefon: 15-30 min
+  - Blok pracy: do końca dnia roboczego lub 8h
 
 NOTATKI (notes):
-- Fakty, informacje do zapamiętania (adresy, numery telefonów, kwoty, nazwiska)
+- Fakty, informacje do zapamiętania (adresy, numery, kwoty, nazwiska, kody)
 - Każda istotna informacja jako osobna notatka
 
 DZIENNIK (journal):
-- Wpisy dotyczące emocji, samopoczucia, refleksji
+- Wpisy dotyczące emocji, samopoczucia, refleksji osobistych
 - Zachowaj oryginalny ton i treść emocjonalną
 
-Dodatkowe wytyczne:
-- Jeśli coś wymaga wykonania "po drodze" lub "przed czymś", dodaj to jako zadanie na dzisiaj
-- Rozdzielaj złożone zadania na osobne wpisy (np. "dokończyć IK-123 i IK-15" = 2 osobne zadania)
-- Przy przeliczaniu względnych dat (np. "przyszły czwartek") użyj dzisiejszej daty jako punktu odniesienia
-- Zwracaj TYLKO poprawny JSON, bez dodatkowego tekstu
+ZASADY DZIELENIA ZADAŃ:
+- NIE dziel zadań, które są logicznie jednym działaniem:
+  - "Stworzyć 3 MRy do zadań X i Y" → JEDNO zadanie (to jedna czynność)
+  - "Zrobić X i Y" gdzie X i Y to różne rzeczy → DWA osobne zadania
+- Dziel tylko gdy są to WYRAŹNIE RÓŻNE czynności do wykonania osobno
+- W razie wątpliwości - zostaw jako jedno zadanie
+
+Przykłady:
+- "Jutro ugotować obiad" → scheduled: {"title": "Ugotować obiad", "dueDate": "[data jutrzejsza]"}
+- "o 10 daily, ok 11 code review" → events: [{"startTime": "10:00", ...}, {"startTime": "11:00", ...}]
+- "8-16 Invia, 16-18 ING" → events: [{"startTime": "08:00", "endTime": "16:00", "title": "Praca w Invia"}, {"startTime": "16:00", "endTime": "18:00", "title": "Praca w ING"}]
+
+Zwracaj TYLKO poprawny JSON, bez dodatkowego tekstu.

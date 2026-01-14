@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
+import { calculateTopPercent, calculateHeightPercent } from '@/lib/utils';
 import type { DailyNoteData, AnalysisResponse } from '@/types';
 
 interface DailyNoteState {
@@ -13,7 +14,13 @@ interface DailyNoteState {
   error: string | null;
 }
 
-const getToday = () => new Date().toISOString().split('T')[0];
+const getToday = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const initialState: DailyNoteState = {
   currentDate: getToday(),
@@ -266,14 +273,18 @@ const dailyNoteSlice = createSlice({
               ...updatedEvent,
             };
           }
-          // Also update schedule
+          // Also update schedule with recalculated positions
           const scheduleIndex = state.dailyNote.schedule.findIndex(
             (e) => e.id === updatedEvent.id
           );
           if (scheduleIndex !== -1) {
+            const newStartTime = updatedEvent.startTime;
+            const newEndTime = updatedEvent.endTime;
             state.dailyNote.schedule[scheduleIndex] = {
               ...state.dailyNote.schedule[scheduleIndex],
               ...updatedEvent,
+              topPercent: calculateTopPercent(newStartTime),
+              heightPercent: calculateHeightPercent(newStartTime, newEndTime),
             };
           }
         }

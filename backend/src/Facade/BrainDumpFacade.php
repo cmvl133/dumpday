@@ -6,6 +6,7 @@ namespace App\Facade;
 
 use App\Entity\DailyNote;
 use App\Repository\DailyNoteRepository;
+use App\Repository\TaskRepository;
 use App\Service\BrainDumpAnalyzer;
 use App\Service\EventExtractor;
 use App\Service\JournalExtractor;
@@ -25,6 +26,7 @@ class BrainDumpFacade
         private readonly ScheduleBuilder $scheduleBuilder,
         private readonly EntityManagerInterface $entityManager,
         private readonly DailyNoteRepository $dailyNoteRepository,
+        private readonly TaskRepository $taskRepository,
     ) {
     }
 
@@ -70,21 +72,77 @@ class BrainDumpFacade
             $dailyNote->setRawContent($rawContent);
         }
 
-        // Add new items WITHOUT clearing existing ones
+        // Add new items WITHOUT clearing existing ones, with duplicate detection
+        $existingTaskTitles = array_map(
+            fn ($t) => mb_strtolower(trim($t->getTitle())),
+            $dailyNote->getTasks()->toArray()
+        );
+
         foreach ($this->taskExtractor->extract($analysisResult, $dailyNote) as $task) {
-            $dailyNote->addTask($task);
+            $normalizedTitle = mb_strtolower(trim($task->getTitle()));
+            if (!in_array($normalizedTitle, $existingTaskTitles, true)) {
+                $dailyNote->addTask($task);
+                $existingTaskTitles[] = $normalizedTitle;
+            }
         }
+
+        // For events, check title + overlapping time
+        $existingEvents = $dailyNote->getEvents()->toArray();
 
         foreach ($this->eventExtractor->extract($analysisResult, $dailyNote) as $event) {
-            $dailyNote->addEvent($event);
+            $isDuplicate = false;
+            $newTitle = mb_strtolower(trim($event->getTitle()));
+            $newStart = $event->getStartTime();
+            $newEnd = $event->getEndTime();
+
+            foreach ($existingEvents as $existing) {
+                $existingTitle = mb_strtolower(trim($existing->getTitle()));
+
+                // Check if same title
+                if ($newTitle === $existingTitle) {
+                    // Check if times overlap
+                    $existingStart = $existing->getStartTime();
+                    $existingEnd = $existing->getEndTime();
+
+                    if ($this->timesOverlap($newStart, $newEnd, $existingStart, $existingEnd)) {
+                        $isDuplicate = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$isDuplicate) {
+                $dailyNote->addEvent($event);
+                $existingEvents[] = $event;
+            }
         }
+
+        // For journal entries, check content similarity
+        $existingJournalContents = array_map(
+            fn ($j) => mb_strtolower(trim($j->getContent())),
+            $dailyNote->getJournalEntries()->toArray()
+        );
 
         foreach ($this->journalExtractor->extract($analysisResult, $dailyNote) as $journalEntry) {
-            $dailyNote->addJournalEntry($journalEntry);
+            $normalizedContent = mb_strtolower(trim($journalEntry->getContent()));
+            if (!in_array($normalizedContent, $existingJournalContents, true)) {
+                $dailyNote->addJournalEntry($journalEntry);
+                $existingJournalContents[] = $normalizedContent;
+            }
         }
 
+        // For notes, check content similarity
+        $existingNoteContents = array_map(
+            fn ($n) => mb_strtolower(trim($n->getContent())),
+            $dailyNote->getNotes()->toArray()
+        );
+
         foreach ($this->noteExtractor->extract($analysisResult, $dailyNote) as $note) {
-            $dailyNote->addNote($note);
+            $normalizedContent = mb_strtolower(trim($note->getContent()));
+            if (!in_array($normalizedContent, $existingNoteContents, true)) {
+                $dailyNote->addNote($note);
+                $existingNoteContents[] = $normalizedContent;
+            }
         }
 
         $this->entityManager->persist($dailyNote);
@@ -102,9 +160,9 @@ class BrainDumpFacade
     {
         $dailyNote = $this->dailyNoteRepository->findByDate($date);
 
-        if ($dailyNote === null) {
-            return null;
-        }
+        // Get tasks scheduled for this date (from any DailyNote)
+        $scheduledTasksForDate = $this->taskRepository->findByDueDate($date);
+        $scheduledTaskIds = [];
 
         $tasks = [
             'today' => [],
@@ -112,7 +170,45 @@ class BrainDumpFacade
             'someday' => [],
         ];
 
+        // Add tasks scheduled for this date to the "today" category
+        // (they become "today's tasks" on their due date)
+        foreach ($scheduledTasksForDate as $task) {
+            $scheduledTaskIds[] = $task->getId();
+            $tasks['today'][] = [
+                'id' => $task->getId(),
+                'title' => $task->getTitle(),
+                'isCompleted' => $task->isCompleted(),
+                'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+            ];
+        }
+
+        // If no DailyNote exists but we have scheduled tasks, return minimal data
+        if ($dailyNote === null) {
+            if (empty($scheduledTasksForDate)) {
+                return null;
+            }
+
+            return [
+                'id' => null,
+                'date' => $date->format('Y-m-d'),
+                'rawContent' => null,
+                'tasks' => $tasks,
+                'events' => [],
+                'notes' => [],
+                'journal' => [],
+                'schedule' => [],
+                'createdAt' => null,
+                'updatedAt' => null,
+            ];
+        }
+
+        // Add tasks from the DailyNote (excluding already added scheduled tasks)
         foreach ($dailyNote->getTasks() as $task) {
+            // Skip if already added from scheduledTasksForDate
+            if (in_array($task->getId(), $scheduledTaskIds, true)) {
+                continue;
+            }
+
             $taskData = [
                 'id' => $task->getId(),
                 'title' => $task->getTitle(),
@@ -168,5 +264,31 @@ class BrainDumpFacade
             'createdAt' => $dailyNote->getCreatedAt()?->format('c'),
             'updatedAt' => $dailyNote->getUpdatedAt()?->format('c'),
         ];
+    }
+
+    /**
+     * Check if two time ranges overlap.
+     */
+    private function timesOverlap(
+        ?\DateTimeInterface $start1,
+        ?\DateTimeInterface $end1,
+        ?\DateTimeInterface $start2,
+        ?\DateTimeInterface $end2
+    ): bool {
+        if ($start1 === null || $start2 === null) {
+            return false;
+        }
+
+        // If no end time, assume 1 hour duration
+        $end1 = $end1 ?? (clone $start1)->modify('+1 hour');
+        $end2 = $end2 ?? (clone $start2)->modify('+1 hour');
+
+        // Convert to minutes for comparison
+        $s1 = (int) $start1->format('H') * 60 + (int) $start1->format('i');
+        $e1 = (int) $end1->format('H') * 60 + (int) $end1->format('i');
+        $s2 = (int) $start2->format('H') * 60 + (int) $start2->format('i');
+        $e2 = (int) $end2->format('H') * 60 + (int) $end2->format('i');
+
+        return $s1 < $e2 && $s2 < $e1;
     }
 }

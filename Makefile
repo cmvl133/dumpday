@@ -49,8 +49,8 @@ install: ## Install all dependencies (composer + npm)
 ## Development
 dev: ## Start development environment with hot reload
 	@echo "${GREEN}Starting development environment...${RESET}"
-	@echo "${YELLOW}Frontend: http://localhost:3000${RESET}"
-	@echo "${YELLOW}Backend API: http://localhost:8000/api${RESET}"
+	@echo "${YELLOW}Frontend: http://localhost:3100${RESET}"
+	@echo "${YELLOW}Backend API: http://localhost:8180/api${RESET}"
 	docker compose up
 
 ## Shell access
