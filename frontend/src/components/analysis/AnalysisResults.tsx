@@ -17,6 +17,11 @@ interface AnalysisResultsProps {
   isPreview?: boolean;
   onToggleTask?: (id: number, isCompleted: boolean) => void;
   onDeleteTask?: (id: number) => void;
+  onUpdateTask?: (id: number, title: string) => void;
+  onUpdateNote?: (id: number, content: string) => void;
+  onDeleteNote?: (id: number) => void;
+  onUpdateJournal?: (id: number, content: string) => void;
+  onDeleteJournal?: (id: number) => void;
 }
 
 export function AnalysisResults({
@@ -24,6 +29,11 @@ export function AnalysisResults({
   isPreview = false,
   onToggleTask,
   onDeleteTask,
+  onUpdateTask,
+  onUpdateNote,
+  onDeleteNote,
+  onUpdateJournal,
+  onDeleteJournal,
 }: AnalysisResultsProps) {
   const tasks = data.tasks;
   const notes = data.notes;
@@ -59,6 +69,7 @@ export function AnalysisResults({
             tasks={tasks.today || []}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
+            onUpdate={onUpdateTask}
             isPreview={isPreview}
           />
         </CardContent>
@@ -82,6 +93,7 @@ export function AnalysisResults({
             tasks={tasks.scheduled || []}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
+            onUpdate={onUpdateTask}
             isPreview={isPreview}
           />
         </CardContent>
@@ -105,6 +117,7 @@ export function AnalysisResults({
             tasks={tasks.someday || []}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
+            onUpdate={onUpdateTask}
             isPreview={isPreview}
           />
         </CardContent>
@@ -124,7 +137,12 @@ export function AnalysisResults({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <NotesList notes={notes} />
+          <NotesList
+            notes={notes}
+            isPreview={isPreview}
+            onUpdate={onUpdateNote}
+            onDelete={onDeleteNote}
+          />
         </CardContent>
       </Card>
 
@@ -142,7 +160,12 @@ export function AnalysisResults({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <JournalSection entries={journal} />
+          <JournalSection
+            entries={journal}
+            isPreview={isPreview}
+            onUpdate={onUpdateJournal}
+            onDelete={onDeleteJournal}
+          />
         </CardContent>
       </Card>
     </div>

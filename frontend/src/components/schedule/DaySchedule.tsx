@@ -7,6 +7,12 @@ import type { ScheduleEvent } from '@/types';
 
 interface DayScheduleProps {
   events: ScheduleEvent[];
+  isPreview?: boolean;
+  onUpdateEvent?: (
+    id: number,
+    data: { title?: string; startTime?: string; endTime?: string }
+  ) => void;
+  onDeleteEvent?: (id: number) => void;
 }
 
 const SCHEDULE_START_HOUR = 6;
@@ -16,7 +22,12 @@ const HOURS = Array.from(
   (_, i) => i + SCHEDULE_START_HOUR
 );
 
-export function DaySchedule({ events }: DayScheduleProps) {
+export function DaySchedule({
+  events,
+  isPreview = false,
+  onUpdateEvent,
+  onDeleteEvent,
+}: DayScheduleProps) {
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3">
@@ -38,7 +49,13 @@ export function DaySchedule({ events }: DayScheduleProps) {
 
             {/* Event blocks */}
             {events.map((event, index) => (
-              <EventBlock key={event.id ?? index} event={event} />
+              <EventBlock
+                key={event.id ?? index}
+                event={event}
+                isPreview={isPreview}
+                onUpdate={onUpdateEvent}
+                onDelete={onDeleteEvent}
+              />
             ))}
 
             {/* Empty state */}

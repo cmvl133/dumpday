@@ -5,6 +5,7 @@ interface TaskListProps {
   tasks: Task[] | { title: string; dueDate?: string }[];
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
+  onUpdate?: (id: number, title: string) => void;
   isPreview?: boolean;
 }
 
@@ -12,6 +13,7 @@ export function TaskList({
   tasks,
   onToggle,
   onDelete,
+  onUpdate,
   isPreview = false,
 }: TaskListProps) {
   if (tasks.length === 0) {
@@ -31,6 +33,7 @@ export function TaskList({
           dueDate={'dueDate' in task ? task.dueDate : undefined}
           onToggle={onToggle}
           onDelete={onDelete}
+          onUpdate={onUpdate}
           isPreview={isPreview}
         />
       ))}

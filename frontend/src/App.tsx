@@ -5,6 +5,13 @@ import {
   setCurrentDate,
   toggleTaskComplete,
   deleteTask,
+  updateTask,
+  updateEvent,
+  deleteEvent,
+  updateJournalEntry,
+  deleteJournalEntry,
+  updateNote,
+  deleteNote,
 } from './store/dailyNoteSlice';
 import { Header } from './components/layout/Header';
 import { DaySwitcher } from './components/layout/DaySwitcher';
@@ -39,8 +46,40 @@ function App() {
     dispatch(deleteTask(id));
   };
 
+  const handleUpdateTask = (id: number, title: string) => {
+    dispatch(updateTask({ id, title }));
+  };
+
+  const handleUpdateEvent = (
+    id: number,
+    data: { title?: string; startTime?: string; endTime?: string }
+  ) => {
+    dispatch(updateEvent({ id, data }));
+  };
+
+  const handleDeleteEvent = (id: number) => {
+    dispatch(deleteEvent(id));
+  };
+
+  const handleUpdateNote = (id: number, content: string) => {
+    dispatch(updateNote({ id, content }));
+  };
+
+  const handleDeleteNote = (id: number) => {
+    dispatch(deleteNote(id));
+  };
+
+  const handleUpdateJournal = (id: number, content: string) => {
+    dispatch(updateJournalEntry({ id, content }));
+  };
+
+  const handleDeleteJournal = (id: number) => {
+    dispatch(deleteJournalEntry(id));
+  };
+
   const displayData = analysisPreview || dailyNote;
   const scheduleEvents = analysisPreview?.schedule || dailyNote?.schedule || [];
+  const isPreview = !!analysisPreview;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -71,9 +110,14 @@ function App() {
               ) : displayData ? (
                 <AnalysisResults
                   data={displayData}
-                  isPreview={!!analysisPreview}
+                  isPreview={isPreview}
                   onToggleTask={handleToggleTask}
                   onDeleteTask={handleDeleteTask}
+                  onUpdateTask={handleUpdateTask}
+                  onUpdateNote={handleUpdateNote}
+                  onDeleteNote={handleDeleteNote}
+                  onUpdateJournal={handleUpdateJournal}
+                  onDeleteJournal={handleDeleteJournal}
                 />
               ) : (
                 <div className="flex items-center justify-center h-64">
@@ -92,7 +136,12 @@ function App() {
 
           {/* Right: Schedule */}
           <div className="col-span-12 lg:col-span-4">
-            <DaySchedule events={scheduleEvents} />
+            <DaySchedule
+              events={scheduleEvents}
+              isPreview={isPreview}
+              onUpdateEvent={handleUpdateEvent}
+              onDeleteEvent={handleDeleteEvent}
+            />
           </div>
         </div>
       </main>
