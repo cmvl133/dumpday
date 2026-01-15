@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Facade\BrainDumpFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/daily-note')]
 class DailyNoteController extends AbstractController
@@ -22,7 +24,7 @@ class DailyNoteController extends AbstractController
     #[Route('/{date}', name: 'daily_note_get', methods: ['GET'], requirements: [
         'date' => '\d{4}-\d{2}-\d{2}',
     ])]
-    public function get(string $date): JsonResponse
+    public function get(#[CurrentUser] User $user, string $date): JsonResponse
     {
         try {
             $dateTime = new \DateTime($date);
@@ -32,7 +34,7 @@ class DailyNoteController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $data = $this->facade->getDailyNoteData($dateTime);
+        $data = $this->facade->getDailyNoteData($user, $dateTime);
 
         if ($data === null) {
             return $this->json(null, Response::HTTP_NOT_FOUND);
@@ -42,7 +44,7 @@ class DailyNoteController extends AbstractController
     }
 
     #[Route('', name: 'daily_note_create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
+    public function create(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -66,12 +68,13 @@ class DailyNoteController extends AbstractController
 
         try {
             $dailyNote = $this->facade->saveAnalysis(
+                $user,
                 $data['rawContent'],
                 $data['analysis'],
                 $date
             );
 
-            $responseData = $this->facade->getDailyNoteData($date);
+            $responseData = $this->facade->getDailyNoteData($user, $date);
 
             return $this->json($responseData, Response::HTTP_CREATED);
         } catch (\Throwable $e) {

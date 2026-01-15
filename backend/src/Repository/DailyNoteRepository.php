@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\DailyNote;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,10 +19,12 @@ class DailyNoteRepository extends ServiceEntityRepository
         parent::__construct($registry, DailyNote::class);
     }
 
-    public function findByDate(\DateTimeInterface $date): ?DailyNote
+    public function findByUserAndDate(User $user, \DateTimeInterface $date): ?DailyNote
     {
         return $this->createQueryBuilder('dn')
+            ->andWhere('dn.user = :user')
             ->andWhere('dn.date = :date')
+            ->setParameter('user', $user)
             ->setParameter('date', $date->format('Y-m-d'))
             ->getQuery()
             ->getOneOrNullResult();

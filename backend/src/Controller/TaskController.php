@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/task')]
 class TaskController extends AbstractController
@@ -22,7 +24,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/{id}', name: 'task_update', methods: ['PATCH'])]
-    public function update(int $id, Request $request): JsonResponse
+    public function update(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
     {
         $task = $this->taskRepository->find($id);
 
@@ -30,6 +32,12 @@ class TaskController extends AbstractController
             return $this->json([
                 'error' => 'Task not found',
             ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -40,6 +48,14 @@ class TaskController extends AbstractController
 
         if (isset($data['title'])) {
             $task->setTitle((string) $data['title']);
+        }
+
+        if (array_key_exists('dueDate', $data)) {
+            if ($data['dueDate'] === null || $data['dueDate'] === '') {
+                $task->setDueDate(null);
+            } else {
+                $task->setDueDate(new \DateTime($data['dueDate']));
+            }
         }
 
         $this->entityManager->flush();
@@ -54,7 +70,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/{id}', name: 'task_delete', methods: ['DELETE'])]
-    public function delete(int $id): JsonResponse
+    public function delete(#[CurrentUser] User $user, int $id): JsonResponse
     {
         $task = $this->taskRepository->find($id);
 
@@ -62,6 +78,12 @@ class TaskController extends AbstractController
             return $this->json([
                 'error' => 'Task not found',
             ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $this->entityManager->remove($task);

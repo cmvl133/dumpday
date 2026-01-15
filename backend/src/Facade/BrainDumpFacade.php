@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Facade;
 
 use App\Entity\DailyNote;
+use App\Entity\User;
 use App\Repository\DailyNoteRepository;
 use App\Repository\TaskRepository;
 use App\Service\BrainDumpAnalyzer;
@@ -30,7 +31,7 @@ class BrainDumpFacade
     ) {
     }
 
-    public function analyze(string $rawContent, \DateTimeInterface $date): array
+    public function analyze(User $user, string $rawContent, \DateTimeInterface $date): array
     {
         $aiResponse = $this->analyzer->analyze($rawContent, $date);
 
@@ -53,14 +54,16 @@ class BrainDumpFacade
     }
 
     public function saveAnalysis(
+        User $user,
         string $rawContent,
         array $analysisResult,
         \DateTimeInterface $date
     ): DailyNote {
-        $dailyNote = $this->dailyNoteRepository->findByDate($date);
+        $dailyNote = $this->dailyNoteRepository->findByUserAndDate($user, $date);
 
         if ($dailyNote === null) {
             $dailyNote = new DailyNote();
+            $dailyNote->setUser($user);
             $dailyNote->setDate($date);
         }
 
@@ -151,17 +154,17 @@ class BrainDumpFacade
         return $dailyNote;
     }
 
-    public function getDailyNote(\DateTimeInterface $date): ?DailyNote
+    public function getDailyNote(User $user, \DateTimeInterface $date): ?DailyNote
     {
-        return $this->dailyNoteRepository->findByDate($date);
+        return $this->dailyNoteRepository->findByUserAndDate($user, $date);
     }
 
-    public function getDailyNoteData(\DateTimeInterface $date): ?array
+    public function getDailyNoteData(User $user, \DateTimeInterface $date): ?array
     {
-        $dailyNote = $this->dailyNoteRepository->findByDate($date);
+        $dailyNote = $this->dailyNoteRepository->findByUserAndDate($user, $date);
 
-        // Get tasks scheduled for this date (from any DailyNote)
-        $scheduledTasksForDate = $this->taskRepository->findByDueDate($date);
+        // Get tasks scheduled for this date (for this user)
+        $scheduledTasksForDate = $this->taskRepository->findByUserAndDueDate($user, $date);
         $scheduledTaskIds = [];
 
         $tasks = [

@@ -87,6 +87,19 @@ export const updateTask = createAsyncThunk(
   }
 );
 
+export const updateTaskDueDate = createAsyncThunk(
+  'dailyNote/updateTaskDueDate',
+  async (
+    { id, dueDate }: { id: number; dueDate: string | null },
+    { dispatch, getState }
+  ) => {
+    await api.task.update(id, { dueDate });
+    // Refetch to get correct task categorization from backend
+    const state = getState() as { dailyNote: DailyNoteState };
+    dispatch(fetchDailyNote(state.dailyNote.currentDate));
+  }
+);
+
 export const deleteTask = createAsyncThunk(
   'dailyNote/deleteTask',
   async (id: number) => {

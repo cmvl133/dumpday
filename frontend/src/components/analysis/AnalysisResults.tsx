@@ -14,10 +14,12 @@ import type { AnalysisResponse, DailyNoteData } from '@/types';
 
 interface AnalysisResultsProps {
   data: AnalysisResponse | DailyNoteData;
+  currentDate?: string;
   isPreview?: boolean;
   onToggleTask?: (id: number, isCompleted: boolean) => void;
   onDeleteTask?: (id: number) => void;
   onUpdateTask?: (id: number, title: string) => void;
+  onUpdateTaskDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateNote?: (id: number, content: string) => void;
   onDeleteNote?: (id: number) => void;
   onUpdateJournal?: (id: number, content: string) => void;
@@ -26,10 +28,12 @@ interface AnalysisResultsProps {
 
 export function AnalysisResults({
   data,
+  currentDate,
   isPreview = false,
   onToggleTask,
   onDeleteTask,
   onUpdateTask,
+  onUpdateTaskDueDate,
   onUpdateNote,
   onDeleteNote,
   onUpdateJournal,
@@ -67,9 +71,12 @@ export function AnalysisResults({
         <CardContent>
           <TaskList
             tasks={tasks.today || []}
+            currentDate={currentDate}
+            isTodaySection={true}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
+            onUpdateDueDate={onUpdateTaskDueDate}
             isPreview={isPreview}
           />
         </CardContent>
@@ -91,9 +98,11 @@ export function AnalysisResults({
         <CardContent>
           <TaskList
             tasks={tasks.scheduled || []}
+            currentDate={currentDate}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
+            onUpdateDueDate={onUpdateTaskDueDate}
             isPreview={isPreview}
           />
         </CardContent>
@@ -115,9 +124,11 @@ export function AnalysisResults({
         <CardContent>
           <TaskList
             tasks={tasks.someday || []}
+            currentDate={currentDate}
             onToggle={onToggleTask}
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
+            onUpdateDueDate={onUpdateTaskDueDate}
             isPreview={isPreview}
           />
         </CardContent>

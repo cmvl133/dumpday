@@ -70,6 +70,14 @@ services:
     networks:
       - dumpday-net
 
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8125:8025"
+      - "1125:1025"
+    networks:
+      - dumpday-net
+
 networks:
   dumpday-net:
     driver: bridge

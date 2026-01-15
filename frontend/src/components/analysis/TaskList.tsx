@@ -3,17 +3,23 @@ import type { Task } from '@/types';
 
 interface TaskListProps {
   tasks: Task[] | { title: string; dueDate?: string }[];
+  currentDate?: string;
+  isTodaySection?: boolean;
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
+  onUpdateDueDate?: (id: number, dueDate: string | null) => void;
   isPreview?: boolean;
 }
 
 export function TaskList({
   tasks,
+  currentDate,
+  isTodaySection = false,
   onToggle,
   onDelete,
   onUpdate,
+  onUpdateDueDate,
   isPreview = false,
 }: TaskListProps) {
   if (tasks.length === 0) {
@@ -31,9 +37,12 @@ export function TaskList({
           title={task.title}
           isCompleted={'isCompleted' in task ? task.isCompleted : false}
           dueDate={'dueDate' in task ? task.dueDate : undefined}
+          currentDate={currentDate}
+          isTodaySection={isTodaySection}
           onToggle={onToggle}
           onDelete={onDelete}
           onUpdate={onUpdate}
+          onUpdateDueDate={onUpdateDueDate}
           isPreview={isPreview}
         />
       ))}

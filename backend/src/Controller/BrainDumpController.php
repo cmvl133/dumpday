@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Facade\BrainDumpFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/brain-dump')]
 class BrainDumpController extends AbstractController
@@ -20,7 +22,7 @@ class BrainDumpController extends AbstractController
     }
 
     #[Route('/analyze', name: 'brain_dump_analyze', methods: ['POST'])]
-    public function analyze(Request $request): JsonResponse
+    public function analyze(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -37,7 +39,7 @@ class BrainDumpController extends AbstractController
         }
 
         try {
-            $result = $this->facade->analyze($data['rawContent'], $date);
+            $result = $this->facade->analyze($user, $data['rawContent'], $date);
 
             return $this->json($result);
         } catch (\Throwable $e) {

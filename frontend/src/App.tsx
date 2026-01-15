@@ -6,6 +6,7 @@ import {
   toggleTaskComplete,
   deleteTask,
   updateTask,
+  updateTaskDueDate,
   updateEvent,
   deleteEvent,
   updateJournalEntry,
@@ -13,12 +14,15 @@ import {
   updateNote,
   deleteNote,
 } from './store/dailyNoteSlice';
+import { checkAuth } from './store/authSlice';
 import { Header } from './components/layout/Header';
 import { DaySwitcher } from './components/layout/DaySwitcher';
 import { BrainDumpInput } from './components/brain-dump/BrainDumpInput';
 import { AnalysisResults } from './components/analysis/AnalysisResults';
 import { DaySchedule } from './components/schedule/DaySchedule';
 import { ScrollArea } from './components/ui/scroll-area';
+import { LoginPage } from './components/auth/LoginPage';
+import { Loader2 } from 'lucide-react';
 import type { AnalysisResponse, DailyNoteData } from './types';
 
 function App() {
@@ -30,55 +34,22 @@ function App() {
     isLoading,
     error,
   } = useAppSelector((state) => state.dailyNote);
+  const { isAuthenticated, isLoading: authLoading } = useAppSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
-    dispatch(fetchDailyNote(currentDate));
-  }, [currentDate, dispatch]);
+    dispatch(checkAuth());
+  }, [dispatch]);
 
-  const handleDateChange = (date: string) => {
-    dispatch(setCurrentDate(date));
-  };
-
-  const handleToggleTask = (id: number, isCompleted: boolean) => {
-    dispatch(toggleTaskComplete({ id, isCompleted }));
-  };
-
-  const handleDeleteTask = (id: number) => {
-    dispatch(deleteTask(id));
-  };
-
-  const handleUpdateTask = (id: number, title: string) => {
-    dispatch(updateTask({ id, title }));
-  };
-
-  const handleUpdateEvent = (
-    id: number,
-    data: { title?: string; startTime?: string; endTime?: string }
-  ) => {
-    dispatch(updateEvent({ id, data }));
-  };
-
-  const handleDeleteEvent = (id: number) => {
-    dispatch(deleteEvent(id));
-  };
-
-  const handleUpdateNote = (id: number, content: string) => {
-    dispatch(updateNote({ id, content }));
-  };
-
-  const handleDeleteNote = (id: number) => {
-    dispatch(deleteNote(id));
-  };
-
-  const handleUpdateJournal = (id: number, content: string) => {
-    dispatch(updateJournalEntry({ id, content }));
-  };
-
-  const handleDeleteJournal = (id: number) => {
-    dispatch(deleteJournalEntry(id));
-  };
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchDailyNote(currentDate));
+    }
+  }, [currentDate, dispatch, isAuthenticated]);
 
   // Merge persisted data with preview data when both exist
+  // Must be before conditional returns to follow Rules of Hooks
   const { displayData, scheduleEvents } = useMemo((): {
     displayData: AnalysisResponse | DailyNoteData | null;
     scheduleEvents: DailyNoteData['schedule'];
@@ -146,6 +117,65 @@ function App() {
 
   const isPreview = !!analysisPreview;
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  const handleDateChange = (date: string) => {
+    dispatch(setCurrentDate(date));
+  };
+
+  const handleToggleTask = (id: number, isCompleted: boolean) => {
+    dispatch(toggleTaskComplete({ id, isCompleted }));
+  };
+
+  const handleDeleteTask = (id: number) => {
+    dispatch(deleteTask(id));
+  };
+
+  const handleUpdateTask = (id: number, title: string) => {
+    dispatch(updateTask({ id, title }));
+  };
+
+  const handleUpdateTaskDueDate = (id: number, dueDate: string | null) => {
+    dispatch(updateTaskDueDate({ id, dueDate }));
+  };
+
+  const handleUpdateEvent = (
+    id: number,
+    data: { title?: string; startTime?: string; endTime?: string }
+  ) => {
+    dispatch(updateEvent({ id, data }));
+  };
+
+  const handleDeleteEvent = (id: number) => {
+    dispatch(deleteEvent(id));
+  };
+
+  const handleUpdateNote = (id: number, content: string) => {
+    dispatch(updateNote({ id, content }));
+  };
+
+  const handleDeleteNote = (id: number) => {
+    dispatch(deleteNote(id));
+  };
+
+  const handleUpdateJournal = (id: number, content: string) => {
+    dispatch(updateJournalEntry({ id, content }));
+  };
+
+  const handleDeleteJournal = (id: number) => {
+    dispatch(deleteJournalEntry(id));
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -175,10 +205,12 @@ function App() {
               ) : displayData ? (
                 <AnalysisResults
                   data={displayData}
+                  currentDate={currentDate}
                   isPreview={isPreview}
                   onToggleTask={handleToggleTask}
                   onDeleteTask={handleDeleteTask}
                   onUpdateTask={handleUpdateTask}
+                  onUpdateTaskDueDate={handleUpdateTaskDueDate}
                   onUpdateNote={handleUpdateNote}
                   onDeleteNote={handleDeleteNote}
                   onUpdateJournal={handleUpdateJournal}

@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DailyNoteRepository::class)]
 #[ORM\Table(name: 'daily_notes')]
+#[ORM\UniqueConstraint(name: 'unique_user_date', columns: ['user_id', 'date'])]
 #[ORM\HasLifecycleCallbacks]
 class DailyNote
 {
@@ -20,7 +21,11 @@ class DailyNote
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, unique: true)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'dailyNotes')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?User $user = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -238,5 +243,17 @@ class DailyNote
         $this->events->clear();
         $this->journalEntries->clear();
         $this->notes->clear();
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

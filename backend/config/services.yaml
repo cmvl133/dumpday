@@ -1,5 +1,8 @@
 parameters:
     openai_api_key: '%env(OPENAI_API_KEY)%'
+    allowed_users: '%env(ALLOWED_USERS)%'
+    mail_from: '%env(default:default_mail_from:MAIL_FROM)%'
+    default_mail_from: 'noreply@dumpday.app'
 
 services:
     _defaults:
@@ -20,3 +23,11 @@ services:
     App\Service\BrainDumpAnalyzer:
         arguments:
             $openAiApiKey: '%openai_api_key%'
+
+    App\Service\UserService:
+        arguments:
+            $allowedUsers: '%allowed_users%'
+
+    App\Service\AuthMailerService:
+        arguments:
+            $mailFrom: '%mail_from%'

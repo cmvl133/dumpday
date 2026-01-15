@@ -26,9 +26,16 @@ class EventExtractor
                 $event->setTitle(trim($item['title']));
                 $event->setDailyNote($dailyNote);
 
-                $date = isset($item['date'])
-                    ? new \DateTime($item['date'])
-                    : $dailyNote->getDate();
+                if (isset($item['date'])) {
+                    $date = \DateTime::createFromFormat('Y-m-d', $item['date']);
+                    if ($date === false) {
+                        $date = $dailyNote->getDate();
+                    } else {
+                        $date->setTime(12, 0, 0); // Set to noon to avoid timezone edge cases
+                    }
+                } else {
+                    $date = $dailyNote->getDate();
+                }
                 $event->setDate($date);
 
                 $startTime = \DateTime::createFromFormat('H:i', $item['startTime']);
@@ -50,7 +57,6 @@ class EventExtractor
 
                 $events[] = $event;
             } catch (\Exception) {
-                // Invalid data, skip this event
                 continue;
             }
         }
