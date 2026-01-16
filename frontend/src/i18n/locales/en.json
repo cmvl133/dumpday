@@ -12,7 +12,6 @@
     "logout": "Log out",
     "email": "Email address",
     "loginTitle": "Welcome to Dopaminder",
-    "loginSubtitle": "Your punk rock productivity companion",
     "sendMagicLink": "Send magic link",
     "checkEmail": "Check your email",
     "magicLinkSent": "We've sent a magic link to {{email}}",
@@ -51,7 +50,9 @@
     "removeReminder": "Remove reminder",
     "editTask": "Edit task",
     "deleteTask": "Delete task",
-    "taskPlaceholder": "What needs to be done?"
+    "taskPlaceholder": "What needs to be done?",
+    "notes": "Notes",
+    "journal": "Journal"
   },
   "checkIn": {
     "title": "Check-in",
@@ -81,67 +82,120 @@
   },
   "settings": {
     "title": "Settings",
+    "description": "Customize the app to your needs.",
     "language": "Language",
     "english": "English",
     "polish": "Polski",
+    "autoCheckIn": "Auto check-in",
+    "autoCheckInDesc": "How often to remind you to review tasks",
+    "intervalOff": "Off",
+    "interval1h": "Every 1 hour",
+    "interval2h": "Every 2 hours",
+    "interval3h": "Every 3 hours",
+    "interval4h": "Every 4 hours",
     "notifications": "Notifications",
+    "notificationsDesc": "Required for task reminders",
+    "notificationsEnabled": "Enabled",
+    "notificationsBlocked": "Blocked (change in browser settings)",
+    "testNotification": "Test",
+    "testNotificationTitle": "Test notification",
+    "testNotificationBody": "Notifications are working!",
     "enableNotifications": "Enable notifications",
     "defaultReminderTime": "Default reminder time",
     "zenMode": "Zen mode",
     "zenModeDesc": "Hide combo counter and reduce animations",
     "tone": "Tone",
-    "notificationSound": "Notification sound"
+    "toneDesc": "Style of reminder messages and combo comments",
+    "confettiStyle": "Confetti style",
+    "confettiStyleDesc": "Effect when completing a task",
+    "confettiClassic": "Classic",
+    "confettiStars": "Stars",
+    "confettiExplosion": "Explosion",
+    "confettiNeon": "Neon",
+    "confettiFire": "Fire"
   },
   "tones": {
-    "pirate": {
-      "name": "Pirate",
-      "messages": {
-        "great": ["Arrr! Ye be a fine crew!", "Shiver me timbers, what a haul!", "Treasure well earned, matey!"],
-        "good": ["Not bad fer a landlubber!", "Ye've got sea legs!", "Fair sailing today!"],
-        "okay": ["Fair winds ahead, matey.", "Steady as she goes.", "The horizon awaits."],
-        "bad": ["Ye need more rum!", "The ship be sinkin'...", "Rough waters ahead!"],
-        "terrible": ["Walk the plank!", "Ye call this treasure?!", "Davy Jones be disappointed!"]
-      }
+    "gentle": {
+      "name": "Gentle",
+      "reminders": [
+        "Hey, remember: {{task}}?",
+        "Gentle reminder: {{task}}",
+        "Whenever you're ready: {{task}}",
+        "Maybe time for: {{task}}? No pressure"
+      ],
+      "combo": [
+        "Nice progress!",
+        "Great job, keep going",
+        "I see progress!"
+      ]
     },
-    "drill": {
-      "name": "Drill Sergeant",
-      "messages": {
-        "great": ["Outstanding, soldier!", "Mission accomplished!", "That's how it's done, private!"],
-        "good": ["Good effort, private!", "You're getting there!", "Keep that pace!"],
-        "okay": ["Acceptable, barely.", "Keep pushing, soldier!", "Don't get comfortable!"],
-        "bad": ["Drop and give me 20!", "That's not good enough!", "You call that effort?!"],
-        "terrible": ["What is this garbage?!", "You call yourself productive?!", "Back to basic training!"]
-      }
+    "normal": {
+      "name": "Normal",
+      "reminders": [
+        "Reminder: {{task}}",
+        "Time for: {{task}}",
+        "Don't forget: {{task}}",
+        "Task waiting: {{task}}"
+      ],
+      "combo": [
+        "You're killing it!",
+        "Going well!",
+        "Machine!",
+        "Who's stopping you today?",
+        "Focus mode: ON"
+      ]
     },
-    "zen": {
-      "name": "Zen Master",
-      "messages": {
-        "great": ["Inner peace achieved.", "The journey is the reward.", "Harmony flows through you."],
-        "good": ["Progress, not perfection.", "Well done, young one.", "The path reveals itself."],
-        "okay": ["Every step counts.", "Be present.", "Breathe and continue."],
-        "bad": ["Tomorrow is a new day.", "Let go of judgment.", "Rest is also practice."],
-        "terrible": ["The void teaches patience.", "Embrace the struggle.", "In stillness, find strength."]
-      }
+    "aggressive": {
+      "name": "Aggressive",
+      "reminders": [
+        "HEY. {{task}}. NOW.",
+        "Get it together: {{task}}",
+        "How long can you wait? {{task}}!",
+        "MOVE IT: {{task}}",
+        "Zero excuses - get to work!"
+      ],
+      "combo": [
+        "HELL YEAH!",
+        "KEEP GOING!",
+        "DON'T SLOW DOWN!",
+        "UNSTOPPABLE!",
+        "WHO'S STOPPING YOU?!"
+      ]
     },
-    "coach": {
-      "name": "Life Coach",
-      "messages": {
-        "great": ["You're crushing it!", "This is your year!", "Unstoppable energy!"],
-        "good": ["Keep that momentum!", "You've got this!", "Progress is progress!"],
-        "okay": ["Every day is progress!", "Believe in yourself!", "Small steps matter!"],
-        "bad": ["Growth mindset time!", "Failure is feedback!", "Learn and move forward!"],
-        "terrible": ["Reset and refocus!", "Your breakthrough is coming!", "Pivot and persist!"]
-      }
+    "vulgar": {
+      "name": "Vulgar",
+      "reminders": [
+        "FUCK, {{task}}! GET IT TOGETHER!",
+        "Hey, {{task}} won't do itself!",
+        "MOVE YOUR ASS: {{task}}",
+        "How many times do I have to remind you about {{task}}?!",
+        "{{task}} - just fucking do it already",
+        "Fuck procrastination - get to work!"
+      ],
+      "combo": [
+        "Fuck yeah, you're killing it!",
+        "Hell yeah!",
+        "You're fucking crushing it!",
+        "Fucking machine!",
+        "Destroying this list!"
+      ]
     },
-    "neutral": {
-      "name": "Neutral",
-      "messages": {
-        "great": ["Excellent completion rate.", "High productivity.", "Optimal performance."],
-        "good": ["Good progress today.", "Solid work.", "Above average output."],
-        "okay": ["Moderate productivity.", "Acceptable output.", "Within normal parameters."],
-        "bad": ["Below average today.", "Room for improvement.", "Suboptimal results."],
-        "terrible": ["Low completion rate.", "Consider adjustments.", "Significant gap to target."]
-      }
+    "bigpoppapump": {
+      "name": "Big Poppa Pump",
+      "reminders": [
+        "🚨 HOLLA! {{task}} HAS 141 2/3% CHANCE IT WON'T DO ITSELF! 🚨",
+        "🚨 FATASS! {{task}} IS WAITING! NUMBERS DON'T LIE! 🚨",
+        "🚨 {{task}}! BIG POPPA PUMP SAYS: NOW! 🚨",
+        "🚨 SEE THIS TASK? {{task}}? THIS IS YOUR MOMENT! 🚨",
+        "🚨 {{task}} - GENETIC FREAKS DON'T PROCRASTINATE! 🚨"
+      ],
+      "combo": [
+        "🚨 HOLLA! COMBO IS RISING! 🚨",
+        "🚨 NUMBERS DON'T LIE - YOU'RE KILLING IT! 🚨",
+        "🚨 THIS IS A GENETIC FREAK OF PRODUCTIVITY! 🚨",
+        "🚨 GIMME A FUCKIN MIC! 🚨",
+        "🚨 YOU'RE NOT NORMAL - YOU'RE A FREAK! 🚨"
+      ]
     }
   },
   "combo": {

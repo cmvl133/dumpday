@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store';
-import { getRandomMessage } from '@/lib/toneMessages';
+import { getRandomReminderMessage } from '@/lib/toneMessages';
 import type { Task } from '@/types';
 
 const SENT_REMINDERS_KEY = 'dopaminder_sent_reminders';
@@ -144,8 +144,8 @@ export function useReminders() {
 
         // Check if it's time and we haven't sent this reminder today
         if (task.reminderTime === currentTime && !sentReminders.has(key)) {
-          const message = getRandomMessage(reminderTone, 'reminder');
-          showNotification(message, task.title);
+          const message = getRandomReminderMessage(reminderTone, task.title);
+          showNotification('Dopaminder', message);
           markReminderSent(task.id, task.reminderTime);
         }
       }

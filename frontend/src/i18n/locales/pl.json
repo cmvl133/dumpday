@@ -12,7 +12,6 @@
     "logout": "Wyloguj",
     "email": "Adres email",
     "loginTitle": "Witaj w Dopaminder",
-    "loginSubtitle": "Twój punkowy kompan produktywności",
     "sendMagicLink": "Wyślij magic link",
     "checkEmail": "Sprawdź swoją skrzynkę",
     "magicLinkSent": "Wysłaliśmy magic link na {{email}}",
@@ -51,7 +50,9 @@
     "removeReminder": "Usuń przypomnienie",
     "editTask": "Edytuj zadanie",
     "deleteTask": "Usuń zadanie",
-    "taskPlaceholder": "Co trzeba zrobić?"
+    "taskPlaceholder": "Co trzeba zrobić?",
+    "notes": "Notatki",
+    "journal": "Dziennik"
   },
   "checkIn": {
     "title": "Check-in",
@@ -81,72 +82,125 @@
   },
   "settings": {
     "title": "Ustawienia",
+    "description": "Dostosuj działanie aplikacji do swoich potrzeb.",
     "language": "Język",
     "english": "English",
     "polish": "Polski",
+    "autoCheckIn": "Automatyczny check-in",
+    "autoCheckInDesc": "Jak często przypominać o przejrzeniu zadań",
+    "intervalOff": "Wyłączony",
+    "interval1h": "Co 1 godzinę",
+    "interval2h": "Co 2 godziny",
+    "interval3h": "Co 3 godziny",
+    "interval4h": "Co 4 godziny",
     "notifications": "Powiadomienia",
+    "notificationsDesc": "Wymagane do przypomnień o zadaniach",
+    "notificationsEnabled": "Włączone",
+    "notificationsBlocked": "Zablokowane (zmień w ustawieniach przeglądarki)",
+    "testNotification": "Testuj",
+    "testNotificationTitle": "Test powiadomienia",
+    "testNotificationBody": "Powiadomienia działają poprawnie!",
     "enableNotifications": "Włącz powiadomienia",
     "defaultReminderTime": "Domyślny czas przypomnienia",
     "zenMode": "Tryb zen",
     "zenModeDesc": "Ukryj licznik combo i ogranicz animacje",
     "tone": "Ton",
-    "notificationSound": "Dźwięk powiadomień"
+    "toneDesc": "Styl komunikatów przypominających i combo",
+    "confettiStyle": "Styl confetti",
+    "confettiStyleDesc": "Efekt przy ukończeniu zadania",
+    "confettiClassic": "Klasyczne",
+    "confettiStars": "Gwiazdki",
+    "confettiExplosion": "Eksplozja",
+    "confettiNeon": "Neon",
+    "confettiFire": "Ogień"
   },
   "tones": {
-    "pirate": {
-      "name": "Pirat",
-      "messages": {
-        "great": ["Arrr! Niezła załoga!", "Na kotwicę, co za łup!", "Skarb dobrze zdobyty!"],
-        "good": ["Nieźle jak na szczura lądowego!", "Masz morskie nogi!", "Dobre żeglowanie!"],
-        "okay": ["Spokojne wody przed nami.", "Trzymaj kurs.", "Horyzont czeka."],
-        "bad": ["Potrzebujesz więcej rumu!", "Statek tonie...", "Wzburzone morze!"],
-        "terrible": ["Na deskę z tobą!", "To nazywasz skarbem?!", "Davy Jones jest rozczarowany!"]
-      }
+    "gentle": {
+      "name": "Łagodny",
+      "reminders": [
+        "Hej, pamiętasz o: {{task}}?",
+        "Delikatne przypomnienie: {{task}}",
+        "Kiedy będziesz gotowy: {{task}}",
+        "Może czas na: {{task}}? Bez presji"
+      ],
+      "combo": [
+        "Nieźle Ci idzie!",
+        "Świetna robota, tak trzymaj",
+        "Widzę progres!"
+      ]
     },
-    "drill": {
-      "name": "Sierżant",
-      "messages": {
-        "great": ["Wspaniale, żołnierzu!", "Misja wykonana!", "Tak się to robi, szeregowy!"],
-        "good": ["Dobra robota, szeregowy!", "Jesteś na dobrej drodze!", "Utrzymaj tempo!"],
-        "okay": ["Akceptowalne. Ledwo.", "Naprzód, żołnierzu!", "Nie rozluźniaj się!"],
-        "bad": ["Padnij i daj mi 20!", "To nie wystarczy!", "To nazywasz wysiłkiem?!"],
-        "terrible": ["Co to za bałagan?!", "Nazywasz się produktywnym?!", "Wracamy do podstaw!"]
-      }
+    "normal": {
+      "name": "Normalny",
+      "reminders": [
+        "Przypomnienie: {{task}}",
+        "Czas na: {{task}}",
+        "Nie zapomnij: {{task}}",
+        "Zadanie czeka: {{task}}"
+      ],
+      "combo": [
+        "Ogarniasz!",
+        "Nieźle leci!",
+        "Maszyna!",
+        "Kto Cię dziś zatrzyma?",
+        "Focus mode: ON"
+      ]
     },
-    "zen": {
-      "name": "Mistrz Zen",
-      "messages": {
-        "great": ["Wewnętrzny spokój osiągnięty.", "Podróż jest nagrodą.", "Harmonia przepływa przez ciebie."],
-        "good": ["Postęp, nie perfekcja.", "Dobrze ci idzie, młody.", "Ścieżka się objawia."],
-        "okay": ["Każdy krok się liczy.", "Bądź obecny.", "Oddychaj i kontynuuj."],
-        "bad": ["Jutro jest nowy dzień.", "Puść osąd.", "Odpoczynek to też praktyka."],
-        "terrible": ["Pustka uczy cierpliwości.", "Przytul walkę.", "W ciszy znajdź siłę."]
-      }
+    "aggressive": {
+      "name": "Agresywny",
+      "reminders": [
+        "EJ. {{task}}. TERAZ.",
+        "Ogarnij się: {{task}}",
+        "Ile można czekać? {{task}}!",
+        "RUSZ SIĘ: {{task}}",
+        "Zero wymówek - do roboty!"
+      ],
+      "combo": [
+        "NO WŁAŚNIE TAK!",
+        "DAWAJ JESZCZE!",
+        "NIE ZWALNIAJ!",
+        "NIE DO ZATRZYMANIA!",
+        "KTO CIĘ DZIŚ ZATRZYMA?!"
+      ]
     },
-    "coach": {
-      "name": "Life Coach",
-      "messages": {
-        "great": ["Miażdżysz to!", "To twój rok!", "Nie do zatrzymania!"],
-        "good": ["Utrzymaj momentum!", "Dasz radę!", "Postęp to postęp!"],
-        "okay": ["Każdy dzień to postęp!", "Wierz w siebie!", "Małe kroki się liczą!"],
-        "bad": ["Czas na growth mindset!", "Porażka to feedback!", "Ucz się i idź dalej!"],
-        "terrible": ["Reset i focus!", "Twój przełom nadchodzi!", "Pivot i nie poddawaj się!"]
-      }
+    "vulgar": {
+      "name": "Wulgarny",
+      "reminders": [
+        "KURWA, {{task}}! OGARNIAJ SIĘ!",
+        "Ej, {{task}} samo się nie zrobi!",
+        "RUSZ DUPĘ: {{task}}",
+        "Ile razy mam Ci przypominać o {{task}}?!",
+        "{{task}} - zrób to kurwa w końcu",
+        "Jebać lenistwo - do roboty!"
+      ],
+      "combo": [
+        "Kurwa, ogarniasz!",
+        "No jest dobrze!",
+        "Jedziesz z tym kurwa!",
+        "Kurwa maszyna!",
+        "Rozpierdalasz tę listę!"
+      ]
     },
-    "neutral": {
-      "name": "Neutralny",
-      "messages": {
-        "great": ["Doskonały wskaźnik ukończenia.", "Wysoka produktywność.", "Optymalna wydajność."],
-        "good": ["Dobry postęp dzisiaj.", "Solidna robota.", "Powyżej średniej."],
-        "okay": ["Umiarkowana produktywność.", "Akceptowalny wynik.", "W normie."],
-        "bad": ["Poniżej średniej.", "Jest miejsce na poprawę.", "Wynik nieoptymalny."],
-        "terrible": ["Niski wskaźnik ukończenia.", "Rozważ zmiany.", "Znaczna luka do celu."]
-      }
+    "bigpoppapump": {
+      "name": "Big Poppa Pump",
+      "reminders": [
+        "🚨 HOLLA! {{task}} MA 141 2/3% SZANS ŻE SIĘ NIE ZROBI SAMO! 🚨",
+        "🚨 FATASS! {{task}} CZEKA! LICZBY NIE KŁAMIĄ! 🚨",
+        "🚨 {{task}}! BIG POPPA PUMP MÓWI: TERAZ! 🚨",
+        "🚨 WIDZISZ TEN TASK? {{task}}? TO JEST TWÓJ MOMENT! 🚨",
+        "🚨 {{task}} - GENETIC FREAKS NIE PROKRASTYNUJĄ! 🚨"
+      ],
+      "combo": [
+        "🚨 HOLLA! COMBO ROŚNIE! 🚨",
+        "🚨 LICZBY NIE KŁAMIĄ - OGARNIASZ! 🚨",
+        "🚨 TO JEST GENETIC FREAK PRODUKTYWNOŚCI! 🚨",
+        "🚨 GIMME A FUCKIN MIC! 🚨",
+        "🚨 NIE JESTEŚ NORMALNY - JESTEŚ FREAKIEM! 🚨"
+      ]
     }
   },
   "combo": {
-    "x2": "Podwójne trafienie!",
-    "x3": "Potrójne trafienie!",
+    "x2": "Podwójne zabójstwo!",
+    "x3": "Potrójne zabójstwo!",
     "x5": "Seria zabójstw!",
     "x7": "Dominacja!",
     "x10": "Boski!",

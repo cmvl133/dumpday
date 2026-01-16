@@ -227,7 +227,7 @@ export function AnalysisResults({
       <CollapsibleCard
         id="notes"
         icon={<StickyNote className="h-4 w-4 text-orange-600" />}
-        title="Notes"
+        title={t('tasks.notes')}
         count={notes.length}
         isCollapsed={isCollapsed('notes')}
         onToggle={() => toggleBox('notes')}
@@ -244,7 +244,7 @@ export function AnalysisResults({
       <CollapsibleCard
         id="journal"
         icon={<Heart className="h-4 w-4 text-pink-600" />}
-        title="Journal"
+        title={t('tasks.journal')}
         count={journal.length}
         isCollapsed={isCollapsed('journal')}
         onToggle={() => toggleBox('journal')}

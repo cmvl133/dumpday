@@ -20,6 +20,10 @@ interface SettingsModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const TONE_VALUES: ReminderTone[] = ['gentle', 'normal', 'aggressive', 'vulgar', 'bigpoppapump'];
+const INTERVAL_VALUES: CheckInInterval[] = ['off', '1h', '2h', '3h', '4h'];
+const CONFETTI_VALUES: ConfettiStyle[] = ['classic', 'stars', 'explosion', 'neon', 'fire'];
+
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -29,35 +33,6 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
     'Notification' in window ? Notification.permission : 'denied'
   );
-
-  const INTERVAL_OPTIONS: { value: CheckInInterval; label: string }[] = [
-    { value: 'off', label: language === 'pl' ? 'Wyłączony' : 'Off' },
-    { value: '1h', label: language === 'pl' ? 'Co 1 godzinę' : 'Every 1 hour' },
-    { value: '2h', label: language === 'pl' ? 'Co 2 godziny' : 'Every 2 hours' },
-    { value: '3h', label: language === 'pl' ? 'Co 3 godziny' : 'Every 3 hours' },
-    { value: '4h', label: language === 'pl' ? 'Co 4 godziny' : 'Every 4 hours' },
-  ];
-
-  const TONE_OPTIONS: { value: ReminderTone; label: string }[] = [
-    { value: 'gentle', label: language === 'pl' ? 'Delikatny' : 'Gentle' },
-    { value: 'normal', label: language === 'pl' ? 'Normalny' : 'Normal' },
-    { value: 'aggressive', label: language === 'pl' ? 'Agresywny' : 'Aggressive' },
-    { value: 'vulgar', label: language === 'pl' ? 'Wulgarny' : 'Vulgar' },
-    { value: 'bigpoppapump', label: 'Big Poppa Pump' },
-  ];
-
-  const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
-    { value: 'en', label: 'English' },
-    { value: 'pl', label: 'Polski' },
-  ];
-
-  const CONFETTI_OPTIONS: { value: ConfettiStyle; label: string }[] = [
-    { value: 'classic', label: language === 'pl' ? 'Klasyczne' : 'Classic' },
-    { value: 'stars', label: language === 'pl' ? 'Gwiazdki' : 'Stars' },
-    { value: 'explosion', label: language === 'pl' ? 'Eksplozja' : 'Explosion' },
-    { value: 'neon', label: language === 'pl' ? 'Neon' : 'Neon' },
-    { value: 'fire', label: language === 'pl' ? 'Ogień' : 'Fire' },
-  ];
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -91,15 +66,35 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     dispatch(updateSettings({ confettiStyle: value }));
   };
 
+  const getIntervalLabel = (interval: CheckInInterval): string => {
+    const labels: Record<CheckInInterval, string> = {
+      off: t('settings.intervalOff'),
+      '1h': t('settings.interval1h'),
+      '2h': t('settings.interval2h'),
+      '3h': t('settings.interval3h'),
+      '4h': t('settings.interval4h'),
+    };
+    return labels[interval];
+  };
+
+  const getConfettiLabel = (style: ConfettiStyle): string => {
+    const labels: Record<ConfettiStyle, string> = {
+      classic: t('settings.confettiClassic'),
+      stars: t('settings.confettiStars'),
+      explosion: t('settings.confettiExplosion'),
+      neon: t('settings.confettiNeon'),
+      fire: t('settings.confettiFire'),
+    };
+    return labels[style];
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t('settings.title')}</DialogTitle>
           <DialogDescription>
-            {language === 'pl'
-              ? 'Dostosuj działanie aplikacji do swoich potrzeb.'
-              : 'Customize the app to your needs.'}
+            {t('settings.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -110,40 +105,31 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             </label>
             <select
               value={language}
-              onChange={(e) =>
-                handleLanguageChange(e.target.value as Language)
-              }
+              onChange={(e) => handleLanguageChange(e.target.value as Language)}
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {LANGUAGE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+              <option value="en">English</option>
+              <option value="pl">Polski</option>
             </select>
           </div>
 
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              {language === 'pl' ? 'Automatyczny check-in' : 'Auto check-in'}
+              {t('settings.autoCheckIn')}
             </label>
             <select
               value={checkInInterval}
-              onChange={(e) =>
-                handleIntervalChange(e.target.value as CheckInInterval)
-              }
+              onChange={(e) => handleIntervalChange(e.target.value as CheckInInterval)}
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {INTERVAL_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              {INTERVAL_VALUES.map((interval) => (
+                <option key={interval} value={interval}>
+                  {getIntervalLabel(interval)}
                 </option>
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              {language === 'pl'
-                ? 'Jak często przypominać o przejrzeniu zadań'
-                : 'How often to remind you to review tasks'}
+              {t('settings.autoCheckInDesc')}
             </p>
           </div>
 
@@ -153,45 +139,37 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             </label>
             <select
               value={reminderTone}
-              onChange={(e) =>
-                handleToneChange(e.target.value as ReminderTone)
-              }
+              onChange={(e) => handleToneChange(e.target.value as ReminderTone)}
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {TONE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              {TONE_VALUES.map((tone) => (
+                <option key={tone} value={tone}>
+                  {t(`tones.${tone}.name`)}
                 </option>
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              {language === 'pl'
-                ? 'Styl komunikatów przypominających i combo'
-                : 'Style of reminder messages and combo comments'}
+              {t('settings.toneDesc')}
             </p>
           </div>
 
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              {language === 'pl' ? 'Styl confetti' : 'Confetti style'}
+              {t('settings.confettiStyle')}
             </label>
             <select
               value={confettiStyle}
-              onChange={(e) =>
-                handleConfettiStyleChange(e.target.value as ConfettiStyle)
-              }
+              onChange={(e) => handleConfettiStyleChange(e.target.value as ConfettiStyle)}
               className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              {CONFETTI_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              {CONFETTI_VALUES.map((style) => (
+                <option key={style} value={style}>
+                  {getConfettiLabel(style)}
                 </option>
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              {language === 'pl'
-                ? 'Efekt przy ukończeniu zadania'
-                : 'Effect when completing a task'}
+              {t('settings.confettiStyleDesc')}
             </p>
           </div>
 
@@ -204,32 +182,25 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-sm text-green-600">
                     <Check className="h-4 w-4" />
-                    {language === 'pl' ? 'Włączone' : 'Enabled'}
+                    {t('settings.notificationsEnabled')}
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      new Notification(
-                        language === 'pl' ? 'Test powiadomienia' : 'Test notification',
-                        {
-                          body: language === 'pl'
-                            ? 'Powiadomienia działają poprawnie!'
-                            : 'Notifications are working!',
-                          icon: '/vite.svg',
-                        }
-                      );
+                      new Notification(t('settings.testNotificationTitle'), {
+                        body: t('settings.testNotificationBody'),
+                        icon: '/vite.svg',
+                      });
                     }}
                   >
-                    {language === 'pl' ? 'Testuj' : 'Test'}
+                    {t('settings.testNotification')}
                   </Button>
                 </div>
               ) : notificationPermission === 'denied' ? (
                 <div className="flex items-center gap-2 text-sm text-destructive">
                   <BellOff className="h-4 w-4" />
-                  {language === 'pl'
-                    ? 'Zablokowane (zmień w ustawieniach przeglądarki)'
-                    : 'Blocked (change in browser settings)'}
+                  {t('settings.notificationsBlocked')}
                 </div>
               ) : (
                 <Button
@@ -244,9 +215,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {language === 'pl'
-                ? 'Wymagane do przypomnień o zadaniach'
-                : 'Required for task reminders'}
+              {t('settings.notificationsDesc')}
             </p>
           </div>
 
@@ -262,7 +231,6 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               onCheckedChange={handleZenModeChange}
             />
           </div>
-
         </div>
       </DialogContent>
     </Dialog>

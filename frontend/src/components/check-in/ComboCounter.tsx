@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { cn } from '@/lib/utils';
-import { getRandomMessage } from '@/lib/toneMessages';
+import { getRandomComboMessage } from '@/lib/toneMessages';
 import type { RootState } from '@/store';
 
 interface ComboCounterProps {
@@ -14,7 +14,7 @@ export function ComboCounter({ combo, zenMode = false }: ComboCounterProps) {
 
   const comment = useMemo(() => {
     if (combo < 3) return null;
-    return getRandomMessage(reminderTone, 'combo');
+    return getRandomComboMessage(reminderTone);
   }, [combo, reminderTone]);
 
   if (combo === 0 || zenMode) return null;

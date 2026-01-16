@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Mail, KeyRound, ArrowLeft } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -21,6 +21,11 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+
+  const tagline = useMemo(() => {
+    const taglines = t('header.taglines', { returnObjects: true }) as string[];
+    return taglines[Math.floor(Math.random() * taglines.length)];
+  }, [t]);
 
   useEffect(() => {
     return () => {
@@ -55,7 +60,7 @@ export function LoginPage() {
           <p className="text-sm text-muted-foreground mt-2">
             {codeSent
               ? t('auth.checkEmail')
-              : t('auth.loginSubtitle')}
+              : tagline}
           </p>
         </CardHeader>
         <CardContent>
