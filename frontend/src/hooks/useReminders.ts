@@ -4,7 +4,7 @@ import type { RootState } from '@/store';
 import { getRandomMessage } from '@/lib/toneMessages';
 import type { Task } from '@/types';
 
-const SENT_REMINDERS_KEY = 'dumpday_sent_reminders';
+const SENT_REMINDERS_KEY = 'dopaminder_sent_reminders';
 
 function getSentReminders(): Set<string> {
   try {

@@ -2,7 +2,7 @@ parameters:
     openai_api_key: '%env(OPENAI_API_KEY)%'
     allowed_users: '%env(ALLOWED_USERS)%'
     mail_from: '%env(default:default_mail_from:MAIL_FROM)%'
-    default_mail_from: 'noreply@dumpday.app'
+    default_mail_from: 'noreply@dopaminder.app'
 
 services:
     _defaults:

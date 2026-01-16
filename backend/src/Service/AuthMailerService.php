@@ -12,7 +12,7 @@ class AuthMailerService
 {
     public function __construct(
         private readonly MailerInterface $mailer,
-        private readonly string $mailFrom = 'noreply@dumpday.app',
+        private readonly string $mailFrom = 'noreply@dopaminder.app',
     ) {
     }
 
@@ -21,7 +21,7 @@ class AuthMailerService
         $email = (new Email())
             ->from($this->mailFrom)
             ->to($user->getEmail())
-            ->subject('DumpDay - Twój kod logowania')
+            ->subject('Dopaminder - Twój kod logowania')
             ->text($this->getPlainTextContent($code))
             ->html($this->getHtmlContent($code));
 
@@ -31,7 +31,7 @@ class AuthMailerService
     private function getPlainTextContent(string $code): string
     {
         return <<<TEXT
-Twój kod logowania do DumpDay:
+Twój kod logowania do Dopaminder:
 
 $code
 
@@ -59,7 +59,7 @@ TEXT;
 </head>
 <body>
     <div class="container">
-        <div class="logo">DumpDay</div>
+        <div class="logo">Dopaminder</div>
         <p class="text">Twój kod logowania:</p>
         <div class="code">$code</div>
         <p class="text">Kod jest ważny przez <strong>10 minut</strong>.</p>

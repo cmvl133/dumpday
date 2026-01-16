@@ -4,85 +4,86 @@
 
 @layer base {
   :root {
-    /* Soft, calming background - warm off-white */
+    /* Light mode - keeping for future but punk defaults to dark */
     --background: 40 20% 98%;
     --foreground: 220 15% 20%;
-
-    /* Cards with subtle warmth */
     --card: 0 0% 100%;
     --card-foreground: 220 15% 20%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 20%;
-
-    /* Calming teal accent - not too bright */
-    --primary: 175 40% 40%;
+    --primary: 338 100% 59%;
     --primary-foreground: 0 0% 100%;
-
-    /* Soft gray secondaries */
     --secondary: 220 14% 96%;
     --secondary-foreground: 220 15% 25%;
-
     --muted: 220 14% 96%;
     --muted-foreground: 220 10% 50%;
-
-    --accent: 175 30% 94%;
-    --accent-foreground: 175 40% 30%;
-
-    /* Soft red for destructive */
-    --destructive: 0 65% 55%;
+    --accent: 189 100% 50%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 100% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    /* Subtle borders */
+    --success: 152 100% 50%;
+    --warning: 56 100% 50%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 175 40% 40%;
-
-    /* Larger radius for softer appearance */
-    --radius: 0.75rem;
-
-    /* Chart colors */
-    --chart-1: 175 50% 45%;
-    --chart-2: 142 50% 45%;
-    --chart-3: 199 45% 45%;
-    --chart-4: 43 70% 55%;
-    --chart-5: 27 80% 55%;
+    --ring: 338 100% 59%;
+    --radius: 0.5rem;
+    --chart-1: 338 100% 59%;
+    --chart-2: 189 100% 50%;
+    --chart-3: 152 100% 50%;
+    --chart-4: 56 100% 50%;
+    --chart-5: 0 100% 60%;
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 220 15% 92%;
+    /* PUNK ROCK THEME - Very dark backgrounds */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 94%;
 
-    --card: 220 18% 13%;
-    --card-foreground: 220 15% 92%;
+    /* Cards - slightly lighter */
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 94%;
 
-    --popover: 220 18% 13%;
-    --popover-foreground: 220 15% 92%;
+    /* Popovers - elevated surfaces */
+    --popover: 0 0% 16%;
+    --popover-foreground: 0 0% 94%;
 
-    --primary: 175 45% 50%;
-    --primary-foreground: 220 20% 10%;
+    /* Primary - neon pink/magenta */
+    --primary: 338 100% 59%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 220 15% 85%;
+    /* Secondary - electric blue */
+    --secondary: 189 100% 50%;
+    --secondary-foreground: 0 0% 4%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 220 10% 60%;
+    /* Muted surfaces */
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 53%;
 
-    --accent: 175 30% 20%;
-    --accent-foreground: 175 45% 70%;
+    /* Accent - electric blue for highlights */
+    --accent: 189 100% 50%;
+    --accent-foreground: 0 0% 4%;
 
-    --destructive: 0 55% 45%;
+    /* Destructive - aggressive red */
+    --destructive: 0 100% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
-    --ring: 175 45% 50%;
+    /* Success - neon green */
+    --success: 152 100% 50%;
 
-    --chart-1: 175 60% 55%;
-    --chart-2: 142 60% 55%;
-    --chart-3: 199 55% 55%;
-    --chart-4: 43 75% 60%;
-    --chart-5: 27 85% 60%;
+    /* Warning - bright yellow */
+    --warning: 56 100% 50%;
+
+    /* Borders - subtle gray */
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 338 100% 59%;
+
+    /* Chart colors - punk palette */
+    --chart-1: 338 100% 59%;
+    --chart-2: 189 100% 50%;
+    --chart-3: 152 100% 50%;
+    --chart-4: 56 100% 50%;
+    --chart-5: 0 100% 60%;
   }
 }
 
@@ -93,24 +94,21 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Focus styles for accessibility */
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
 
-/* Custom scrollbar for better aesthetics */
 @layer utilities {
+  /* Custom scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
@@ -134,20 +132,21 @@
     background: hsl(var(--muted-foreground) / 0.5);
   }
 
-  /* Check-in animations */
+  /* Flash animation for task completion */
   .animate-flash-green {
     animation: flashGreen 0.3s ease-out;
   }
 
   @keyframes flashGreen {
     0% {
-      background-color: rgba(34, 197, 94, 0.3);
+      background-color: hsl(var(--success) / 0.3);
     }
     100% {
       background-color: transparent;
     }
   }
 
+  /* Bounce in animation */
   .animate-bounce-in {
     animation: bounceIn 0.3s ease-out;
   }
@@ -166,6 +165,7 @@
     }
   }
 
+  /* Shake animation */
   .animate-shake {
     animation: shake 0.4s ease-out;
   }
@@ -174,11 +174,98 @@
     0%, 100% {
       transform: translateX(0);
     }
-    25% {
-      transform: translateX(-5px);
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-4px);
     }
-    75% {
-      transform: translateX(5px);
+    20%, 40%, 60%, 80% {
+      transform: translateX(4px);
     }
+  }
+
+  /* Heavy shake for high combos */
+  .animate-shake-heavy {
+    animation: shakeHeavy 0.5s ease-out;
+  }
+
+  @keyframes shakeHeavy {
+    0%, 100% {
+      transform: translateX(0) rotate(0deg);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-6px) rotate(-0.5deg);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(6px) rotate(0.5deg);
+    }
+  }
+
+  /* Pulse glow animation */
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 5px hsl(var(--primary) / 0.5);
+    }
+    50% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.8);
+    }
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-primary-hover:hover {
+    box-shadow: 0 0 25px hsl(var(--primary) / 0.5);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.3);
+  }
+
+  .glow-secondary-hover:hover {
+    box-shadow: 0 0 25px hsl(var(--secondary) / 0.5);
+  }
+
+  /* Native date/time picker styling for punk theme */
+  input[type="date"],
+  input[type="time"] {
+    color-scheme: dark;
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    transition: all 150ms;
+  }
+
+  input[type="date"]:focus,
+  input[type="time"]:focus {
+    outline: none;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 150ms;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Firefox date/time inputs */
+  input[type="date"]::-moz-calendar-picker-indicator,
+  input[type="time"]::-moz-calendar-picker-indicator {
+    filter: invert(1);
   }
 }

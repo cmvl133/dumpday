@@ -35,8 +35,8 @@ final class Version20260114150437 extends AbstractMigration
         $this->addSql('ALTER TABLE daily_notes ADD user_id INT');
 
         // Create default user and migrate existing data
-        $this->addSql("INSERT INTO users (email, created_at, updated_at) VALUES ('default@dumpday.local', NOW(), NOW())");
-        $this->addSql('UPDATE daily_notes SET user_id = (SELECT id FROM users WHERE email = \'default@dumpday.local\') WHERE user_id IS NULL');
+        $this->addSql("INSERT INTO users (email, created_at, updated_at) VALUES ('default@dopaminder.local', NOW(), NOW())");
+        $this->addSql('UPDATE daily_notes SET user_id = (SELECT id FROM users WHERE email = \'default@dopaminder.local\') WHERE user_id IS NULL');
 
         // Set NOT NULL constraint
         $this->addSql('ALTER TABLE daily_notes ALTER COLUMN user_id SET NOT NULL');

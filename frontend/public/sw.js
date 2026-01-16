@@ -5,7 +5,7 @@ self.addEventListener('push', (event) => {
   try {
     const data = event.data.json();
     event.waitUntil(
-      self.registration.showNotification(data.title || 'DumpDay', {
+      self.registration.showNotification(data.title || 'Dopaminder', {
         body: data.body || '',
         icon: '/vite.svg',
         badge: '/vite.svg',
@@ -18,7 +18,7 @@ self.addEventListener('push', (event) => {
     // If not JSON, try as text
     const text = event.data.text();
     event.waitUntil(
-      self.registration.showNotification('DumpDay', {
+      self.registration.showNotification('Dopaminder', {
         body: text,
         icon: '/vite.svg',
         data: { url: '/' },

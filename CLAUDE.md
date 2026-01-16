@@ -1,10 +1,10 @@
-# DumpDay - Notatki projektowe
+# Dopaminder - Notatki projektowe
 
-Ten plik zawiera informacje dla Claude Code dotyczące projektu DumpDay.
+Ten plik zawiera informacje dla Claude Code dotyczące projektu Dopaminder.
 
 ## O projekcie
 
-DumpDay to aplikacja do planowania dnia dla osób z ADHD. Pozwala na "brain dump" - swobodne wpisywanie myśli, które są następnie analizowane przez AI i organizowane w strukturę: zadania, wydarzenia, notatki i wpisy dziennika.
+Dopaminder to aplikacja do planowania dnia dla osób z ADHD. Pozwala na "brain dump" - swobodne wpisywanie myśli, które są następnie analizowane przez AI i organizowane w strukturę: zadania, wydarzenia, notatki i wpisy dziennika.
 
 ## Stack technologiczny
 

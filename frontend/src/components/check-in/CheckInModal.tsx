@@ -84,17 +84,17 @@ export function CheckInModal() {
           if (!zenMode) {
             const newCombo = combo + 1;
 
-            // Always show small confetti burst
+            // Always show small confetti burst - punk pink
             confetti({
               particleCount: 30,
               spread: 50,
               origin: { x: 0.5, y: 0.6 },
-              colors: ['#14b8a6', '#22c55e', '#a3e635'],
+              colors: ['#ff2d7a', '#ff69b4', '#ff1493'],
               startVelocity: 25,
               gravity: 0.8,
             });
 
-            // Medium combo - side cannons
+            // Medium combo - side cannons - electric blue
             if (newCombo >= 3) {
               setTimeout(() => {
                 confetti({
@@ -102,32 +102,32 @@ export function CheckInModal() {
                   angle: 60,
                   spread: 40,
                   origin: { x: 0 },
-                  colors: ['#f59e0b', '#eab308', '#fbbf24'],
+                  colors: ['#00d4ff', '#00bfff', '#1e90ff'],
                 });
                 confetti({
                   particleCount: 20,
                   angle: 120,
                   spread: 40,
                   origin: { x: 1 },
-                  colors: ['#f59e0b', '#eab308', '#fbbf24'],
+                  colors: ['#00d4ff', '#00bfff', '#1e90ff'],
                 });
               }, 100);
             }
 
-            // High combo - full explosion!
+            // High combo - full explosion! - all punk colors
             if (newCombo >= 5) {
               setTimeout(() => {
                 confetti({
                   particleCount: 80,
                   spread: 100,
                   origin: { y: 0.5 },
-                  colors: ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6'],
+                  colors: ['#ff2d7a', '#00d4ff', '#00ff88', '#ffee00', '#ff3333'],
                   startVelocity: 35,
                 });
               }, 200);
             }
 
-            // Epic combo - stars!
+            // Epic combo - stars! - neon yellow/green
             if (newCombo >= 7) {
               setTimeout(() => {
                 confetti({
@@ -135,7 +135,7 @@ export function CheckInModal() {
                   spread: 360,
                   origin: { x: 0.5, y: 0.5 },
                   shapes: ['star'],
-                  colors: ['#fbbf24', '#fcd34d', '#fef08a'],
+                  colors: ['#ffee00', '#00ff88', '#ff2d7a'],
                   scalar: 1.2,
                   startVelocity: 40,
                 });

@@ -13,7 +13,7 @@ services:
       - php
       - node
     networks:
-      - dumpday-net
+      - dopaminder-net
 
   php:
     build:
@@ -28,7 +28,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - dumpday-net
+      - dopaminder-net
 
   node:
     build:
@@ -47,7 +47,7 @@ services:
       - WATCHPACK_POLLING=true
       - npm_config_cache=/app/.npm
     networks:
-      - dumpday-net
+      - dopaminder-net
     tty: true
     stdin_open: true
 
@@ -68,7 +68,7 @@ services:
       retries: 10
       start_period: 30s
     networks:
-      - dumpday-net
+      - dopaminder-net
 
   mailpit:
     image: axllent/mailpit
@@ -76,10 +76,10 @@ services:
       - "8125:8025"
       - "1125:1025"
     networks:
-      - dumpday-net
+      - dopaminder-net
 
 networks:
-  dumpday-net:
+  dopaminder-net:
     driver: bridge
 
 volumes:

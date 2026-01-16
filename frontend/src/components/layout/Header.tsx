@@ -1,5 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LogOut, ClipboardCheck, Settings } from 'lucide-react';
+
+const TAGLINES = [
+  "Where chaos meets done.",
+  "Stop planning. Start doing.",
+  "For people who hate todo apps.",
+  "The anti-productivity productivity app.",
+  "Productivity that hits different.",
+  "Dopamine-driven productivity.",
+  "Your daily dopamine dealer.",
+];
 import { Button } from '@/components/ui/button';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -10,6 +20,8 @@ export function Header() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const tagline = useMemo(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)], []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -26,11 +38,11 @@ export function Header() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground tracking-tight">
-                DumpDay
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                Dopaminder
               </h1>
               <p className="text-sm text-muted-foreground">
-                Dump your thoughts. Own your day.
+                {tagline}
               </p>
             </div>
             {user && (

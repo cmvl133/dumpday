@@ -34,14 +34,14 @@ export function SummaryScreen({
           angle: 60,
           spread: 55,
           origin: { x: 0 },
-          colors: ['#14b8a6', '#22c55e', '#eab308'],
+          colors: ['#ff2d7a', '#00ff88', '#ffee00'],
         });
         confetti({
           particleCount: 3,
           angle: 120,
           spread: 55,
           origin: { x: 1 },
-          colors: ['#14b8a6', '#22c55e', '#eab308'],
+          colors: ['#ff2d7a', '#00d4ff', '#ffee00'],
         });
 
         if (Date.now() < end) {
@@ -74,22 +74,22 @@ export function SummaryScreen({
       <h2 className="text-2xl font-bold">{getMessage()}</h2>
 
       <div className="grid grid-cols-3 gap-4 text-sm">
-        <div className="bg-green-100 dark:bg-green-900/30 rounded-lg p-3">
-          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+        <div className="bg-[#00ff88]/10 border border-[#00ff88]/30 rounded-lg p-3">
+          <div className="text-2xl font-bold text-[#00ff88]">
             {stats.done}
           </div>
           <div className="text-muted-foreground">Zrobione</div>
         </div>
 
-        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3">
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="bg-[#00d4ff]/10 border border-[#00d4ff]/30 rounded-lg p-3">
+          <div className="text-2xl font-bold text-[#00d4ff]">
             {stats.today}
           </div>
           <div className="text-muted-foreground">Na dzis</div>
         </div>
 
-        <div className="bg-yellow-100 dark:bg-yellow-900/30 rounded-lg p-3">
-          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+        <div className="bg-[#ffee00]/10 border border-[#ffee00]/30 rounded-lg p-3">
+          <div className="text-2xl font-bold text-[#ffee00]">
             {stats.tomorrow}
           </div>
           <div className="text-muted-foreground">Na jutro</div>

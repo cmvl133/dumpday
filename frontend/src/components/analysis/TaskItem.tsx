@@ -65,7 +65,7 @@ export function TaskItem({
           particleCount: 50,
           spread: 60,
           origin: { x, y },
-          colors: ['#14b8a6', '#22c55e', '#a3e635', '#fbbf24'],
+          colors: ['#ff2d7a', '#00ff88', '#00d4ff', '#ffee00'],
           startVelocity: 20,
           gravity: 0.8,
           scalar: 0.8,
@@ -208,13 +208,13 @@ export function TaskItem({
           )}
 
           {!isPreview && id !== undefined && isEditingReminder && onUpdateReminder && (
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-background/95 rounded px-1 py-0.5 border shadow-sm">
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-card/95 backdrop-blur-sm rounded-md px-2 py-1 border border-primary/30 shadow-lg shadow-primary/10">
               <input
                 type="time"
                 value={reminderValue}
                 onChange={(e) => setReminderValue(e.target.value)}
                 onKeyDown={handleReminderKeyDown}
-                className="h-7 w-24 px-2 text-sm rounded border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                className="h-7 w-24 px-2 text-sm"
                 autoFocus
               />
               <Button
@@ -223,7 +223,7 @@ export function TaskItem({
                 className="h-7 w-7"
                 onClick={handleReminderSave}
               >
-                <Check className="h-4 w-4 text-green-600" />
+                <Check className="h-4 w-4 text-[#00ff88]" />
               </Button>
               {reminderTime && (
                 <Button

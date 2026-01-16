@@ -25,12 +25,12 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         />
         <div
           className={cn(
-            'h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 peer-checked:bg-primary peer-checked:text-primary-foreground cursor-pointer flex items-center justify-center',
+            'h-5 w-5 shrink-0 rounded-sm border-2 border-primary/40 ring-offset-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 peer-checked:bg-primary peer-checked:border-primary hover:border-primary/70 cursor-pointer flex items-center justify-center',
             className
           )}
           onClick={() => onCheckedChange?.(!checked)}
         >
-          {checked && <Check className="h-3 w-3 text-primary-foreground" />}
+          {checked && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
         </div>
       </div>
     );

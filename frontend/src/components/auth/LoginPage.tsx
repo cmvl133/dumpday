@@ -49,7 +49,7 @@ export function LoginPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">DumpDay</CardTitle>
+          <CardTitle className="text-2xl font-bold">Dopaminder</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
             {codeSent
               ? 'Wpisz kod, który wysłaliśmy na Twój email'
