@@ -100,6 +100,14 @@ export const updateTaskDueDate = createAsyncThunk(
   }
 );
 
+export const updateTaskReminder = createAsyncThunk(
+  'dailyNote/updateTaskReminder',
+  async ({ id, reminderTime }: { id: number; reminderTime: string | null }) => {
+    const result = await api.task.update(id, { reminderTime });
+    return result;
+  }
+);
+
 export const deleteTask = createAsyncThunk(
   'dailyNote/deleteTask',
   async (id: number) => {
@@ -247,6 +255,21 @@ const dailyNoteSlice = createSlice({
       })
 
       .addCase(updateTask.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          const task = action.payload;
+          const categories = ['today', 'scheduled', 'someday'] as const;
+          for (const category of categories) {
+            const taskList = state.dailyNote.tasks[category];
+            const index = taskList.findIndex((t) => t.id === task.id);
+            if (index !== -1) {
+              taskList[index] = { ...taskList[index], ...task };
+              break;
+            }
+          }
+        }
+      })
+
+      .addCase(updateTaskReminder.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const task = action.payload;
           const categories = ['today', 'scheduled', 'someday'] as const;

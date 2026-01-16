@@ -64,6 +64,14 @@ class TaskController extends AbstractController
             }
         }
 
+        if (array_key_exists('reminderTime', $data)) {
+            if ($data['reminderTime'] === null || $data['reminderTime'] === '') {
+                $task->setReminderTime(null);
+            } else {
+                $task->setReminderTime(new \DateTimeImmutable($data['reminderTime']));
+            }
+        }
+
         $this->entityManager->flush();
 
         return $this->json([
@@ -74,6 +82,7 @@ class TaskController extends AbstractController
             'dueDate' => $task->getDueDate()?->format('Y-m-d'),
             'category' => $task->getCategory()->value,
             'completedAt' => $task->getCompletedAt()?->format('c'),
+            'reminderTime' => $task->getReminderTime()?->format('H:i'),
         ]);
     }
 

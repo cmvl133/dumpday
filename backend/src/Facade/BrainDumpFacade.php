@@ -182,6 +182,7 @@ class BrainDumpFacade
                 'title' => $task->getTitle(),
                 'isCompleted' => $task->isCompleted(),
                 'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+                'reminderTime' => $task->getReminderTime()?->format('H:i'),
             ];
         }
 
@@ -225,6 +226,7 @@ class BrainDumpFacade
                 'title' => $task->getTitle(),
                 'isCompleted' => $task->isCompleted(),
                 'dueDate' => $taskDueDate,
+                'reminderTime' => $task->getReminderTime()?->format('H:i'),
             ];
 
             $category = $task->getCategory()->value;

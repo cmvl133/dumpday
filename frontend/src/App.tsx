@@ -7,6 +7,7 @@ import {
   deleteTask,
   updateTask,
   updateTaskDueDate,
+  updateTaskReminder,
   updateEvent,
   deleteEvent,
   updateJournalEntry,
@@ -25,6 +26,7 @@ import { ScrollArea } from './components/ui/scroll-area';
 import { LoginPage } from './components/auth/LoginPage';
 import { CheckInModal } from './components/check-in/CheckInModal';
 import { useAutoCheckIn } from './hooks/useAutoCheckIn';
+import { useReminders } from './hooks/useReminders';
 import { Loader2 } from 'lucide-react';
 import type { AnalysisResponse, DailyNoteData } from './types';
 
@@ -42,6 +44,7 @@ function App() {
   );
 
   useAutoCheckIn();
+  useReminders();
 
   useEffect(() => {
     dispatch(checkAuth());
@@ -160,6 +163,10 @@ function App() {
     dispatch(updateTaskDueDate({ id, dueDate }));
   };
 
+  const handleUpdateTaskReminder = (id: number, reminderTime: string | null) => {
+    dispatch(updateTaskReminder({ id, reminderTime }));
+  };
+
   const handleUpdateEvent = (
     id: number,
     data: { title?: string; startTime?: string; endTime?: string }
@@ -222,6 +229,7 @@ function App() {
                   onDeleteTask={handleDeleteTask}
                   onUpdateTask={handleUpdateTask}
                   onUpdateTaskDueDate={handleUpdateTaskDueDate}
+                  onUpdateTaskReminder={handleUpdateTaskReminder}
                   onUpdateNote={handleUpdateNote}
                   onDeleteNote={handleDeleteNote}
                   onUpdateJournal={handleUpdateJournal}

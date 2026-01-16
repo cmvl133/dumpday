@@ -1,18 +1,8 @@
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { cn } from '@/lib/utils';
-
-const COMBO_COMMENTS = [
-  'Ogarniasz!',
-  'Nieźle leci!',
-  'Maszyna!',
-  'Kto Cię dziś zatrzyma?',
-  'Focus mode: ON',
-  'Rozpierdalasz tę listę!',
-  'ADHD? Jaki ADHD?',
-  'Jeszcze trochę!',
-  'Nie do zatrzymania!',
-  'Produktywność 100%',
-];
+import { getRandomMessage } from '@/lib/toneMessages';
+import type { RootState } from '@/store';
 
 interface ComboCounterProps {
   combo: number;
@@ -20,10 +10,12 @@ interface ComboCounterProps {
 }
 
 export function ComboCounter({ combo, zenMode = false }: ComboCounterProps) {
+  const { reminderTone } = useSelector((state: RootState) => state.settings);
+
   const comment = useMemo(() => {
     if (combo < 3) return null;
-    return COMBO_COMMENTS[Math.floor(Math.random() * COMBO_COMMENTS.length)];
-  }, [combo]);
+    return getRandomMessage(reminderTone, 'combo');
+  }, [combo, reminderTone]);
 
   if (combo === 0 || zenMode) return null;
 

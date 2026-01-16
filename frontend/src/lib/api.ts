@@ -110,7 +110,7 @@ export const api = {
   task: {
     update: async (
       id: number,
-      data: Partial<Pick<Task, 'isCompleted' | 'title' | 'dueDate'>>
+      data: Partial<Pick<Task, 'isCompleted' | 'title' | 'dueDate' | 'reminderTime'>>
     ): Promise<Task> => {
       const response = await fetch(`${API_BASE}/task/${id}`, {
         method: 'PATCH',

@@ -20,6 +20,7 @@ interface AnalysisResultsProps {
   onDeleteTask?: (id: number) => void;
   onUpdateTask?: (id: number, title: string) => void;
   onUpdateTaskDueDate?: (id: number, dueDate: string | null) => void;
+  onUpdateTaskReminder?: (id: number, reminderTime: string | null) => void;
   onUpdateNote?: (id: number, content: string) => void;
   onDeleteNote?: (id: number) => void;
   onUpdateJournal?: (id: number, content: string) => void;
@@ -34,6 +35,7 @@ export function AnalysisResults({
   onDeleteTask,
   onUpdateTask,
   onUpdateTaskDueDate,
+  onUpdateTaskReminder,
   onUpdateNote,
   onDeleteNote,
   onUpdateJournal,
@@ -77,6 +79,7 @@ export function AnalysisResults({
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
             onUpdateDueDate={onUpdateTaskDueDate}
+            onUpdateReminder={onUpdateTaskReminder}
             isPreview={isPreview}
           />
         </CardContent>
@@ -103,6 +106,7 @@ export function AnalysisResults({
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
             onUpdateDueDate={onUpdateTaskDueDate}
+            onUpdateReminder={onUpdateTaskReminder}
             isPreview={isPreview}
           />
         </CardContent>
@@ -129,6 +133,7 @@ export function AnalysisResults({
             onDelete={onDeleteTask}
             onUpdate={onUpdateTask}
             onUpdateDueDate={onUpdateTaskDueDate}
+            onUpdateReminder={onUpdateTaskReminder}
             isPreview={isPreview}
           />
         </CardContent>

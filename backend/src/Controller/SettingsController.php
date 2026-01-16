@@ -27,6 +27,7 @@ class SettingsController extends AbstractController
             'checkInInterval' => $user->getCheckInInterval(),
             'zenMode' => $user->isZenMode(),
             'soundEnabled' => $user->isSoundEnabled(),
+            'reminderTone' => $user->getReminderTone(),
         ]);
     }
 
@@ -50,12 +51,20 @@ class SettingsController extends AbstractController
             $user->setSoundEnabled((bool) $data['soundEnabled']);
         }
 
+        if (isset($data['reminderTone'])) {
+            $tone = (string) $data['reminderTone'];
+            if (in_array($tone, ['gentle', 'normal', 'aggressive', 'vulgar', 'bigpoppapump'], true)) {
+                $user->setReminderTone($tone);
+            }
+        }
+
         $this->entityManager->flush();
 
         return $this->json([
             'checkInInterval' => $user->getCheckInInterval(),
             'zenMode' => $user->isZenMode(),
             'soundEnabled' => $user->isSoundEnabled(),
+            'reminderTone' => $user->getReminderTone(),
         ]);
     }
 }

@@ -42,12 +42,14 @@ class CheckInController extends AbstractController
                 'title' => $task->getTitle(),
                 'dueDate' => $task->getDueDate()?->format('Y-m-d'),
                 'category' => $task->getCategory()->value,
+                'reminderTime' => $task->getReminderTime()?->format('H:i'),
             ], $overdueTasks),
             'today' => array_map(fn ($task) => [
                 'id' => $task->getId(),
                 'title' => $task->getTitle(),
                 'dueDate' => $task->getDueDate()?->format('Y-m-d'),
                 'category' => $task->getCategory()->value,
+                'reminderTime' => $task->getReminderTime()?->format('H:i'),
             ], $todayTasks),
             'lastCheckInAt' => $lastCheckIn?->getCompletedAt()?->format('c'),
         ]);
@@ -106,6 +108,7 @@ class CheckInController extends AbstractController
                 'dueDate' => $task->getDueDate()?->format('Y-m-d'),
                 'category' => $task->getCategory()->value,
                 'completedAt' => $task->getCompletedAt()?->format('c'),
+                'reminderTime' => $task->getReminderTime()?->format('H:i'),
             ],
         ]);
     }

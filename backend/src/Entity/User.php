@@ -50,6 +50,9 @@ class User implements UserInterface
     #[ORM\Column(options: ['default' => false])]
     private bool $soundEnabled = false;
 
+    #[ORM\Column(length: 20, options: ['default' => 'normal'])]
+    private string $reminderTone = 'normal';
+
     public function __construct()
     {
         $this->dailyNotes = new ArrayCollection();
@@ -179,6 +182,18 @@ class User implements UserInterface
     public function setSoundEnabled(bool $soundEnabled): static
     {
         $this->soundEnabled = $soundEnabled;
+
+        return $this;
+    }
+
+    public function getReminderTone(): string
+    {
+        return $this->reminderTone;
+    }
+
+    public function setReminderTone(string $reminderTone): static
+    {
+        $this->reminderTone = $reminderTone;
 
         return $this;
     }

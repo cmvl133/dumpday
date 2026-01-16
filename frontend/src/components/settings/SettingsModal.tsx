@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Dialog,
@@ -7,9 +8,11 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Bell, BellOff, Check } from 'lucide-react';
 import { updateSettings } from '@/store/settingsSlice';
 import type { RootState, AppDispatch } from '@/store';
-import type { CheckInInterval } from '@/types';
+import type { CheckInInterval, ReminderTone } from '@/types';
 
 interface SettingsModalProps {
   open: boolean;
@@ -17,17 +20,40 @@ interface SettingsModalProps {
 }
 
 const INTERVAL_OPTIONS: { value: CheckInInterval; label: string }[] = [
-  { value: 'off', label: 'Wyłączony' },
+  { value: 'off', label: 'Wylaczony' },
   { value: '2h', label: 'Co 2 godziny' },
   { value: '3h', label: 'Co 3 godziny' },
   { value: '4h', label: 'Co 4 godziny' },
 ];
 
+const TONE_OPTIONS: { value: ReminderTone; label: string }[] = [
+  { value: 'gentle', label: 'Delikatny' },
+  { value: 'normal', label: 'Normalny' },
+  { value: 'aggressive', label: 'Agresywny' },
+  { value: 'vulgar', label: 'Wulgarny' },
+  { value: 'bigpoppapump', label: 'Big Poppa Pump' },
+];
+
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { checkInInterval, zenMode, soundEnabled } = useSelector(
+  const { checkInInterval, zenMode, soundEnabled, reminderTone } = useSelector(
     (state: RootState) => state.settings
   );
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
+    'Notification' in window ? Notification.permission : 'denied'
+  );
+
+  useEffect(() => {
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+    }
+  }, [open]);
+
+  const handleRequestPermission = async () => {
+    if (!('Notification' in window)) return;
+    const permission = await Notification.requestPermission();
+    setNotificationPermission(permission);
+  };
 
   const handleIntervalChange = (value: CheckInInterval) => {
     dispatch(updateSettings({ checkInInterval: value }));
@@ -39,6 +65,10 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   const handleSoundChange = (checked: boolean) => {
     dispatch(updateSettings({ soundEnabled: checked }));
+  };
+
+  const handleToneChange = (value: ReminderTone) => {
+    dispatch(updateSettings({ reminderTone: value }));
   };
 
   return (
@@ -70,7 +100,75 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              Jak często przypominać o przejrzeniu zadań
+              Jak czesto przypominac o przejrzeniu zadan
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium">
+              Ton powiadomien
+            </label>
+            <select
+              value={reminderTone}
+              onChange={(e) =>
+                handleToneChange(e.target.value as ReminderTone)
+              }
+              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {TONE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted-foreground">
+              Styl komunikatow przypominajacych i combo
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium">
+              Powiadomienia systemowe
+            </label>
+            <div className="flex items-center gap-3">
+              {notificationPermission === 'granted' ? (
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <Check className="h-4 w-4" />
+                    Włączone
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      new Notification('Test powiadomienia', {
+                        body: 'Powiadomienia działają poprawnie!',
+                        icon: '/vite.svg',
+                      });
+                    }}
+                  >
+                    Testuj
+                  </Button>
+                </div>
+              ) : notificationPermission === 'denied' ? (
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <BellOff className="h-4 w-4" />
+                  Zablokowane (zmień w ustawieniach przeglądarki)
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRequestPermission}
+                  className="gap-2"
+                >
+                  <Bell className="h-4 w-4" />
+                  Włącz powiadomienia
+                </Button>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Wymagane do przypomnień o zadaniach
             </p>
           </div>
 

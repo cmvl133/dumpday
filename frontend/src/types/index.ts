@@ -8,14 +8,18 @@ export interface Task {
   dueDate: string | null;
   category?: TaskCategory;
   completedAt?: string | null;
+  reminderTime?: string | null;
 }
 
 export type CheckInInterval = 'off' | '2h' | '3h' | '4h';
+
+export type ReminderTone = 'gentle' | 'normal' | 'aggressive' | 'vulgar' | 'bigpoppapump';
 
 export interface Settings {
   checkInInterval: CheckInInterval;
   zenMode: boolean;
   soundEnabled: boolean;
+  reminderTone: ReminderTone;
 }
 
 export interface CheckInTask {
@@ -23,6 +27,7 @@ export interface CheckInTask {
   title: string;
   dueDate: string | null;
   category: TaskCategory;
+  reminderTime?: string | null;
 }
 
 export interface CheckInTasksResponse {

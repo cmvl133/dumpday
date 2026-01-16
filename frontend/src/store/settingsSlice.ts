@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
-import type { CheckInInterval, Settings } from '@/types';
+import type { CheckInInterval, ReminderTone, Settings } from '@/types';
 
 interface SettingsState {
   checkInInterval: CheckInInterval;
   zenMode: boolean;
   soundEnabled: boolean;
+  reminderTone: ReminderTone;
   isLoading: boolean;
   error: string | null;
 }
@@ -14,6 +15,7 @@ const initialState: SettingsState = {
   checkInInterval: '3h',
   zenMode: false,
   soundEnabled: false,
+  reminderTone: 'normal',
   isLoading: false,
   error: null,
 };
@@ -46,6 +48,7 @@ const settingsSlice = createSlice({
         state.checkInInterval = action.payload.checkInInterval;
         state.zenMode = action.payload.zenMode;
         state.soundEnabled = action.payload.soundEnabled;
+        state.reminderTone = action.payload.reminderTone;
       })
       .addCase(fetchSettings.rejected, (state, action) => {
         state.isLoading = false;
@@ -55,6 +58,7 @@ const settingsSlice = createSlice({
         state.checkInInterval = action.payload.checkInInterval;
         state.zenMode = action.payload.zenMode;
         state.soundEnabled = action.payload.soundEnabled;
+        state.reminderTone = action.payload.reminderTone;
       });
   },
 });

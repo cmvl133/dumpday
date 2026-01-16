@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Trash2, Pencil, Check, X, Calendar } from 'lucide-react';
+import { Trash2, Pencil, Check, X, Calendar, Clock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
@@ -12,12 +12,14 @@ interface TaskItemProps {
   title: string;
   isCompleted?: boolean;
   dueDate?: string | null;
+  reminderTime?: string | null;
   currentDate?: string;
   isTodaySection?: boolean;
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
+  onUpdateReminder?: (id: number, reminderTime: string | null) => void;
   isPreview?: boolean;
 }
 
@@ -26,16 +28,20 @@ export function TaskItem({
   title,
   isCompleted = false,
   dueDate,
+  reminderTime,
   currentDate,
   isTodaySection = false,
   onToggle,
   onDelete,
   onUpdate,
   onUpdateDueDate,
+  onUpdateReminder,
   isPreview = false,
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
+  const [isEditingReminder, setIsEditingReminder] = useState(false);
+  const [reminderValue, setReminderValue] = useState(reminderTime || '');
   const dateInputRef = useRef<HTMLInputElement>(null);
   const checkboxWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -110,6 +116,39 @@ export function TaskItem({
     }
   };
 
+  const handleReminderEdit = () => {
+    setReminderValue(reminderTime || '');
+    setIsEditingReminder(true);
+  };
+
+  const handleReminderSave = () => {
+    if (id !== undefined && onUpdateReminder) {
+      onUpdateReminder(id, reminderValue || null);
+    }
+    setIsEditingReminder(false);
+  };
+
+  const handleReminderCancel = () => {
+    setReminderValue(reminderTime || '');
+    setIsEditingReminder(false);
+  };
+
+  const handleReminderClear = () => {
+    if (id !== undefined && onUpdateReminder) {
+      onUpdateReminder(id, null);
+    }
+    setReminderValue('');
+    setIsEditingReminder(false);
+  };
+
+  const handleReminderKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleReminderSave();
+    } else if (e.key === 'Escape') {
+      handleReminderCancel();
+    }
+  };
+
   return (
     <div className="flex items-center gap-3 py-2 group relative">
       {!isPreview && id !== undefined ? (
@@ -157,17 +196,73 @@ export function TaskItem({
             {title}
           </span>
 
-          {displayDate && (
-            <Badge variant="outline" className="text-xs">
-              {new Date(displayDate + 'T00:00:00').toLocaleDateString('pl-PL', {
+          {(displayDate || reminderTime) && (
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+              {displayDate && new Date(displayDate + 'T00:00:00').toLocaleDateString('pl-PL', {
                 day: 'numeric',
                 month: 'short',
               })}
+              {displayDate && reminderTime && ' · '}
+              {reminderTime}
             </Badge>
           )}
 
-          {!isPreview && id !== undefined && (
+          {!isPreview && id !== undefined && isEditingReminder && onUpdateReminder && (
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-background/95 rounded px-1 py-0.5 border shadow-sm">
+              <input
+                type="time"
+                value={reminderValue}
+                onChange={(e) => setReminderValue(e.target.value)}
+                onKeyDown={handleReminderKeyDown}
+                className="h-7 w-24 px-2 text-sm rounded border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                autoFocus
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={handleReminderSave}
+              >
+                <Check className="h-4 w-4 text-green-600" />
+              </Button>
+              {reminderTime && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={handleReminderClear}
+                  title="Usun przypomnienie"
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={handleReminderCancel}
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            </div>
+          )}
+
+          {!isPreview && id !== undefined && !isEditingReminder && (
             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 rounded">
+              {onUpdateReminder && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={handleReminderEdit}
+                  title={reminderTime ? `Przypomnienie: ${reminderTime}` : 'Ustaw przypomnienie'}
+                >
+                  <Clock className={cn(
+                    "h-3.5 w-3.5",
+                    reminderTime ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  )} />
+                </Button>
+              )}
               {onUpdateDueDate && (
                 <>
                   <input

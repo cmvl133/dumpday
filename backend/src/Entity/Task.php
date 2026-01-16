@@ -40,6 +40,9 @@ class Task
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $completedAt = null;
 
+    #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $reminderTime = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,6 +128,18 @@ class Task
     public function setCompletedAt(?\DateTimeImmutable $completedAt): static
     {
         $this->completedAt = $completedAt;
+
+        return $this;
+    }
+
+    public function getReminderTime(): ?\DateTimeImmutable
+    {
+        return $this->reminderTime;
+    }
+
+    public function setReminderTime(?\DateTimeImmutable $reminderTime): static
+    {
+        $this->reminderTime = $reminderTime;
 
         return $this;
     }
