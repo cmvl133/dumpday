@@ -1,0 +1,160 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "email": "Email address",
+    "loginTitle": "Welcome to Dopaminder",
+    "loginSubtitle": "Your punk rock productivity companion",
+    "sendMagicLink": "Send magic link",
+    "checkEmail": "Check your email",
+    "magicLinkSent": "We've sent a magic link to {{email}}",
+    "sending": "Sending..."
+  },
+  "header": {
+    "taglines": [
+      "Where chaos meets done.",
+      "Stop planning. Start doing.",
+      "For people who hate todo apps.",
+      "The anti-productivity productivity app.",
+      "Productivity that hits different.",
+      "Dopamine-driven productivity.",
+      "Your daily dopamine dealer."
+    ]
+  },
+  "brainDump": {
+    "title": "Brain Dump",
+    "placeholder": "Dump everything that's on your mind... meetings, tasks, random thoughts, shopping lists - just get it all out of your head.",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "addTasks": "Add all tasks",
+    "addingTasks": "Adding...",
+    "analysisPreview": "Analysis Preview",
+    "tasksFound": "{{count}} tasks found"
+  },
+  "tasks": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This week",
+    "later": "Later",
+    "completed": "Completed",
+    "noTasks": "No tasks yet",
+    "addTask": "Add task",
+    "setReminder": "Set reminder",
+    "removeReminder": "Remove reminder",
+    "editTask": "Edit task",
+    "deleteTask": "Delete task",
+    "taskPlaceholder": "What needs to be done?"
+  },
+  "checkIn": {
+    "title": "Check-in",
+    "overdue": "Overdue",
+    "today": "Today",
+    "done": "Done",
+    "tomorrow": "Tomorrow",
+    "keepToday": "Keep today",
+    "noTasks": "No tasks to review",
+    "allDone": "All done!",
+    "reviewTasks": "Review your tasks",
+    "progress": "{{current}} / {{total}}"
+  },
+  "summary": {
+    "done": "Done",
+    "forToday": "For today",
+    "forTomorrow": "For tomorrow",
+    "bestCombo": "Best combo",
+    "allDone": "Everything done!",
+    "greatJob": "Great job!",
+    "amazingCombo": "Amazing combo x{{combo}}!",
+    "goodWork": "Good work!",
+    "checkInComplete": "Check-in complete",
+    "whatNext": "What's next for today?",
+    "rebuild": "Rebuild rest of the day",
+    "newTasksPlaceholder": "Enter new tasks, events..."
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "english": "English",
+    "polish": "Polski",
+    "notifications": "Notifications",
+    "enableNotifications": "Enable notifications",
+    "defaultReminderTime": "Default reminder time",
+    "zenMode": "Zen mode",
+    "zenModeDesc": "Hide combo counter and reduce animations",
+    "tone": "Tone",
+    "notificationSound": "Notification sound"
+  },
+  "tones": {
+    "pirate": {
+      "name": "Pirate",
+      "messages": {
+        "great": ["Arrr! Ye be a fine crew!", "Shiver me timbers, what a haul!", "Treasure well earned, matey!"],
+        "good": ["Not bad fer a landlubber!", "Ye've got sea legs!", "Fair sailing today!"],
+        "okay": ["Fair winds ahead, matey.", "Steady as she goes.", "The horizon awaits."],
+        "bad": ["Ye need more rum!", "The ship be sinkin'...", "Rough waters ahead!"],
+        "terrible": ["Walk the plank!", "Ye call this treasure?!", "Davy Jones be disappointed!"]
+      }
+    },
+    "drill": {
+      "name": "Drill Sergeant",
+      "messages": {
+        "great": ["Outstanding, soldier!", "Mission accomplished!", "That's how it's done, private!"],
+        "good": ["Good effort, private!", "You're getting there!", "Keep that pace!"],
+        "okay": ["Acceptable, barely.", "Keep pushing, soldier!", "Don't get comfortable!"],
+        "bad": ["Drop and give me 20!", "That's not good enough!", "You call that effort?!"],
+        "terrible": ["What is this garbage?!", "You call yourself productive?!", "Back to basic training!"]
+      }
+    },
+    "zen": {
+      "name": "Zen Master",
+      "messages": {
+        "great": ["Inner peace achieved.", "The journey is the reward.", "Harmony flows through you."],
+        "good": ["Progress, not perfection.", "Well done, young one.", "The path reveals itself."],
+        "okay": ["Every step counts.", "Be present.", "Breathe and continue."],
+        "bad": ["Tomorrow is a new day.", "Let go of judgment.", "Rest is also practice."],
+        "terrible": ["The void teaches patience.", "Embrace the struggle.", "In stillness, find strength."]
+      }
+    },
+    "coach": {
+      "name": "Life Coach",
+      "messages": {
+        "great": ["You're crushing it!", "This is your year!", "Unstoppable energy!"],
+        "good": ["Keep that momentum!", "You've got this!", "Progress is progress!"],
+        "okay": ["Every day is progress!", "Believe in yourself!", "Small steps matter!"],
+        "bad": ["Growth mindset time!", "Failure is feedback!", "Learn and move forward!"],
+        "terrible": ["Reset and refocus!", "Your breakthrough is coming!", "Pivot and persist!"]
+      }
+    },
+    "neutral": {
+      "name": "Neutral",
+      "messages": {
+        "great": ["Excellent completion rate.", "High productivity.", "Optimal performance."],
+        "good": ["Good progress today.", "Solid work.", "Above average output."],
+        "okay": ["Moderate productivity.", "Acceptable output.", "Within normal parameters."],
+        "bad": ["Below average today.", "Room for improvement.", "Suboptimal results."],
+        "terrible": ["Low completion rate.", "Consider adjustments.", "Significant gap to target."]
+      }
+    }
+  },
+  "combo": {
+    "x2": "Double kill!",
+    "x3": "Triple kill!",
+    "x5": "Killing spree!",
+    "x7": "Dominating!",
+    "x10": "Godlike!",
+    "x15": "LEGENDARY!"
+  },
+  "dates": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday"
+  }
+}

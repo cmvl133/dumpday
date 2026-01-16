@@ -15,11 +15,14 @@ export type CheckInInterval = 'off' | '2h' | '3h' | '4h';
 
 export type ReminderTone = 'gentle' | 'normal' | 'aggressive' | 'vulgar' | 'bigpoppapump';
 
+export type Language = 'en' | 'pl';
+
 export interface Settings {
   checkInInterval: CheckInInterval;
   zenMode: boolean;
   soundEnabled: boolean;
   reminderTone: ReminderTone;
+  language: Language;
 }
 
 export interface CheckInTask {

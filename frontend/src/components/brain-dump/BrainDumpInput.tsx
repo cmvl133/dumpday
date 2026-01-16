@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Sparkles } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
 } from '@/store/dailyNoteSlice';
 
 export function BrainDumpInput() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { currentDate, rawContent, isAnalyzing, isSaving, analysisPreview } =
     useAppSelector((state) => state.dailyNote);
@@ -49,17 +51,14 @@ export function BrainDumpInput() {
       <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-lg flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          Brain Dump
+          {t('brainDump.title')}
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Napisz wszystko co masz na myśli...
-        </p>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
         <Textarea
           value={rawContent}
           onChange={(e) => dispatch(setRawContent(e.target.value))}
-          placeholder="Dzisiaj mam spotkanie o 10:00 z Janem. Muszę dokończyć raport do piątku. Czuję się trochę zmęczony. Pamiętać o kupnie mleka. Adres klienta: ul. Przykładowa 15..."
+          placeholder={t('brainDump.placeholder')}
           className="flex-1 resize-none text-base leading-relaxed"
         />
 
@@ -68,11 +67,11 @@ export function BrainDumpInput() {
             {isAnalyzing && (
               <span className="flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Analizuję...
+                {t('brainDump.analyzing')}
               </span>
             )}
             {!isAnalyzing && rawContent.length > 0 && (
-              <span>{rawContent.length} znaków</span>
+              <span>{rawContent.length}</span>
             )}
           </div>
 
@@ -83,7 +82,7 @@ export function BrainDumpInput() {
               onClick={handleAnalyze}
               disabled={isAnalyzing || rawContent.trim().length === 0}
             >
-              Analizuj
+              {t('brainDump.analyze')}
             </Button>
             <Button
               size="sm"
@@ -93,10 +92,10 @@ export function BrainDumpInput() {
               {isSaving ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Zapisuję...
+                  {t('common.loading')}
                 </>
               ) : (
-                'Zapisz'
+                t('common.save')
               )}
             </Button>
           </div>

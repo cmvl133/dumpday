@@ -202,7 +202,7 @@ export function TaskItem({
                 day: 'numeric',
                 month: 'short',
               })}
-              {displayDate && reminderTime && ' · '}
+              {displayDate && reminderTime && ' '}
               {reminderTime}
             </Badge>
           )}

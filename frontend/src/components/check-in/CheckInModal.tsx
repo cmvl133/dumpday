@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
 import {
   Dialog,
@@ -26,6 +27,7 @@ import type { RootState, AppDispatch } from '@/store';
 import type { CheckInTask } from '@/types';
 
 export function CheckInModal() {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const {
     isOpen,
@@ -163,9 +165,9 @@ export function CheckInModal() {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogTitle className="sr-only">Check-in</DialogTitle>
+        <DialogTitle className="sr-only">{t('checkIn.title')}</DialogTitle>
         <DialogDescription className="sr-only">
-          Przejrzyj swoje zadania
+          {t('checkIn.reviewTasks')}
         </DialogDescription>
 
         {isLoading ? (
@@ -176,8 +178,8 @@ export function CheckInModal() {
           <div className="text-center py-12 text-destructive">{error}</div>
         ) : totalTasks === 0 ? (
           <div className="text-center py-12">
-            <p className="text-lg font-medium mb-2">Brak zadan do przejrzenia</p>
-            <p className="text-muted-foreground">Wszystko ogarnięte! 🎉</p>
+            <p className="text-lg font-medium mb-2">{t('checkIn.noTasks')}</p>
+            <p className="text-muted-foreground">{t('checkIn.allDone')}</p>
           </div>
         ) : isComplete ? (
           <SummaryScreen
@@ -190,7 +192,7 @@ export function CheckInModal() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>
-                  {currentTask?.isOverdue ? 'Zalegla' : 'Dzisiaj'}
+                  {currentTask?.isOverdue ? t('checkIn.overdue') : t('checkIn.today')}
                 </span>
                 <span>
                   {currentIndex + 1} / {totalTasks}

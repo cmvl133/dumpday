@@ -53,6 +53,9 @@ class User implements UserInterface
     #[ORM\Column(length: 20, options: ['default' => 'normal'])]
     private string $reminderTone = 'normal';
 
+    #[ORM\Column(length: 5, options: ['default' => 'en'])]
+    private string $language = 'en';
+
     public function __construct()
     {
         $this->dailyNotes = new ArrayCollection();
@@ -194,6 +197,18 @@ class User implements UserInterface
     public function setReminderTone(string $reminderTone): static
     {
         $this->reminderTone = $reminderTone;
+
+        return $this;
+    }
+
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): static
+    {
+        $this->language = $language;
 
         return $this;
     }

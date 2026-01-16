@@ -16,16 +16,21 @@ class BrainDumpAnalyzer
     ) {
     }
 
-    public function analyze(string $rawContent, \DateTimeInterface $date): array
+    public function analyze(string $rawContent, \DateTimeInterface $date, string $language = 'en'): array
     {
         if (empty(trim($rawContent))) {
             return $this->getEmptyResponse();
         }
 
-        $prompt = $this->twig->render('prompts/brain_dump_analysis.twig', [
+        $templateName = sprintf('prompts/brain_dump_analysis_%s.twig', $language);
+        $dayOfWeek = $language === 'pl'
+            ? $this->getPolishDayOfWeek($date)
+            : $this->getEnglishDayOfWeek($date);
+
+        $prompt = $this->twig->render($templateName, [
             'raw_content' => $rawContent,
             'current_date' => $date->format('Y-m-d'),
-            'day_of_week' => $this->getPolishDayOfWeek($date),
+            'day_of_week' => $dayOfWeek,
         ]);
 
         try {
@@ -75,6 +80,11 @@ class BrainDumpAnalyzer
         ];
 
         return $days[$date->format('l')] ?? $date->format('l');
+    }
+
+    private function getEnglishDayOfWeek(\DateTimeInterface $date): string
+    {
+        return $date->format('l');
     }
 
     private function getEmptyResponse(): array

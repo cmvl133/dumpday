@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { cn } from '@/lib/utils';
 import type { CheckInTask } from '@/types';
+import type { RootState } from '@/store';
 
 type ExitAnimation = 'done' | 'postpone' | null;
 
@@ -11,6 +14,8 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, isOverdue, onAction }: TaskCardProps) {
+  const { t } = useTranslation();
+  const { language } = useSelector((state: RootState) => state.settings);
   const [exitAnimation, setExitAnimation] = useState<ExitAnimation>(null);
   const [showFlash, setShowFlash] = useState(false);
 
@@ -27,6 +32,13 @@ export function TaskCard({ task, isOverdue, onAction }: TaskCardProps) {
     }, 300);
   };
 
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString(
+      language === 'pl' ? 'pl-PL' : 'en-US',
+      { day: 'numeric', month: 'short' }
+    );
+  };
+
   return (
     <div
       className={cn(
@@ -40,11 +52,7 @@ export function TaskCard({ task, isOverdue, onAction }: TaskCardProps) {
       <div className="bg-card border rounded-xl p-6 shadow-lg">
         {isOverdue && task.dueDate && (
           <div className="text-xs text-destructive font-medium mb-2">
-            Zalegla z{' '}
-            {new Date(task.dueDate + 'T00:00:00').toLocaleDateString('pl-PL', {
-              day: 'numeric',
-              month: 'short',
-            })}
+            {t('checkIn.overdue')} - {formatDate(task.dueDate)}
           </div>
         )}
 
@@ -55,21 +63,21 @@ export function TaskCard({ task, isOverdue, onAction }: TaskCardProps) {
             onClick={() => handleAction('today')}
             className="px-4 py-2 rounded-lg bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-medium transition-colors"
           >
-            Dzis
+            {t('checkIn.keepToday')}
           </button>
 
           <button
             onClick={() => handleAction('tomorrow')}
             className="px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm font-medium transition-colors"
           >
-            Jutro
+            {t('checkIn.tomorrow')}
           </button>
 
           <button
             onClick={() => handleAction('done')}
             className="px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium transition-colors"
           >
-            Zrobione
+            {t('checkIn.done')}
           </button>
         </div>
       </div>

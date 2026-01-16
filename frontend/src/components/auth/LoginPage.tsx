@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Mail, KeyRound, ArrowLeft } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import {
 } from '@/store/authSlice';
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading, error, codeSent, codeEmail } = useAppSelector(
     (state) => state.auth
@@ -52,8 +54,8 @@ export function LoginPage() {
           <CardTitle className="text-2xl font-bold">Dopaminder</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
             {codeSent
-              ? 'Wpisz kod, który wysłaliśmy na Twój email'
-              : 'Zaloguj się za pomocą adresu email'}
+              ? t('auth.checkEmail')
+              : t('auth.loginSubtitle')}
           </p>
         </CardHeader>
         <CardContent>
@@ -70,7 +72,7 @@ export function LoginPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="Twój adres email"
+                    placeholder={t('auth.email')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
@@ -88,10 +90,10 @@ export function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Wysyłanie...
+                    {t('auth.sending')}
                   </>
                 ) : (
-                  'Wyślij kod'
+                  t('auth.sendMagicLink')
                 )}
               </Button>
             </form>
@@ -99,7 +101,7 @@ export function LoginPage() {
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div className="text-center mb-4">
                 <p className="text-sm text-muted-foreground">
-                  Kod został wysłany na:
+                  {t('auth.magicLinkSent', { email: '' })}
                 </p>
                 <p className="font-medium">{codeEmail}</p>
               </div>
@@ -108,7 +110,7 @@ export function LoginPage() {
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="6-cyfrowy kod"
+                    placeholder="000000"
                     value={code}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, '').slice(0, 6);
@@ -130,10 +132,10 @@ export function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Weryfikacja...
+                    {t('common.loading')}
                   </>
                 ) : (
-                  'Zaloguj się'
+                  t('auth.login')
                 )}
               </Button>
               <Button
@@ -144,7 +146,7 @@ export function LoginPage() {
                 disabled={isLoading}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Wróć
+                {t('common.cancel')}
               </Button>
             </form>
           )}

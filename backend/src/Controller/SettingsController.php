@@ -28,6 +28,7 @@ class SettingsController extends AbstractController
             'zenMode' => $user->isZenMode(),
             'soundEnabled' => $user->isSoundEnabled(),
             'reminderTone' => $user->getReminderTone(),
+            'language' => $user->getLanguage(),
         ]);
     }
 
@@ -58,6 +59,13 @@ class SettingsController extends AbstractController
             }
         }
 
+        if (isset($data['language'])) {
+            $language = (string) $data['language'];
+            if (in_array($language, ['en', 'pl'], true)) {
+                $user->setLanguage($language);
+            }
+        }
+
         $this->entityManager->flush();
 
         return $this->json([
@@ -65,6 +73,7 @@ class SettingsController extends AbstractController
             'zenMode' => $user->isZenMode(),
             'soundEnabled' => $user->isSoundEnabled(),
             'reminderTone' => $user->getReminderTone(),
+            'language' => $user->getLanguage(),
         ]);
     }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -12,36 +13,42 @@ import { Button } from '@/components/ui/button';
 import { Bell, BellOff, Check } from 'lucide-react';
 import { updateSettings } from '@/store/settingsSlice';
 import type { RootState, AppDispatch } from '@/store';
-import type { CheckInInterval, ReminderTone } from '@/types';
+import type { CheckInInterval, Language, ReminderTone } from '@/types';
 
 interface SettingsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const INTERVAL_OPTIONS: { value: CheckInInterval; label: string }[] = [
-  { value: 'off', label: 'Wylaczony' },
-  { value: '2h', label: 'Co 2 godziny' },
-  { value: '3h', label: 'Co 3 godziny' },
-  { value: '4h', label: 'Co 4 godziny' },
-];
-
-const TONE_OPTIONS: { value: ReminderTone; label: string }[] = [
-  { value: 'gentle', label: 'Delikatny' },
-  { value: 'normal', label: 'Normalny' },
-  { value: 'aggressive', label: 'Agresywny' },
-  { value: 'vulgar', label: 'Wulgarny' },
-  { value: 'bigpoppapump', label: 'Big Poppa Pump' },
-];
-
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const { checkInInterval, zenMode, soundEnabled, reminderTone } = useSelector(
+  const { checkInInterval, zenMode, soundEnabled, reminderTone, language } = useSelector(
     (state: RootState) => state.settings
   );
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
     'Notification' in window ? Notification.permission : 'denied'
   );
+
+  const INTERVAL_OPTIONS: { value: CheckInInterval; label: string }[] = [
+    { value: 'off', label: language === 'pl' ? 'Wyłączony' : 'Off' },
+    { value: '2h', label: language === 'pl' ? 'Co 2 godziny' : 'Every 2 hours' },
+    { value: '3h', label: language === 'pl' ? 'Co 3 godziny' : 'Every 3 hours' },
+    { value: '4h', label: language === 'pl' ? 'Co 4 godziny' : 'Every 4 hours' },
+  ];
+
+  const TONE_OPTIONS: { value: ReminderTone; label: string }[] = [
+    { value: 'gentle', label: language === 'pl' ? 'Delikatny' : 'Gentle' },
+    { value: 'normal', label: language === 'pl' ? 'Normalny' : 'Normal' },
+    { value: 'aggressive', label: language === 'pl' ? 'Agresywny' : 'Aggressive' },
+    { value: 'vulgar', label: language === 'pl' ? 'Wulgarny' : 'Vulgar' },
+    { value: 'bigpoppapump', label: 'Big Poppa Pump' },
+  ];
+
+  const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
+    { value: 'en', label: 'English' },
+    { value: 'pl', label: 'Polski' },
+  ];
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -71,20 +78,45 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     dispatch(updateSettings({ reminderTone: value }));
   };
 
+  const handleLanguageChange = (value: Language) => {
+    dispatch(updateSettings({ language: value }));
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Ustawienia</DialogTitle>
+          <DialogTitle>{t('settings.title')}</DialogTitle>
           <DialogDescription>
-            Dostosuj działanie aplikacji do swoich potrzeb.
+            {language === 'pl'
+              ? 'Dostosuj działanie aplikacji do swoich potrzeb.'
+              : 'Customize the app to your needs.'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              Automatyczny check-in
+              {t('settings.language')}
+            </label>
+            <select
+              value={language}
+              onChange={(e) =>
+                handleLanguageChange(e.target.value as Language)
+              }
+              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {LANGUAGE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium">
+              {language === 'pl' ? 'Automatyczny check-in' : 'Auto check-in'}
             </label>
             <select
               value={checkInInterval}
@@ -100,13 +132,15 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              Jak czesto przypominac o przejrzeniu zadan
+              {language === 'pl'
+                ? 'Jak często przypominać o przejrzeniu zadań'
+                : 'How often to remind you to review tasks'}
             </p>
           </div>
 
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              Ton powiadomien
+              {t('settings.tone')}
             </label>
             <select
               value={reminderTone}
@@ -122,38 +156,47 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              Styl komunikatow przypominajacych i combo
+              {language === 'pl'
+                ? 'Styl komunikatów przypominających i combo'
+                : 'Style of reminder messages and combo comments'}
             </p>
           </div>
 
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              Powiadomienia systemowe
+              {t('settings.notifications')}
             </label>
             <div className="flex items-center gap-3">
               {notificationPermission === 'granted' ? (
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-sm text-green-600">
                     <Check className="h-4 w-4" />
-                    Włączone
+                    {language === 'pl' ? 'Włączone' : 'Enabled'}
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      new Notification('Test powiadomienia', {
-                        body: 'Powiadomienia działają poprawnie!',
-                        icon: '/vite.svg',
-                      });
+                      new Notification(
+                        language === 'pl' ? 'Test powiadomienia' : 'Test notification',
+                        {
+                          body: language === 'pl'
+                            ? 'Powiadomienia działają poprawnie!'
+                            : 'Notifications are working!',
+                          icon: '/vite.svg',
+                        }
+                      );
                     }}
                   >
-                    Testuj
+                    {language === 'pl' ? 'Testuj' : 'Test'}
                   </Button>
                 </div>
               ) : notificationPermission === 'denied' ? (
                 <div className="flex items-center gap-2 text-sm text-destructive">
                   <BellOff className="h-4 w-4" />
-                  Zablokowane (zmień w ustawieniach przeglądarki)
+                  {language === 'pl'
+                    ? 'Zablokowane (zmień w ustawieniach przeglądarki)'
+                    : 'Blocked (change in browser settings)'}
                 </div>
               ) : (
                 <Button
@@ -163,20 +206,22 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                   className="gap-2"
                 >
                   <Bell className="h-4 w-4" />
-                  Włącz powiadomienia
+                  {t('settings.enableNotifications')}
                 </Button>
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Wymagane do przypomnień o zadaniach
+              {language === 'pl'
+                ? 'Wymagane do przypomnień o zadaniach'
+                : 'Required for task reminders'}
             </p>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <label className="text-sm font-medium">Tryb zen</label>
+              <label className="text-sm font-medium">{t('settings.zenMode')}</label>
               <p className="text-xs text-muted-foreground">
-                Wyłącz animacje i komentarze combo
+                {t('settings.zenModeDesc')}
               </p>
             </div>
             <Checkbox
@@ -187,9 +232,13 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <label className="text-sm font-medium">Dźwięki</label>
+              <label className="text-sm font-medium">
+                {language === 'pl' ? 'Dźwięki' : 'Sounds'}
+              </label>
               <p className="text-xs text-muted-foreground">
-                Efekty dźwiękowe przy akcjach
+                {language === 'pl'
+                  ? 'Efekty dźwiękowe przy akcjach'
+                  : 'Sound effects for actions'}
               </p>
             </div>
             <Checkbox

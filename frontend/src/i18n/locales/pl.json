@@ -1,0 +1,160 @@
+{
+  "common": {
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "close": "Zamknij",
+    "loading": "Ładowanie...",
+    "error": "Wystąpił błąd"
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "logout": "Wyloguj",
+    "email": "Adres email",
+    "loginTitle": "Witaj w Dopaminder",
+    "loginSubtitle": "Twój punkowy kompan produktywności",
+    "sendMagicLink": "Wyślij magic link",
+    "checkEmail": "Sprawdź swoją skrzynkę",
+    "magicLinkSent": "Wysłaliśmy magic link na {{email}}",
+    "sending": "Wysyłanie..."
+  },
+  "header": {
+    "taglines": [
+      "Gdzie chaos spotyka zrobione.",
+      "Przestań planować. Zacznij działać.",
+      "Dla ludzi, którzy nienawidzą todo appek.",
+      "Anty-produktywna aplikacja produktywności.",
+      "Produktywność, która działa inaczej.",
+      "Dopamina napędza produktywność.",
+      "Twój codzienny dealer dopaminy."
+    ]
+  },
+  "brainDump": {
+    "title": "Brain Dump",
+    "placeholder": "Wyrzuć z głowy wszystko co ci chodzi po głowie... spotkania, zadania, przypadkowe myśli, listy zakupów - po prostu wszystko wywal.",
+    "analyze": "Analizuj",
+    "analyzing": "Analizuję...",
+    "addTasks": "Dodaj wszystkie zadania",
+    "addingTasks": "Dodaję...",
+    "analysisPreview": "Podgląd analizy",
+    "tasksFound": "Znaleziono {{count}} zadań"
+  },
+  "tasks": {
+    "today": "Dziś",
+    "tomorrow": "Jutro",
+    "thisWeek": "Ten tydzień",
+    "later": "Później",
+    "completed": "Ukończone",
+    "noTasks": "Brak zadań",
+    "addTask": "Dodaj zadanie",
+    "setReminder": "Ustaw przypomnienie",
+    "removeReminder": "Usuń przypomnienie",
+    "editTask": "Edytuj zadanie",
+    "deleteTask": "Usuń zadanie",
+    "taskPlaceholder": "Co trzeba zrobić?"
+  },
+  "checkIn": {
+    "title": "Check-in",
+    "overdue": "Zaległe",
+    "today": "Dziś",
+    "done": "Zrobione",
+    "tomorrow": "Jutro",
+    "keepToday": "Zostaw na dziś",
+    "noTasks": "Brak zadań do przejrzenia",
+    "allDone": "Wszystko ogarnięte!",
+    "reviewTasks": "Przejrzyj swoje zadania",
+    "progress": "{{current}} / {{total}}"
+  },
+  "summary": {
+    "done": "Zrobione",
+    "forToday": "Na dziś",
+    "forTomorrow": "Na jutro",
+    "bestCombo": "Najlepsze combo",
+    "allDone": "Wszystko ogarnięte!",
+    "greatJob": "Świetna robota!",
+    "amazingCombo": "Niesamowite combo x{{combo}}!",
+    "goodWork": "Dobra robota!",
+    "checkInComplete": "Check-in zakończony",
+    "whatNext": "Co nowego na dziś?",
+    "rebuild": "Przebuduj resztę dnia",
+    "newTasksPlaceholder": "Wpisz nowe zadania, wydarzenia..."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "english": "English",
+    "polish": "Polski",
+    "notifications": "Powiadomienia",
+    "enableNotifications": "Włącz powiadomienia",
+    "defaultReminderTime": "Domyślny czas przypomnienia",
+    "zenMode": "Tryb zen",
+    "zenModeDesc": "Ukryj licznik combo i ogranicz animacje",
+    "tone": "Ton",
+    "notificationSound": "Dźwięk powiadomień"
+  },
+  "tones": {
+    "pirate": {
+      "name": "Pirat",
+      "messages": {
+        "great": ["Arrr! Niezła załoga!", "Na kotwicę, co za łup!", "Skarb dobrze zdobyty!"],
+        "good": ["Nieźle jak na szczura lądowego!", "Masz morskie nogi!", "Dobre żeglowanie!"],
+        "okay": ["Spokojne wody przed nami.", "Trzymaj kurs.", "Horyzont czeka."],
+        "bad": ["Potrzebujesz więcej rumu!", "Statek tonie...", "Wzburzone morze!"],
+        "terrible": ["Na deskę z tobą!", "To nazywasz skarbem?!", "Davy Jones jest rozczarowany!"]
+      }
+    },
+    "drill": {
+      "name": "Sierżant",
+      "messages": {
+        "great": ["Wspaniale, żołnierzu!", "Misja wykonana!", "Tak się to robi, szeregowy!"],
+        "good": ["Dobra robota, szeregowy!", "Jesteś na dobrej drodze!", "Utrzymaj tempo!"],
+        "okay": ["Akceptowalne. Ledwo.", "Naprzód, żołnierzu!", "Nie rozluźniaj się!"],
+        "bad": ["Padnij i daj mi 20!", "To nie wystarczy!", "To nazywasz wysiłkiem?!"],
+        "terrible": ["Co to za bałagan?!", "Nazywasz się produktywnym?!", "Wracamy do podstaw!"]
+      }
+    },
+    "zen": {
+      "name": "Mistrz Zen",
+      "messages": {
+        "great": ["Wewnętrzny spokój osiągnięty.", "Podróż jest nagrodą.", "Harmonia przepływa przez ciebie."],
+        "good": ["Postęp, nie perfekcja.", "Dobrze ci idzie, młody.", "Ścieżka się objawia."],
+        "okay": ["Każdy krok się liczy.", "Bądź obecny.", "Oddychaj i kontynuuj."],
+        "bad": ["Jutro jest nowy dzień.", "Puść osąd.", "Odpoczynek to też praktyka."],
+        "terrible": ["Pustka uczy cierpliwości.", "Przytul walkę.", "W ciszy znajdź siłę."]
+      }
+    },
+    "coach": {
+      "name": "Life Coach",
+      "messages": {
+        "great": ["Miażdżysz to!", "To twój rok!", "Nie do zatrzymania!"],
+        "good": ["Utrzymaj momentum!", "Dasz radę!", "Postęp to postęp!"],
+        "okay": ["Każdy dzień to postęp!", "Wierz w siebie!", "Małe kroki się liczą!"],
+        "bad": ["Czas na growth mindset!", "Porażka to feedback!", "Ucz się i idź dalej!"],
+        "terrible": ["Reset i focus!", "Twój przełom nadchodzi!", "Pivot i nie poddawaj się!"]
+      }
+    },
+    "neutral": {
+      "name": "Neutralny",
+      "messages": {
+        "great": ["Doskonały wskaźnik ukończenia.", "Wysoka produktywność.", "Optymalna wydajność."],
+        "good": ["Dobry postęp dzisiaj.", "Solidna robota.", "Powyżej średniej."],
+        "okay": ["Umiarkowana produktywność.", "Akceptowalny wynik.", "W normie."],
+        "bad": ["Poniżej średniej.", "Jest miejsce na poprawę.", "Wynik nieoptymalny."],
+        "terrible": ["Niski wskaźnik ukończenia.", "Rozważ zmiany.", "Znaczna luka do celu."]
+      }
+    }
+  },
+  "combo": {
+    "x2": "Podwójne trafienie!",
+    "x3": "Potrójne trafienie!",
+    "x5": "Seria zabójstw!",
+    "x7": "Dominacja!",
+    "x10": "Boski!",
+    "x15": "LEGENDARNY!"
+  },
+  "dates": {
+    "today": "Dziś",
+    "tomorrow": "Jutro",
+    "yesterday": "Wczoraj"
+  }
+}

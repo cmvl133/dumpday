@@ -1,15 +1,6 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LogOut, ClipboardCheck, Settings } from 'lucide-react';
-
-const TAGLINES = [
-  "Where chaos meets done.",
-  "Stop planning. Start doing.",
-  "For people who hate todo apps.",
-  "The anti-productivity productivity app.",
-  "Productivity that hits different.",
-  "Dopamine-driven productivity.",
-  "Your daily dopamine dealer.",
-];
 import { Button } from '@/components/ui/button';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -17,11 +8,15 @@ import { logout } from '@/store/authSlice';
 import { openCheckIn, fetchCheckInTasks } from '@/store/checkInSlice';
 
 export function Header() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const tagline = useMemo(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)], []);
+  const tagline = useMemo(() => {
+    const taglines = t('header.taglines', { returnObjects: true }) as string[];
+    return taglines[Math.floor(Math.random() * taglines.length)];
+  }, [t]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -61,7 +56,7 @@ export function Header() {
                   size="sm"
                   onClick={() => setSettingsOpen(true)}
                   className="text-muted-foreground hover:text-foreground"
-                  title="Ustawienia"
+                  title={t('settings.title')}
                 >
                   <Settings className="h-4 w-4" />
                 </Button>
@@ -75,7 +70,7 @@ export function Header() {
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span className="ml-2 hidden sm:inline">Wyloguj</span>
+                  <span className="ml-2 hidden sm:inline">{t('auth.logout')}</span>
                 </Button>
               </div>
             )}

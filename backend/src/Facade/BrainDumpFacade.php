@@ -33,7 +33,7 @@ class BrainDumpFacade
 
     public function analyze(User $user, string $rawContent, \DateTimeInterface $date): array
     {
-        $aiResponse = $this->analyzer->analyze($rawContent, $date);
+        $aiResponse = $this->analyzer->analyze($rawContent, $date, $user->getLanguage());
 
         $schedule = $this->scheduleBuilder->buildScheduleFromAnalysis(
             $aiResponse['events'] ?? [],
