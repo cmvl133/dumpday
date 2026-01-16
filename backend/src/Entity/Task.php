@@ -34,6 +34,12 @@ class Task
     #[ORM\Column(type: 'string', enumType: TaskCategory::class)]
     private TaskCategory $category = TaskCategory::TODAY;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDropped = false;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $completedAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -95,6 +101,30 @@ class Task
     public function setCategory(TaskCategory $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function isDropped(): bool
+    {
+        return $this->isDropped;
+    }
+
+    public function setIsDropped(bool $isDropped): static
+    {
+        $this->isDropped = $isDropped;
+
+        return $this;
+    }
+
+    public function getCompletedAt(): ?\DateTimeImmutable
+    {
+        return $this->completedAt;
+    }
+
+    public function setCompletedAt(?\DateTimeImmutable $completedAt): static
+    {
+        $this->completedAt = $completedAt;
 
         return $this;
     }

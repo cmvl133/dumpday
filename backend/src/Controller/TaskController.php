@@ -43,7 +43,13 @@ class TaskController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['isCompleted'])) {
-            $task->setIsCompleted((bool) $data['isCompleted']);
+            $isCompleted = (bool) $data['isCompleted'];
+            $task->setIsCompleted($isCompleted);
+            if ($isCompleted && $task->getCompletedAt() === null) {
+                $task->setCompletedAt(new \DateTimeImmutable());
+            } elseif (! $isCompleted) {
+                $task->setCompletedAt(null);
+            }
         }
 
         if (isset($data['title'])) {
@@ -64,8 +70,10 @@ class TaskController extends AbstractController
             'id' => $task->getId(),
             'title' => $task->getTitle(),
             'isCompleted' => $task->isCompleted(),
+            'isDropped' => $task->isDropped(),
             'dueDate' => $task->getDueDate()?->format('Y-m-d'),
             'category' => $task->getCategory()->value,
+            'completedAt' => $task->getCompletedAt()?->format('c'),
         ]);
     }
 

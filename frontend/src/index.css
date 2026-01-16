@@ -133,4 +133,52 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
+
+  /* Check-in animations */
+  .animate-flash-green {
+    animation: flashGreen 0.3s ease-out;
+  }
+
+  @keyframes flashGreen {
+    0% {
+      background-color: rgba(34, 197, 94, 0.3);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.3s ease-out;
+  }
+
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.4s ease-out;
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
 }

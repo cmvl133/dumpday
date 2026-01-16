@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Trash2, Pencil, Check, X, Calendar } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ export function TaskItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const dateInputRef = useRef<HTMLInputElement>(null);
+  const checkboxWrapperRef = useRef<HTMLDivElement>(null);
 
   // For "today" section, show context date; for others show dueDate
   const displayDate = isTodaySection ? (dueDate || currentDate) : dueDate;
@@ -44,7 +46,25 @@ export function TaskItem({
 
   const handleToggle = () => {
     if (id !== undefined && onToggle) {
-      onToggle(id, !isCompleted);
+      const willBeCompleted = !isCompleted;
+      onToggle(id, willBeCompleted);
+
+      // Confetti when completing a task!
+      if (willBeCompleted && checkboxWrapperRef.current) {
+        const rect = checkboxWrapperRef.current.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { x, y },
+          colors: ['#14b8a6', '#22c55e', '#a3e635', '#fbbf24'],
+          startVelocity: 20,
+          gravity: 0.8,
+          scalar: 0.8,
+        });
+      }
     }
   };
 
@@ -93,7 +113,9 @@ export function TaskItem({
   return (
     <div className="flex items-center gap-3 py-2 group relative">
       {!isPreview && id !== undefined ? (
-        <Checkbox checked={isCompleted} onCheckedChange={handleToggle} />
+        <div ref={checkboxWrapperRef}>
+          <Checkbox checked={isCompleted} onCheckedChange={handleToggle} />
+        </div>
       ) : (
         <div className="w-4 h-4 rounded-sm border border-muted-foreground/30" />
       )}

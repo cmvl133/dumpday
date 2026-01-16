@@ -6,6 +6,10 @@ import type {
   Event,
   JournalEntry,
   Note,
+  CheckInTasksResponse,
+  CheckInStats,
+  CheckIn,
+  Settings,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -220,6 +224,79 @@ export const api = {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to delete note');
       }
+    },
+  },
+
+  checkIn: {
+    getTasks: async (): Promise<CheckInTasksResponse> => {
+      const response = await fetch(`${API_BASE}/check-in/tasks`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch check-in tasks');
+      }
+      return response.json();
+    },
+
+    taskAction: async (
+      id: number,
+      action: 'done' | 'tomorrow' | 'today' | 'drop'
+    ): Promise<{ success: boolean; task: Task }> => {
+      const response = await fetch(`${API_BASE}/check-in/task/${id}/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to perform task action');
+      }
+      return response.json();
+    },
+
+    complete: async (
+      stats: CheckInStats
+    ): Promise<{ success: boolean; checkIn: CheckIn }> => {
+      const response = await fetch(`${API_BASE}/check-in/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stats }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to complete check-in');
+      }
+      return response.json();
+    },
+  },
+
+  settings: {
+    get: async (): Promise<Settings> => {
+      const response = await fetch(`${API_BASE}/settings`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch settings');
+      }
+      return response.json();
+    },
+
+    update: async (data: Partial<Settings>): Promise<Settings> => {
+      const response = await fetch(`${API_BASE}/settings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to update settings');
+      }
+      return response.json();
     },
   },
 };

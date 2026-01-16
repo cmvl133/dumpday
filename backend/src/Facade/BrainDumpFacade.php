@@ -206,9 +206,17 @@ class BrainDumpFacade
         }
 
         // Add tasks from the DailyNote (excluding already added scheduled tasks)
+        $dateString = $date->format('Y-m-d');
         foreach ($dailyNote->getTasks() as $task) {
             // Skip if already added from scheduledTasksForDate
             if (in_array($task->getId(), $scheduledTaskIds, true)) {
+                continue;
+            }
+
+            // Skip if task has a dueDate that doesn't match current date
+            // (it will appear on its dueDate instead)
+            $taskDueDate = $task->getDueDate()?->format('Y-m-d');
+            if ($taskDueDate !== null && $taskDueDate !== $dateString) {
                 continue;
             }
 
@@ -216,7 +224,7 @@ class BrainDumpFacade
                 'id' => $task->getId(),
                 'title' => $task->getTitle(),
                 'isCompleted' => $task->isCompleted(),
-                'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+                'dueDate' => $taskDueDate,
             ];
 
             $category = $task->getCategory()->value;

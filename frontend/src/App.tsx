@@ -15,6 +15,7 @@ import {
   deleteNote,
 } from './store/dailyNoteSlice';
 import { checkAuth } from './store/authSlice';
+import { fetchSettings } from './store/settingsSlice';
 import { Header } from './components/layout/Header';
 import { DaySwitcher } from './components/layout/DaySwitcher';
 import { BrainDumpInput } from './components/brain-dump/BrainDumpInput';
@@ -22,6 +23,8 @@ import { AnalysisResults } from './components/analysis/AnalysisResults';
 import { DaySchedule } from './components/schedule/DaySchedule';
 import { ScrollArea } from './components/ui/scroll-area';
 import { LoginPage } from './components/auth/LoginPage';
+import { CheckInModal } from './components/check-in/CheckInModal';
+import { useAutoCheckIn } from './hooks/useAutoCheckIn';
 import { Loader2 } from 'lucide-react';
 import type { AnalysisResponse, DailyNoteData } from './types';
 
@@ -38,6 +41,8 @@ function App() {
     (state) => state.auth
   );
 
+  useAutoCheckIn();
+
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
@@ -47,6 +52,12 @@ function App() {
       dispatch(fetchDailyNote(currentDate));
     }
   }, [currentDate, dispatch, isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchSettings());
+    }
+  }, [isAuthenticated, dispatch]);
 
   // Merge persisted data with preview data when both exist
   // Must be before conditional returns to follow Rules of Hooks
@@ -242,6 +253,8 @@ function App() {
           </div>
         </div>
       </main>
+
+      <CheckInModal />
     </div>
   );
 }

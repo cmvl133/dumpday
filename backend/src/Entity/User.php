@@ -41,6 +41,15 @@ class User implements UserInterface
     #[ORM\OneToMany(targetEntity: LoginCode::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $loginCodes;
 
+    #[ORM\Column(length: 20, options: ['default' => '3h'])]
+    private string $checkInInterval = '3h';
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $zenMode = false;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $soundEnabled = false;
+
     public function __construct()
     {
         $this->dailyNotes = new ArrayCollection();
@@ -136,5 +145,41 @@ class User implements UserInterface
     public function getUserIdentifier(): string
     {
         return $this->email ?? '';
+    }
+
+    public function getCheckInInterval(): string
+    {
+        return $this->checkInInterval;
+    }
+
+    public function setCheckInInterval(string $checkInInterval): static
+    {
+        $this->checkInInterval = $checkInInterval;
+
+        return $this;
+    }
+
+    public function isZenMode(): bool
+    {
+        return $this->zenMode;
+    }
+
+    public function setZenMode(bool $zenMode): static
+    {
+        $this->zenMode = $zenMode;
+
+        return $this;
+    }
+
+    public function isSoundEnabled(): bool
+    {
+        return $this->soundEnabled;
+    }
+
+    public function setSoundEnabled(bool $soundEnabled): static
+    {
+        $this->soundEnabled = $soundEnabled;
+
+        return $this;
     }
 }

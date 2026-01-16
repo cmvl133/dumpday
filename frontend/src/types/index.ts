@@ -4,8 +4,52 @@ export interface Task {
   id?: number;
   title: string;
   isCompleted: boolean;
+  isDropped?: boolean;
   dueDate: string | null;
   category?: TaskCategory;
+  completedAt?: string | null;
+}
+
+export type CheckInInterval = 'off' | '2h' | '3h' | '4h';
+
+export interface Settings {
+  checkInInterval: CheckInInterval;
+  zenMode: boolean;
+  soundEnabled: boolean;
+}
+
+export interface CheckInTask {
+  id: number;
+  title: string;
+  dueDate: string | null;
+  category: TaskCategory;
+}
+
+export interface CheckInTasksResponse {
+  overdue: CheckInTask[];
+  today: CheckInTask[];
+  lastCheckInAt: string | null;
+}
+
+export interface CheckInStats {
+  done: number;
+  tomorrow: number;
+  today: number;
+  dropped: number;
+  overdueCleared: number;
+  bestCombo: number;
+}
+
+export interface CheckIn {
+  id: number;
+  date: string;
+  completedAt: string;
+  statsDone: number;
+  statsTomorrow: number;
+  statsToday: number;
+  statsDropped: number;
+  statsOverdueCleared: number;
+  bestCombo: number;
 }
 
 export interface Event {
