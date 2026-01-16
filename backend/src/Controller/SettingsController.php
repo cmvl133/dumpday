@@ -26,9 +26,9 @@ class SettingsController extends AbstractController
         return $this->json([
             'checkInInterval' => $user->getCheckInInterval(),
             'zenMode' => $user->isZenMode(),
-            'soundEnabled' => $user->isSoundEnabled(),
             'reminderTone' => $user->getReminderTone(),
             'language' => $user->getLanguage(),
+            'confettiStyle' => $user->getConfettiStyle(),
         ]);
     }
 
@@ -39,17 +39,13 @@ class SettingsController extends AbstractController
 
         if (isset($data['checkInInterval'])) {
             $interval = (string) $data['checkInInterval'];
-            if (in_array($interval, ['off', '2h', '3h', '4h'], true)) {
+            if (in_array($interval, ['off', '1h', '2h', '3h', '4h'], true)) {
                 $user->setCheckInInterval($interval);
             }
         }
 
         if (isset($data['zenMode'])) {
             $user->setZenMode((bool) $data['zenMode']);
-        }
-
-        if (isset($data['soundEnabled'])) {
-            $user->setSoundEnabled((bool) $data['soundEnabled']);
         }
 
         if (isset($data['reminderTone'])) {
@@ -66,14 +62,21 @@ class SettingsController extends AbstractController
             }
         }
 
+        if (isset($data['confettiStyle'])) {
+            $style = (string) $data['confettiStyle'];
+            if (in_array($style, ['classic', 'stars', 'explosion', 'neon', 'fire'], true)) {
+                $user->setConfettiStyle($style);
+            }
+        }
+
         $this->entityManager->flush();
 
         return $this->json([
             'checkInInterval' => $user->getCheckInInterval(),
             'zenMode' => $user->isZenMode(),
-            'soundEnabled' => $user->isSoundEnabled(),
             'reminderTone' => $user->getReminderTone(),
             'language' => $user->getLanguage(),
+            'confettiStyle' => $user->getConfettiStyle(),
         ]);
     }
 }

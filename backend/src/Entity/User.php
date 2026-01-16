@@ -47,14 +47,14 @@ class User implements UserInterface
     #[ORM\Column(options: ['default' => false])]
     private bool $zenMode = false;
 
-    #[ORM\Column(options: ['default' => false])]
-    private bool $soundEnabled = false;
-
     #[ORM\Column(length: 20, options: ['default' => 'normal'])]
     private string $reminderTone = 'normal';
 
     #[ORM\Column(length: 5, options: ['default' => 'en'])]
     private string $language = 'en';
+
+    #[ORM\Column(length: 20, options: ['default' => 'neon'])]
+    private string $confettiStyle = 'neon';
 
     public function __construct()
     {
@@ -177,18 +177,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function isSoundEnabled(): bool
-    {
-        return $this->soundEnabled;
-    }
-
-    public function setSoundEnabled(bool $soundEnabled): static
-    {
-        $this->soundEnabled = $soundEnabled;
-
-        return $this;
-    }
-
     public function getReminderTone(): string
     {
         return $this->reminderTone;
@@ -209,6 +197,18 @@ class User implements UserInterface
     public function setLanguage(string $language): static
     {
         $this->language = $language;
+
+        return $this;
+    }
+
+    public function getConfettiStyle(): string
+    {
+        return $this->confettiStyle;
+    }
+
+    public function setConfettiStyle(string $confettiStyle): static
+    {
+        $this->confettiStyle = $confettiStyle;
 
         return $this;
     }

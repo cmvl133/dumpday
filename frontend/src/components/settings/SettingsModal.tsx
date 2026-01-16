@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, BellOff, Check } from 'lucide-react';
 import { updateSettings } from '@/store/settingsSlice';
 import type { RootState, AppDispatch } from '@/store';
-import type { CheckInInterval, Language, ReminderTone } from '@/types';
+import type { CheckInInterval, ConfettiStyle, Language, ReminderTone } from '@/types';
 
 interface SettingsModalProps {
   open: boolean;
@@ -23,7 +23,7 @@ interface SettingsModalProps {
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const { checkInInterval, zenMode, soundEnabled, reminderTone, language } = useSelector(
+  const { checkInInterval, zenMode, reminderTone, language, confettiStyle } = useSelector(
     (state: RootState) => state.settings
   );
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
@@ -32,6 +32,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   const INTERVAL_OPTIONS: { value: CheckInInterval; label: string }[] = [
     { value: 'off', label: language === 'pl' ? 'Wyłączony' : 'Off' },
+    { value: '1h', label: language === 'pl' ? 'Co 1 godzinę' : 'Every 1 hour' },
     { value: '2h', label: language === 'pl' ? 'Co 2 godziny' : 'Every 2 hours' },
     { value: '3h', label: language === 'pl' ? 'Co 3 godziny' : 'Every 3 hours' },
     { value: '4h', label: language === 'pl' ? 'Co 4 godziny' : 'Every 4 hours' },
@@ -48,6 +49,14 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
     { value: 'en', label: 'English' },
     { value: 'pl', label: 'Polski' },
+  ];
+
+  const CONFETTI_OPTIONS: { value: ConfettiStyle; label: string }[] = [
+    { value: 'classic', label: language === 'pl' ? 'Klasyczne' : 'Classic' },
+    { value: 'stars', label: language === 'pl' ? 'Gwiazdki' : 'Stars' },
+    { value: 'explosion', label: language === 'pl' ? 'Eksplozja' : 'Explosion' },
+    { value: 'neon', label: language === 'pl' ? 'Neon' : 'Neon' },
+    { value: 'fire', label: language === 'pl' ? 'Ogień' : 'Fire' },
   ];
 
   useEffect(() => {
@@ -70,16 +79,16 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     dispatch(updateSettings({ zenMode: checked }));
   };
 
-  const handleSoundChange = (checked: boolean) => {
-    dispatch(updateSettings({ soundEnabled: checked }));
-  };
-
   const handleToneChange = (value: ReminderTone) => {
     dispatch(updateSettings({ reminderTone: value }));
   };
 
   const handleLanguageChange = (value: Language) => {
     dispatch(updateSettings({ language: value }));
+  };
+
+  const handleConfettiStyleChange = (value: ConfettiStyle) => {
+    dispatch(updateSettings({ confettiStyle: value }));
   };
 
   return (
@@ -164,6 +173,30 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
           <div className="space-y-3">
             <label className="text-sm font-medium">
+              {language === 'pl' ? 'Styl confetti' : 'Confetti style'}
+            </label>
+            <select
+              value={confettiStyle}
+              onChange={(e) =>
+                handleConfettiStyleChange(e.target.value as ConfettiStyle)
+              }
+              className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {CONFETTI_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted-foreground">
+              {language === 'pl'
+                ? 'Efekt przy ukończeniu zadania'
+                : 'Effect when completing a task'}
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-medium">
               {t('settings.notifications')}
             </label>
             <div className="flex items-center gap-3">
@@ -230,22 +263,6 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <label className="text-sm font-medium">
-                {language === 'pl' ? 'Dźwięki' : 'Sounds'}
-              </label>
-              <p className="text-xs text-muted-foreground">
-                {language === 'pl'
-                  ? 'Efekty dźwiękowe przy akcjach'
-                  : 'Sound effects for actions'}
-              </p>
-            </div>
-            <Checkbox
-              checked={soundEnabled}
-              onCheckedChange={handleSoundChange}
-            />
-          </div>
         </div>
       </DialogContent>
     </Dialog>

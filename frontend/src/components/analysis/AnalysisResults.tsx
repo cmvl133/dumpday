@@ -1,16 +1,42 @@
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
   Calendar,
   Lightbulb,
   StickyNote,
   Heart,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TaskList } from './TaskList';
 import { NotesList } from './NotesList';
 import { JournalSection } from './JournalSection';
+import { cn } from '@/lib/utils';
 import type { AnalysisResponse, DailyNoteData } from '@/types';
+
+const COLLAPSED_BOXES_KEY = 'dopaminder_collapsed_boxes';
+
+type BoxId = 'scheduled' | 'someday' | 'notes' | 'journal';
+
+function getCollapsedBoxes(): BoxId[] {
+  try {
+    const stored = localStorage.getItem(COLLAPSED_BOXES_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCollapsedBoxes(boxes: BoxId[]): void {
+  try {
+    localStorage.setItem(COLLAPSED_BOXES_KEY, JSON.stringify(boxes));
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 interface AnalysisResultsProps {
   data: AnalysisResponse | DailyNoteData;
@@ -27,6 +53,64 @@ interface AnalysisResultsProps {
   onDeleteJournal?: (id: number) => void;
 }
 
+interface CollapsibleCardProps {
+  id?: BoxId;
+  icon: React.ReactNode;
+  title: string;
+  count: number;
+  isCollapsed: boolean;
+  onToggle?: () => void;
+  children: React.ReactNode;
+  canCollapse?: boolean;
+}
+
+function CollapsibleCard({
+  icon,
+  title,
+  count,
+  isCollapsed,
+  onToggle,
+  children,
+  canCollapse = true,
+}: CollapsibleCardProps) {
+  return (
+    <Card>
+      <CardHeader
+        className={cn(
+          'pb-3',
+          canCollapse && 'cursor-pointer select-none hover:bg-muted/30 transition-colors'
+        )}
+        onClick={canCollapse ? onToggle : undefined}
+      >
+        <CardTitle className="text-base flex items-center gap-2">
+          {canCollapse && (
+            isCollapsed ? (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            )
+          )}
+          {icon}
+          {title}
+          {count > 0 && (
+            <Badge variant="secondary" className="ml-auto">
+              {count}
+            </Badge>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <div
+        className={cn(
+          'overflow-hidden transition-all duration-200 ease-in-out',
+          isCollapsed ? 'max-h-0' : 'max-h-[2000px]'
+        )}
+      >
+        <CardContent>{children}</CardContent>
+      </div>
+    </Card>
+  );
+}
+
 export function AnalysisResults({
   data,
   currentDate,
@@ -41,6 +125,25 @@ export function AnalysisResults({
   onUpdateJournal,
   onDeleteJournal,
 }: AnalysisResultsProps) {
+  const { t } = useTranslation();
+  const [collapsedBoxes, setCollapsedBoxes] = useState<BoxId[]>([]);
+
+  useEffect(() => {
+    setCollapsedBoxes(getCollapsedBoxes());
+  }, []);
+
+  const toggleBox = (boxId: BoxId) => {
+    setCollapsedBoxes((prev) => {
+      const newBoxes = prev.includes(boxId)
+        ? prev.filter((id) => id !== boxId)
+        : [...prev, boxId];
+      saveCollapsedBoxes(newBoxes);
+      return newBoxes;
+    });
+  };
+
+  const isCollapsed = (boxId: BoxId) => collapsedBoxes.includes(boxId);
+
   const tasks = data.tasks;
   const notes = data.notes;
   const journal = data.journal;
@@ -53,137 +156,106 @@ export function AnalysisResults({
     <div className="space-y-4">
       {isPreview && (
         <Badge variant="secondary" className="mb-2">
-          Podgląd - kliknij Zapisz aby zachować
+          {t('brainDump.analysisPreview')}
         </Badge>
       )}
 
-      {/* TODO Today */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            TODO na dziś
-            {todayCount > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {todayCount}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TaskList
-            tasks={tasks.today || []}
-            currentDate={currentDate}
-            isTodaySection={true}
-            onToggle={onToggleTask}
-            onDelete={onDeleteTask}
-            onUpdate={onUpdateTask}
-            onUpdateDueDate={onUpdateTaskDueDate}
-            onUpdateReminder={onUpdateTaskReminder}
-            isPreview={isPreview}
-          />
-        </CardContent>
-      </Card>
+      {/* TODO Today - always visible, cannot collapse */}
+      <CollapsibleCard
+        icon={<CheckCircle2 className="h-4 w-4 text-green-600" />}
+        title={t('tasks.today')}
+        count={todayCount}
+        isCollapsed={false}
+        canCollapse={false}
+      >
+        <TaskList
+          tasks={tasks.today || []}
+          currentDate={currentDate}
+          isTodaySection={true}
+          onToggle={onToggleTask}
+          onDelete={onDeleteTask}
+          onUpdate={onUpdateTask}
+          onUpdateDueDate={onUpdateTaskDueDate}
+          onUpdateReminder={onUpdateTaskReminder}
+          isPreview={isPreview}
+        />
+      </CollapsibleCard>
 
       {/* TODO Scheduled */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-blue-600" />
-            TODO zaplanowane
-            {scheduledCount > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {scheduledCount}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TaskList
-            tasks={tasks.scheduled || []}
-            currentDate={currentDate}
-            onToggle={onToggleTask}
-            onDelete={onDeleteTask}
-            onUpdate={onUpdateTask}
-            onUpdateDueDate={onUpdateTaskDueDate}
-            onUpdateReminder={onUpdateTaskReminder}
-            isPreview={isPreview}
-          />
-        </CardContent>
-      </Card>
+      <CollapsibleCard
+        id="scheduled"
+        icon={<Calendar className="h-4 w-4 text-blue-600" />}
+        title={t('tasks.thisWeek')}
+        count={scheduledCount}
+        isCollapsed={isCollapsed('scheduled')}
+        onToggle={() => toggleBox('scheduled')}
+      >
+        <TaskList
+          tasks={tasks.scheduled || []}
+          currentDate={currentDate}
+          onToggle={onToggleTask}
+          onDelete={onDeleteTask}
+          onUpdate={onUpdateTask}
+          onUpdateDueDate={onUpdateTaskDueDate}
+          onUpdateReminder={onUpdateTaskReminder}
+          isPreview={isPreview}
+        />
+      </CollapsibleCard>
 
       {/* TODO Someday */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-yellow-600" />
-            TODO kiedyś
-            {somedayCount > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {somedayCount}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TaskList
-            tasks={tasks.someday || []}
-            currentDate={currentDate}
-            onToggle={onToggleTask}
-            onDelete={onDeleteTask}
-            onUpdate={onUpdateTask}
-            onUpdateDueDate={onUpdateTaskDueDate}
-            onUpdateReminder={onUpdateTaskReminder}
-            isPreview={isPreview}
-          />
-        </CardContent>
-      </Card>
+      <CollapsibleCard
+        id="someday"
+        icon={<Lightbulb className="h-4 w-4 text-yellow-600" />}
+        title={t('tasks.later')}
+        count={somedayCount}
+        isCollapsed={isCollapsed('someday')}
+        onToggle={() => toggleBox('someday')}
+      >
+        <TaskList
+          tasks={tasks.someday || []}
+          currentDate={currentDate}
+          onToggle={onToggleTask}
+          onDelete={onDeleteTask}
+          onUpdate={onUpdateTask}
+          onUpdateDueDate={onUpdateTaskDueDate}
+          onUpdateReminder={onUpdateTaskReminder}
+          isPreview={isPreview}
+        />
+      </CollapsibleCard>
 
       {/* Notes */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <StickyNote className="h-4 w-4 text-orange-600" />
-            Notatki
-            {notes.length > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {notes.length}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <NotesList
-            notes={notes}
-            isPreview={isPreview}
-            onUpdate={onUpdateNote}
-            onDelete={onDeleteNote}
-          />
-        </CardContent>
-      </Card>
+      <CollapsibleCard
+        id="notes"
+        icon={<StickyNote className="h-4 w-4 text-orange-600" />}
+        title="Notes"
+        count={notes.length}
+        isCollapsed={isCollapsed('notes')}
+        onToggle={() => toggleBox('notes')}
+      >
+        <NotesList
+          notes={notes}
+          isPreview={isPreview}
+          onUpdate={onUpdateNote}
+          onDelete={onDeleteNote}
+        />
+      </CollapsibleCard>
 
       {/* Journal */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Heart className="h-4 w-4 text-pink-600" />
-            Dziennik
-            {journal.length > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {journal.length}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <JournalSection
-            entries={journal}
-            isPreview={isPreview}
-            onUpdate={onUpdateJournal}
-            onDelete={onDeleteJournal}
-          />
-        </CardContent>
-      </Card>
+      <CollapsibleCard
+        id="journal"
+        icon={<Heart className="h-4 w-4 text-pink-600" />}
+        title="Journal"
+        count={journal.length}
+        isCollapsed={isCollapsed('journal')}
+        onToggle={() => toggleBox('journal')}
+      >
+        <JournalSection
+          entries={journal}
+          isPreview={isPreview}
+          onUpdate={onUpdateJournal}
+          onDelete={onDeleteJournal}
+        />
+      </CollapsibleCard>
     </div>
   );
 }

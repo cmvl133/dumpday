@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import i18n from '@/i18n';
 import { api } from '@/lib/api';
-import type { CheckInInterval, Language, ReminderTone, Settings } from '@/types';
+import type { CheckInInterval, ConfettiStyle, Language, ReminderTone, Settings } from '@/types';
 
 interface SettingsState {
   checkInInterval: CheckInInterval;
   zenMode: boolean;
-  soundEnabled: boolean;
   reminderTone: ReminderTone;
   language: Language;
+  confettiStyle: ConfettiStyle;
   isLoading: boolean;
   error: string | null;
 }
@@ -16,9 +16,9 @@ interface SettingsState {
 const initialState: SettingsState = {
   checkInInterval: '3h',
   zenMode: false,
-  soundEnabled: false,
   reminderTone: 'normal',
   language: 'en',
+  confettiStyle: 'neon',
   isLoading: false,
   error: null,
 };
@@ -50,9 +50,9 @@ const settingsSlice = createSlice({
         state.isLoading = false;
         state.checkInInterval = action.payload.checkInInterval;
         state.zenMode = action.payload.zenMode;
-        state.soundEnabled = action.payload.soundEnabled;
         state.reminderTone = action.payload.reminderTone;
         state.language = action.payload.language;
+        state.confettiStyle = action.payload.confettiStyle || 'neon';
         i18n.changeLanguage(action.payload.language);
       })
       .addCase(fetchSettings.rejected, (state, action) => {
@@ -62,9 +62,9 @@ const settingsSlice = createSlice({
       .addCase(updateSettings.fulfilled, (state, action) => {
         state.checkInInterval = action.payload.checkInInterval;
         state.zenMode = action.payload.zenMode;
-        state.soundEnabled = action.payload.soundEnabled;
         state.reminderTone = action.payload.reminderTone;
         state.language = action.payload.language;
+        state.confettiStyle = action.payload.confettiStyle || 'neon';
         i18n.changeLanguage(action.payload.language);
       });
   },

@@ -11,18 +11,20 @@ export interface Task {
   reminderTime?: string | null;
 }
 
-export type CheckInInterval = 'off' | '2h' | '3h' | '4h';
+export type CheckInInterval = 'off' | '1h' | '2h' | '3h' | '4h';
 
 export type ReminderTone = 'gentle' | 'normal' | 'aggressive' | 'vulgar' | 'bigpoppapump';
 
 export type Language = 'en' | 'pl';
 
+export type ConfettiStyle = 'classic' | 'stars' | 'explosion' | 'neon' | 'fire';
+
 export interface Settings {
   checkInInterval: CheckInInterval;
   zenMode: boolean;
-  soundEnabled: boolean;
   reminderTone: ReminderTone;
   language: Language;
+  confettiStyle: ConfettiStyle;
 }
 
 export interface CheckInTask {

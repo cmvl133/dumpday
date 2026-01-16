@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Trash2, Pencil, Check, X, Calendar, Clock } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -6,6 +7,59 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import type { RootState } from '@/store';
+import type { ConfettiStyle } from '@/types';
+
+const getConfettiConfig = (style: ConfettiStyle, origin: { x: number; y: number }) => {
+  const configs: Record<ConfettiStyle, Parameters<typeof confetti>[0]> = {
+    classic: {
+      particleCount: 50,
+      spread: 60,
+      origin,
+      startVelocity: 20,
+      gravity: 0.8,
+      scalar: 0.8,
+    },
+    stars: {
+      particleCount: 30,
+      spread: 70,
+      origin,
+      shapes: ['star'],
+      colors: ['#ffd700', '#ffec8b', '#fff8dc', '#fffacd', '#ffefd5'],
+      startVelocity: 25,
+      gravity: 0.6,
+      scalar: 1.2,
+    },
+    explosion: {
+      particleCount: 100,
+      spread: 120,
+      origin,
+      startVelocity: 45,
+      gravity: 1,
+      scalar: 1,
+      ticks: 100,
+    },
+    neon: {
+      particleCount: 50,
+      spread: 60,
+      origin,
+      colors: ['#ff2d7a', '#00ff88', '#00d4ff', '#ffee00'],
+      startVelocity: 20,
+      gravity: 0.8,
+      scalar: 0.8,
+    },
+    fire: {
+      particleCount: 60,
+      spread: 55,
+      origin,
+      colors: ['#ff4500', '#ff6347', '#ff7f50', '#ffa500', '#ffd700'],
+      startVelocity: 30,
+      gravity: 0.9,
+      scalar: 0.9,
+    },
+  };
+  return configs[style];
+};
 
 interface TaskItemProps {
   id?: number;
@@ -38,6 +92,7 @@ export function TaskItem({
   onUpdateReminder,
   isPreview = false,
 }: TaskItemProps) {
+  const confettiStyle = useSelector((state: RootState) => state.settings.confettiStyle);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const [isEditingReminder, setIsEditingReminder] = useState(false);
@@ -61,15 +116,7 @@ export function TaskItem({
         const x = (rect.left + rect.width / 2) / window.innerWidth;
         const y = (rect.top + rect.height / 2) / window.innerHeight;
 
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { x, y },
-          colors: ['#ff2d7a', '#00ff88', '#00d4ff', '#ffee00'],
-          startVelocity: 20,
-          gravity: 0.8,
-          scalar: 0.8,
-        });
+        confetti(getConfettiConfig(confettiStyle, { x, y }));
       }
     }
   };
