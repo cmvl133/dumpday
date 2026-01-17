@@ -49,7 +49,18 @@ OPENAI_API_KEY=sk-twoj-klucz
 
 **Ważne:** Przed commitowaniem i pushowaniem zmian, poczekaj na potwierdzenie od użytkownika. Użytkownik chce najpierw przetestować zmiany lokalnie, a dopiero potem dać zielone światło na commit/push.
 
-## Wersje
+## Release Notes
 
-- **v0.0.1** - MVP z podstawową funkcjonalnością brain dump i analizy AI
-- **v0.0.2** - Edycja/usuwanie wszystkich typów danych, poprawka zachowania Brain Dump
+**PRZYPOMNIENIE:** Przed każdym commitem sprawdź czy release notes są aktualne!
+
+Notatki wersji znajdują się w `notes/vX.X.X/notes.md`. Przy każdej nowej wersji lub znaczących zmianach:
+
+1. Utwórz katalog `notes/vX.X.X/` (jeśli nowa wersja)
+2. Napisz `notes.md` z opisem zmian w formacie:
+   - Zakres zmian
+   - Szczegóły implementacji (backend/frontend)
+   - Nowe endpointy API (jeśli są)
+   - Zmienione pliki
+   - Instrukcje testowania
+
+Nie zapomnij - to dokumentacja projektu dla przyszłego Ciebie!
