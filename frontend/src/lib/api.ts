@@ -11,6 +11,10 @@ import type {
   CheckInStats,
   CheckIn,
   Settings,
+  PlanningTasksResponse,
+  PlanningTaskData,
+  GeneratedSchedule,
+  ScheduleSuggestion,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -130,7 +134,7 @@ export const api = {
 
     update: async (
       id: number,
-      data: Partial<Pick<Task, 'isCompleted' | 'title' | 'dueDate' | 'reminderTime'>>
+      data: Partial<Pick<Task, 'isCompleted' | 'title' | 'dueDate' | 'reminderTime' | 'estimatedMinutes' | 'fixedTime' | 'canCombineWithEvents' | 'needsFullFocus'>>
     ): Promise<Task> => {
       const response = await fetch(`${API_BASE}/task/${id}`, {
         method: 'PATCH',
@@ -343,6 +347,66 @@ export const api = {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to update settings');
+      }
+      return response.json();
+    },
+  },
+
+  planning: {
+    getTasks: async (): Promise<PlanningTasksResponse> => {
+      const response = await fetch(`${API_BASE}/planning/tasks`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch planning tasks');
+      }
+      return response.json();
+    },
+
+    saveTask: async (
+      id: number,
+      data: PlanningTaskData
+    ): Promise<{ success: boolean; task: Task }> => {
+      const response = await fetch(`${API_BASE}/planning/task/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to save task planning');
+      }
+      return response.json();
+    },
+
+    generateSchedule: async (taskIds: number[]): Promise<GeneratedSchedule> => {
+      const response = await fetch(`${API_BASE}/planning/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskIds }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to generate schedule');
+      }
+      return response.json();
+    },
+
+    acceptSchedule: async (
+      schedule: ScheduleSuggestion[]
+    ): Promise<{ success: boolean }> => {
+      const response = await fetch(`${API_BASE}/planning/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schedule }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to accept schedule');
       }
       return response.json();
     },

@@ -24,6 +24,10 @@ services:
         arguments:
             $openAiApiKey: '%openai_api_key%'
 
+    App\Service\PlanningScheduleGenerator:
+        arguments:
+            $openAiApiKey: '%openai_api_key%'
+
     App\Service\UserService:
         arguments:
             $allowedUsers: '%allowed_users%'

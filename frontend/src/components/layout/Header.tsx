@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LogOut, ClipboardCheck, Settings } from 'lucide-react';
+import { LogOut, ClipboardCheck, Settings, CalendarClock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { logout } from '@/store/authSlice';
 import { openCheckIn, fetchCheckInTasks } from '@/store/checkInSlice';
+import { openPlanning, fetchPlanningTasks } from '@/store/planningSlice';
 
 export function Header() {
   const { t } = useTranslation();
@@ -27,6 +28,11 @@ export function Header() {
     dispatch(fetchCheckInTasks());
   };
 
+  const handlePlanning = () => {
+    dispatch(openPlanning());
+    dispatch(fetchPlanningTasks());
+  };
+
   return (
     <>
       <header className="border-b border-border bg-background">
@@ -45,9 +51,18 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={handlePlanning}
+                  className="text-muted-foreground hover:text-foreground"
+                  title={t('planning.title')}
+                >
+                  <CalendarClock className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleCheckIn}
                   className="text-muted-foreground hover:text-foreground"
-                  title="Check-in"
+                  title={t('checkIn.title')}
                 >
                   <ClipboardCheck className="h-4 w-4" />
                 </Button>

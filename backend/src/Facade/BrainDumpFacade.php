@@ -183,6 +183,10 @@ class BrainDumpFacade
                 'isCompleted' => $task->isCompleted(),
                 'dueDate' => $task->getDueDate()?->format('Y-m-d'),
                 'reminderTime' => $task->getReminderTime()?->format('H:i'),
+                'estimatedMinutes' => $task->getEstimatedMinutes(),
+                'fixedTime' => $task->getFixedTime()?->format('H:i'),
+                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+                'needsFullFocus' => $task->isNeedsFullFocus(),
             ];
         }
 
@@ -227,6 +231,10 @@ class BrainDumpFacade
                 'isCompleted' => $task->isCompleted(),
                 'dueDate' => $taskDueDate,
                 'reminderTime' => $task->getReminderTime()?->format('H:i'),
+                'estimatedMinutes' => $task->getEstimatedMinutes(),
+                'fixedTime' => $task->getFixedTime()?->format('H:i'),
+                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+                'needsFullFocus' => $task->isNeedsFullFocus(),
             ];
 
             $category = $task->getCategory()->value;

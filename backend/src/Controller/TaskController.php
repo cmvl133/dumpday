@@ -73,6 +73,10 @@ class TaskController extends AbstractController
             'category' => $task->getCategory()->value,
             'completedAt' => $task->getCompletedAt()?->format('c'),
             'reminderTime' => $task->getReminderTime()?->format('H:i'),
+            'estimatedMinutes' => $task->getEstimatedMinutes(),
+            'fixedTime' => $task->getFixedTime()?->format('H:i'),
+            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+            'needsFullFocus' => $task->isNeedsFullFocus(),
         ], Response::HTTP_CREATED);
     }
 
@@ -125,6 +129,27 @@ class TaskController extends AbstractController
             }
         }
 
+        // Planning Mode fields
+        if (array_key_exists('estimatedMinutes', $data)) {
+            $task->setEstimatedMinutes($data['estimatedMinutes'] !== null ? (int) $data['estimatedMinutes'] : null);
+        }
+
+        if (array_key_exists('fixedTime', $data)) {
+            if ($data['fixedTime'] === null || $data['fixedTime'] === '') {
+                $task->setFixedTime(null);
+            } else {
+                $task->setFixedTime(new \DateTimeImmutable($data['fixedTime']));
+            }
+        }
+
+        if (array_key_exists('canCombineWithEvents', $data)) {
+            $task->setCanCombineWithEvents($data['canCombineWithEvents']);
+        }
+
+        if (array_key_exists('needsFullFocus', $data)) {
+            $task->setNeedsFullFocus((bool) $data['needsFullFocus']);
+        }
+
         $this->entityManager->flush();
 
         return $this->json([
@@ -136,6 +161,10 @@ class TaskController extends AbstractController
             'category' => $task->getCategory()->value,
             'completedAt' => $task->getCompletedAt()?->format('c'),
             'reminderTime' => $task->getReminderTime()?->format('H:i'),
+            'estimatedMinutes' => $task->getEstimatedMinutes(),
+            'fixedTime' => $task->getFixedTime()?->format('H:i'),
+            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+            'needsFullFocus' => $task->isNeedsFullFocus(),
         ]);
     }
 

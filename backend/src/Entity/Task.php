@@ -43,6 +43,18 @@ class Task
     #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $reminderTime = null;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $estimatedMinutes = null;
+
+    #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $fixedTime = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $canCombineWithEvents = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $needsFullFocus = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -140,6 +152,54 @@ class Task
     public function setReminderTime(?\DateTimeImmutable $reminderTime): static
     {
         $this->reminderTime = $reminderTime;
+
+        return $this;
+    }
+
+    public function getEstimatedMinutes(): ?int
+    {
+        return $this->estimatedMinutes;
+    }
+
+    public function setEstimatedMinutes(?int $estimatedMinutes): static
+    {
+        $this->estimatedMinutes = $estimatedMinutes;
+
+        return $this;
+    }
+
+    public function getFixedTime(): ?\DateTimeImmutable
+    {
+        return $this->fixedTime;
+    }
+
+    public function setFixedTime(?\DateTimeImmutable $fixedTime): static
+    {
+        $this->fixedTime = $fixedTime;
+
+        return $this;
+    }
+
+    public function getCanCombineWithEvents(): ?array
+    {
+        return $this->canCombineWithEvents;
+    }
+
+    public function setCanCombineWithEvents(?array $canCombineWithEvents): static
+    {
+        $this->canCombineWithEvents = $canCombineWithEvents;
+
+        return $this;
+    }
+
+    public function isNeedsFullFocus(): bool
+    {
+        return $this->needsFullFocus;
+    }
+
+    public function setNeedsFullFocus(bool $needsFullFocus): static
+    {
+        $this->needsFullFocus = $needsFullFocus;
 
         return $this;
     }

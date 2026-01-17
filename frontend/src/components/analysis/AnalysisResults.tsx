@@ -46,7 +46,7 @@ interface AnalysisResultsProps {
   onDeleteTask?: (id: number) => void;
   onUpdateTask?: (id: number, title: string) => void;
   onUpdateTaskDueDate?: (id: number, dueDate: string | null) => void;
-  onUpdateTaskReminder?: (id: number, reminderTime: string | null) => void;
+  onUpdateTaskFixedTime?: (id: number, fixedTime: string | null) => void;
   onAddTask?: (title: string, dueDate: string | null, category: 'today' | 'scheduled' | 'someday') => void;
   onUpdateNote?: (id: number, content: string) => void;
   onDeleteNote?: (id: number) => void;
@@ -122,7 +122,7 @@ export function AnalysisResults({
   onDeleteTask,
   onUpdateTask,
   onUpdateTaskDueDate,
-  onUpdateTaskReminder,
+  onUpdateTaskFixedTime,
   onAddTask,
   onUpdateNote,
   onDeleteNote,
@@ -183,7 +183,7 @@ export function AnalysisResults({
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
-          onUpdateReminder={onUpdateTaskReminder}
+          onUpdateFixedTime={onUpdateTaskFixedTime}
           onAdd={onAddTask}
           isPreview={isPreview}
         />
@@ -206,7 +206,7 @@ export function AnalysisResults({
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
-          onUpdateReminder={onUpdateTaskReminder}
+          onUpdateFixedTime={onUpdateTaskFixedTime}
           onAdd={onAddTask}
           isPreview={isPreview}
         />
@@ -229,7 +229,7 @@ export function AnalysisResults({
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
-          onUpdateReminder={onUpdateTaskReminder}
+          onUpdateFixedTime={onUpdateTaskFixedTime}
           onAdd={onAddTask}
           isPreview={isPreview}
         />

@@ -9,7 +9,7 @@ import {
   deleteTask,
   updateTask,
   updateTaskDueDate,
-  updateTaskReminder,
+  updateTaskFixedTime,
   updateEvent,
   deleteEvent,
   createJournalEntry,
@@ -29,6 +29,7 @@ import { DaySchedule } from './components/schedule/DaySchedule';
 import { ScrollArea } from './components/ui/scroll-area';
 import { LoginPage } from './components/auth/LoginPage';
 import { CheckInModal } from './components/check-in/CheckInModal';
+import { PlanningModal } from './components/planning/PlanningModal';
 import { useAutoCheckIn } from './hooks/useAutoCheckIn';
 import { useReminders } from './hooks/useReminders';
 import { Loader2 } from 'lucide-react';
@@ -69,14 +70,21 @@ function App() {
 
   // Merge persisted data with preview data when both exist
   // Must be before conditional returns to follow Rules of Hooks
-  const { displayData, scheduleEvents } = useMemo((): {
+  const { displayData, scheduleEvents, scheduledTasks } = useMemo((): {
     displayData: AnalysisResponse | DailyNoteData | null;
     scheduleEvents: DailyNoteData['schedule'];
+    scheduledTasks: DailyNoteData['tasks']['today'];
   } => {
     if (!analysisPreview) {
+      const allTasks = dailyNote ? [
+        ...dailyNote.tasks.today,
+        ...dailyNote.tasks.scheduled,
+        ...dailyNote.tasks.someday,
+      ] : [];
       return {
         displayData: dailyNote,
         scheduleEvents: dailyNote?.schedule || [],
+        scheduledTasks: allTasks.filter((t) => t.fixedTime),
       };
     }
 
@@ -84,6 +92,7 @@ function App() {
       return {
         displayData: analysisPreview,
         scheduleEvents: analysisPreview.schedule || [],
+        scheduledTasks: [],
       };
     }
 
@@ -128,9 +137,17 @@ function App() {
       schedule: [...dailyNote.schedule, ...analysisPreview.schedule],
     };
 
+    // Only include persisted tasks (with IDs) that have fixedTime
+    const persistedTasks = [
+      ...dailyNote.tasks.today,
+      ...dailyNote.tasks.scheduled,
+      ...dailyNote.tasks.someday,
+    ];
+
     return {
       displayData: merged,
       scheduleEvents: merged.schedule,
+      scheduledTasks: persistedTasks.filter((t) => t.fixedTime),
     };
   }, [dailyNote, analysisPreview]);
 
@@ -168,8 +185,8 @@ function App() {
     dispatch(updateTaskDueDate({ id, dueDate }));
   };
 
-  const handleUpdateTaskReminder = (id: number, reminderTime: string | null) => {
-    dispatch(updateTaskReminder({ id, reminderTime }));
+  const handleUpdateTaskFixedTime = (id: number, fixedTime: string | null) => {
+    dispatch(updateTaskFixedTime({ id, fixedTime }));
   };
 
   const handleUpdateEvent = (
@@ -246,7 +263,7 @@ function App() {
                   onDeleteTask={handleDeleteTask}
                   onUpdateTask={handleUpdateTask}
                   onUpdateTaskDueDate={handleUpdateTaskDueDate}
-                  onUpdateTaskReminder={handleUpdateTaskReminder}
+                  onUpdateTaskFixedTime={handleUpdateTaskFixedTime}
                   onAddTask={handleAddTask}
                   onUpdateNote={handleUpdateNote}
                   onDeleteNote={handleDeleteNote}
@@ -274,15 +291,18 @@ function App() {
           <div className="col-span-12 lg:col-span-4 h-[750px]">
             <DaySchedule
               events={scheduleEvents}
+              scheduledTasks={scheduledTasks}
               isPreview={isPreview}
               onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
+              onToggleTask={handleToggleTask}
             />
           </div>
         </div>
       </main>
 
       <CheckInModal />
+      <PlanningModal />
     </div>
   );
 }

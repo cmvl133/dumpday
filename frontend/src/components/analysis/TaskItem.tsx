@@ -66,14 +66,14 @@ interface TaskItemProps {
   title: string;
   isCompleted?: boolean;
   dueDate?: string | null;
-  reminderTime?: string | null;
+  fixedTime?: string | null;
   currentDate?: string;
   isTodaySection?: boolean;
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
-  onUpdateReminder?: (id: number, reminderTime: string | null) => void;
+  onUpdateFixedTime?: (id: number, fixedTime: string | null) => void;
   isPreview?: boolean;
 }
 
@@ -82,21 +82,21 @@ export function TaskItem({
   title,
   isCompleted = false,
   dueDate,
-  reminderTime,
+  fixedTime,
   currentDate,
   isTodaySection = false,
   onToggle,
   onDelete,
   onUpdate,
   onUpdateDueDate,
-  onUpdateReminder,
+  onUpdateFixedTime,
   isPreview = false,
 }: TaskItemProps) {
   const confettiStyle = useSelector((state: RootState) => state.settings.confettiStyle);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
-  const [isEditingReminder, setIsEditingReminder] = useState(false);
-  const [reminderValue, setReminderValue] = useState(reminderTime || '');
+  const [isEditingTime, setIsEditingTime] = useState(false);
+  const [timeValue, setTimeValue] = useState(fixedTime || '');
   const dateInputRef = useRef<HTMLInputElement>(null);
   const checkboxWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -163,36 +163,36 @@ export function TaskItem({
     }
   };
 
-  const handleReminderEdit = () => {
-    setReminderValue(reminderTime || '');
-    setIsEditingReminder(true);
+  const handleTimeEdit = () => {
+    setTimeValue(fixedTime || '');
+    setIsEditingTime(true);
   };
 
-  const handleReminderSave = () => {
-    if (id !== undefined && onUpdateReminder) {
-      onUpdateReminder(id, reminderValue || null);
+  const handleTimeSave = () => {
+    if (id !== undefined && onUpdateFixedTime) {
+      onUpdateFixedTime(id, timeValue || null);
     }
-    setIsEditingReminder(false);
+    setIsEditingTime(false);
   };
 
-  const handleReminderCancel = () => {
-    setReminderValue(reminderTime || '');
-    setIsEditingReminder(false);
+  const handleTimeCancel = () => {
+    setTimeValue(fixedTime || '');
+    setIsEditingTime(false);
   };
 
-  const handleReminderClear = () => {
-    if (id !== undefined && onUpdateReminder) {
-      onUpdateReminder(id, null);
+  const handleTimeClear = () => {
+    if (id !== undefined && onUpdateFixedTime) {
+      onUpdateFixedTime(id, null);
     }
-    setReminderValue('');
-    setIsEditingReminder(false);
+    setTimeValue('');
+    setIsEditingTime(false);
   };
 
-  const handleReminderKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleTimeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleReminderSave();
+      handleTimeSave();
     } else if (e.key === 'Escape') {
-      handleReminderCancel();
+      handleTimeCancel();
     }
   };
 
@@ -243,24 +243,24 @@ export function TaskItem({
             {title}
           </span>
 
-          {(displayDate || reminderTime) && (
+          {(displayDate || fixedTime) && (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0">
               {displayDate && new Date(displayDate + 'T00:00:00').toLocaleDateString('pl-PL', {
                 day: 'numeric',
                 month: 'short',
               })}
-              {displayDate && reminderTime && ' '}
-              {reminderTime}
+              {displayDate && fixedTime && ' '}
+              {fixedTime}
             </Badge>
           )}
 
-          {!isPreview && id !== undefined && isEditingReminder && onUpdateReminder && (
+          {!isPreview && id !== undefined && isEditingTime && onUpdateFixedTime && (
             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-card/95 backdrop-blur-sm rounded-md px-2 py-1 border border-primary/30 shadow-lg shadow-primary/10">
               <input
                 type="time"
-                value={reminderValue}
-                onChange={(e) => setReminderValue(e.target.value)}
-                onKeyDown={handleReminderKeyDown}
+                value={timeValue}
+                onChange={(e) => setTimeValue(e.target.value)}
+                onKeyDown={handleTimeKeyDown}
                 className="h-7 w-24 px-2 text-sm"
                 autoFocus
               />
@@ -268,17 +268,17 @@ export function TaskItem({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={handleReminderSave}
+                onClick={handleTimeSave}
               >
                 <Check className="h-4 w-4 text-[#00ff88]" />
               </Button>
-              {reminderTime && (
+              {fixedTime && (
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  onClick={handleReminderClear}
-                  title="Usun przypomnienie"
+                  onClick={handleTimeClear}
+                  title="Usuń godzinę"
                 >
                   <Trash2 className="h-3.5 w-3.5 text-destructive" />
                 </Button>
@@ -287,26 +287,26 @@ export function TaskItem({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={handleReminderCancel}
+                onClick={handleTimeCancel}
               >
                 <X className="h-4 w-4 text-muted-foreground" />
               </Button>
             </div>
           )}
 
-          {!isPreview && id !== undefined && !isEditingReminder && (
+          {!isPreview && id !== undefined && !isEditingTime && (
             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 rounded">
-              {onUpdateReminder && (
+              {onUpdateFixedTime && (
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7"
-                  onClick={handleReminderEdit}
-                  title={reminderTime ? `Przypomnienie: ${reminderTime}` : 'Ustaw przypomnienie'}
+                  onClick={handleTimeEdit}
+                  title={fixedTime ? `Godzina: ${fixedTime}` : 'Ustaw godzinę'}
                 >
                   <Clock className={cn(
                     "h-3.5 w-3.5",
-                    reminderTime ? "text-primary" : "text-muted-foreground hover:text-primary"
+                    fixedTime ? "text-primary" : "text-muted-foreground hover:text-primary"
                   )} />
                 </Button>
               )}

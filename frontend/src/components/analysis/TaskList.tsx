@@ -16,7 +16,7 @@ interface TaskListProps {
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
-  onUpdateReminder?: (id: number, reminderTime: string | null) => void;
+  onUpdateFixedTime?: (id: number, fixedTime: string | null) => void;
   onAdd?: (title: string, dueDate: string | null, category: TaskCategory) => void;
   isPreview?: boolean;
 }
@@ -36,7 +36,7 @@ export function TaskList({
   onDelete,
   onUpdate,
   onUpdateDueDate,
-  onUpdateReminder,
+  onUpdateFixedTime,
   onAdd,
   isPreview = false,
 }: TaskListProps) {
@@ -115,14 +115,14 @@ export function TaskList({
               title={task.title}
               isCompleted={'isCompleted' in task ? task.isCompleted : false}
               dueDate={'dueDate' in task ? task.dueDate : undefined}
-              reminderTime={'reminderTime' in task ? task.reminderTime : undefined}
+              fixedTime={'fixedTime' in task ? task.fixedTime : undefined}
               currentDate={currentDate}
               isTodaySection={isTodaySection}
               onToggle={onToggle}
               onDelete={onDelete}
               onUpdate={onUpdate}
               onUpdateDueDate={onUpdateDueDate}
-              onUpdateReminder={onUpdateReminder}
+              onUpdateFixedTime={onUpdateFixedTime}
               isPreview={isPreview}
             />
           </div>

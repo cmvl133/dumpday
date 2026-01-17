@@ -5,7 +5,10 @@
     "delete": "Usuń",
     "close": "Zamknij",
     "loading": "Ładowanie...",
-    "error": "Wystąpił błąd"
+    "error": "Wystąpił błąd",
+    "confirm": "Potwierdź",
+    "back": "Wstecz",
+    "continue": "Dalej"
   },
   "auth": {
     "login": "Zaloguj się",
@@ -220,7 +223,65 @@
   },
   "schedule": {
     "title": "Harmonogram",
-    "noEvents": "Brak zaplanowanych wydarzeń"
+    "noEvents": "Brak zaplanowanych wydarzeń",
+    "moreEvents": "+{{count}} więcej",
+    "moreTasks": "+{{count}} zadań"
+  },
+  "planning": {
+    "title": "Zaplanuj dzień",
+    "description": "Przejdź przez zadania i zaplanuj dzień",
+    "task": "Zadanie",
+    "noTasks": "Brak zadań do zaplanowania",
+    "noTasksDesc": "Najpierw dodaj jakieś zadania!",
+    "generating": "Generuję optymalny harmonogram...",
+    "planningComplete": "Planowanie zakończone!",
+    "tasksPlanned": "Zaplanowano {{count}} zadań",
+    "planned": "Zaplanowane",
+    "skipped": "Pominięte",
+    "totalTime": "Łączny czas",
+    "generateSchedule": "Wygeneruj harmonogram",
+    "estimation": {
+      "question": "Ile to zajmie?",
+      "15min": "15 min",
+      "30min": "30 min",
+      "1h": "1 godz",
+      "2h": "2 godz",
+      "3h": "3 godz",
+      "custom": "Własny",
+      "customPlaceholder": "Minuty",
+      "skip": "Pomiń to zadanie"
+    },
+    "fixedTime": {
+      "question": "O konkretnej godzinie?",
+      "yes": "Tak, konkretna godzina",
+      "no": "Nie, elastycznie"
+    },
+    "combine": {
+      "question": "Można zrobić w trakcie innego wydarzenia?",
+      "noEvents": "Brak wydarzeń na dziś",
+      "needsFocus": "Wymaga pełnej uwagi"
+    },
+    "summary": {
+      "title": "Twój plan",
+      "subtitle": "Oto zoptymalizowany harmonogram",
+      "editSubtitle": "Ustaw konkretne godziny dla każdego zadania",
+      "warnings": "Ostrzeżenia",
+      "flexible": "Elastycznie",
+      "combined": "połączone",
+      "accept": "Akceptuj",
+      "adjust": "Popraw"
+    },
+    "conflict": {
+      "header": "Konflikty",
+      "title": "Wykryto konflikt",
+      "scheduledFor": "Zaplanowane na {{time}}",
+      "conflictsWith": "pokrywa się z",
+      "question": "Co chcesz zrobić?",
+      "keep": "Zostaw tutaj",
+      "keepDesc": "Zostaw zadanie o tej godzinie",
+      "reschedule": "Przesuń",
+      "rescheduleDesc": "Dodaj do planowania"
+    }
   },
   "app": {
     "noData": "Brak danych dla tego dnia",

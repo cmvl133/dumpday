@@ -118,10 +118,10 @@ export const updateTaskDueDate = createAsyncThunk(
   }
 );
 
-export const updateTaskReminder = createAsyncThunk(
-  'dailyNote/updateTaskReminder',
-  async ({ id, reminderTime }: { id: number; reminderTime: string | null }) => {
-    const result = await api.task.update(id, { reminderTime });
+export const updateTaskFixedTime = createAsyncThunk(
+  'dailyNote/updateTaskFixedTime',
+  async ({ id, fixedTime }: { id: number; fixedTime: string | null }) => {
+    const result = await api.task.update(id, { fixedTime });
     return result;
   }
 );
@@ -310,7 +310,7 @@ const dailyNoteSlice = createSlice({
         }
       })
 
-      .addCase(updateTaskReminder.fulfilled, (state, action) => {
+      .addCase(updateTaskFixedTime.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const task = action.payload;
           const categories = ['today', 'scheduled', 'someday'] as const;

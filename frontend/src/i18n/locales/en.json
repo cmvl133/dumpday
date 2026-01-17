@@ -5,7 +5,10 @@
     "delete": "Delete",
     "close": "Close",
     "loading": "Loading...",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "confirm": "Confirm",
+    "back": "Back",
+    "continue": "Continue"
   },
   "auth": {
     "login": "Log in",
@@ -220,7 +223,65 @@
   },
   "schedule": {
     "title": "Schedule",
-    "noEvents": "No scheduled events"
+    "noEvents": "No scheduled events",
+    "moreEvents": "+{{count}} more",
+    "moreTasks": "+{{count}} tasks"
+  },
+  "planning": {
+    "title": "Plan Your Day",
+    "description": "Go through your tasks and plan your day",
+    "task": "Task",
+    "noTasks": "No tasks to plan",
+    "noTasksDesc": "Add some tasks first!",
+    "generating": "Generating optimal schedule...",
+    "planningComplete": "Planning complete!",
+    "tasksPlanned": "{{count}} tasks planned",
+    "planned": "Planned",
+    "skipped": "Skipped",
+    "totalTime": "Total time",
+    "generateSchedule": "Generate Schedule",
+    "estimation": {
+      "question": "How long will this take?",
+      "15min": "15 min",
+      "30min": "30 min",
+      "1h": "1 hour",
+      "2h": "2 hours",
+      "3h": "3 hours",
+      "custom": "Custom",
+      "customPlaceholder": "Minutes",
+      "skip": "Skip this task"
+    },
+    "fixedTime": {
+      "question": "Does this need a specific time?",
+      "yes": "Yes, specific time",
+      "no": "No, flexible"
+    },
+    "combine": {
+      "question": "Can you do this during another event?",
+      "noEvents": "No events scheduled for today",
+      "needsFocus": "Needs full focus"
+    },
+    "summary": {
+      "title": "Your Plan",
+      "subtitle": "Here's your optimized schedule",
+      "editSubtitle": "Set specific times for each task",
+      "warnings": "Warnings",
+      "flexible": "Flexible",
+      "combined": "combined",
+      "accept": "Accept",
+      "adjust": "Adjust"
+    },
+    "conflict": {
+      "header": "Conflicts",
+      "title": "Conflict Detected",
+      "scheduledFor": "Scheduled for {{time}}",
+      "conflictsWith": "overlaps with",
+      "question": "What would you like to do?",
+      "keep": "Keep it here",
+      "keepDesc": "Leave the task at this time",
+      "reschedule": "Reschedule",
+      "rescheduleDesc": "Add to planning queue"
+    }
   },
   "app": {
     "noData": "No data for this day",

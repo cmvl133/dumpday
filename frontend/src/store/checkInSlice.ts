@@ -2,6 +2,36 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
 import type { CheckInTask, CheckInStats } from '@/types';
 
+const LAST_CHECK_IN_KEY = 'dopaminder_last_check_in';
+
+function getStoredLastCheckIn(): string | null {
+  try {
+    const stored = localStorage.getItem(LAST_CHECK_IN_KEY);
+    if (stored) {
+      // Verify it's a valid date
+      const date = new Date(stored);
+      if (!isNaN(date.getTime())) {
+        return stored;
+      }
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return null;
+}
+
+function storeLastCheckIn(value: string | null): void {
+  try {
+    if (value) {
+      localStorage.setItem(LAST_CHECK_IN_KEY, value);
+    } else {
+      localStorage.removeItem(LAST_CHECK_IN_KEY);
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
 interface CheckInState {
   isOpen: boolean;
   tasks: { overdue: CheckInTask[]; today: CheckInTask[] };
@@ -29,7 +59,7 @@ const initialState: CheckInState = {
     bestCombo: 0,
   },
   isLoading: false,
-  lastCheckInAt: null,
+  lastCheckInAt: getStoredLastCheckIn(),
   error: null,
 };
 
@@ -82,7 +112,9 @@ const checkInSlice = createSlice({
       };
       state.error = null;
       // Update lastCheckInAt when opening to prevent immediate re-open if dismissed
-      state.lastCheckInAt = new Date().toISOString();
+      const now = new Date().toISOString();
+      state.lastCheckInAt = now;
+      storeLastCheckIn(now);
     },
     closeCheckIn: (state) => {
       state.isOpen = false;
@@ -119,14 +151,25 @@ const checkInSlice = createSlice({
           overdue: action.payload.overdue,
           today: action.payload.today,
         };
-        state.lastCheckInAt = action.payload.lastCheckInAt;
+        // Only update lastCheckInAt from API if we don't have a more recent local value
+        const apiLastCheckIn = action.payload.lastCheckInAt;
+        if (apiLastCheckIn) {
+          const apiDate = new Date(apiLastCheckIn).getTime();
+          const localDate = state.lastCheckInAt ? new Date(state.lastCheckInAt).getTime() : 0;
+          if (apiDate > localDate) {
+            state.lastCheckInAt = apiLastCheckIn;
+            storeLastCheckIn(apiLastCheckIn);
+          }
+        }
       })
       .addCase(fetchCheckInTasks.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Failed to fetch tasks';
       })
       .addCase(completeCheckIn.fulfilled, (state, action) => {
-        state.lastCheckInAt = action.payload.checkIn.completedAt;
+        const completedAt = action.payload.checkIn.completedAt;
+        state.lastCheckInAt = completedAt;
+        storeLastCheckIn(completedAt);
       });
   },
 });

@@ -9,6 +9,10 @@ export interface Task {
   category?: TaskCategory;
   completedAt?: string | null;
   reminderTime?: string | null;
+  estimatedMinutes?: number | null;
+  fixedTime?: string | null;
+  canCombineWithEvents?: number[] | null;
+  needsFullFocus?: boolean;
 }
 
 export type CheckInInterval = 'off' | '1h' | '2h' | '3h' | '4h';
@@ -126,4 +130,51 @@ export interface SaveDailyNoteRequest {
   rawContent: string;
   date: string;
   analysis: AnalysisResponse;
+}
+
+// Planning Mode types
+export interface PlanningEvent {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime: string | null;
+}
+
+export interface PlanningTask extends Task {
+  id: number;
+  hasConflict?: boolean;
+  conflictingEvent?: PlanningEvent | null;
+}
+
+export interface PlanningTasksResponse {
+  tasks: PlanningTask[];
+  conflictingTasks: PlanningTask[];
+  events: PlanningEvent[];
+}
+
+export interface PlanningTaskData {
+  estimatedMinutes?: number | null;
+  fixedTime?: string | null;
+  canCombineWithEvents?: number[] | null;
+  needsFullFocus?: boolean;
+}
+
+export interface ScheduleSuggestion {
+  taskId: number;
+  suggestedTime: string | null;
+  duration: number;
+  combinedWithEventId: number | null;
+  reasoning: string;
+}
+
+export interface GeneratedSchedule {
+  schedule: ScheduleSuggestion[];
+  warnings: string[];
+}
+
+export interface PlanningStats {
+  totalTasks: number;
+  planned: number;
+  skipped: number;
+  totalMinutes: number;
 }

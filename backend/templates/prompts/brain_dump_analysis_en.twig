@@ -63,6 +63,7 @@ EVENTS (events):
   - "around 11:00 do X" or "about 11 call" → event at 11:00
   - "morning meeting" → event at 9:00 (default)
   - "afternoon appointment" → event at 14:00 (default)
+  - "haircut at 8" → ONLY event at 8:00 (DO NOT create task!)
 - Time blocks with hour ranges:
   - "8:00 - 16:00 work at company X" → event 8:00-16:00
   - "from 4-6pm work on Y" → event 16:00-18:00
@@ -72,6 +73,13 @@ EVENTS (events):
   - Appointment (doctor/barber): 60 min
   - Short call/phone: 15-30 min
   - Work block: until end of work day or 8h
+
+IMPORTANT - DO NOT DUPLICATE:
+- If something has a specific time → create ONLY event, DO NOT create task!
+- "haircut at 8" → ONLY event, not task
+- "meeting at 2pm" → ONLY event, not task
+- "daily at 10" → ONLY event, not task
+- Create task only when there's NO specific time or it's an action to perform (not meeting/appointment)
 
 NOTES (notes):
 - Facts, information to remember (addresses, numbers, amounts, names, codes)

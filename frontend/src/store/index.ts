@@ -4,6 +4,7 @@ import dailyNoteReducer from './dailyNoteSlice';
 import authReducer from './authSlice';
 import checkInReducer from './checkInSlice';
 import settingsReducer from './settingsSlice';
+import planningReducer from './planningSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     auth: authReducer,
     checkIn: checkInReducer,
     settings: settingsReducer,
+    planning: planningReducer,
   },
 });
 

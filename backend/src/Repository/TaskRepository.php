@@ -86,4 +86,48 @@ class TaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Find all incomplete tasks for today that don't have a fixed time set yet (for Planning Mode).
+     *
+     * @return Task[]
+     */
+    public function findUnplannedTasksForToday(User $user, \DateTimeInterface $today): array
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.dailyNote', 'dn')
+            ->where('dn.user = :user')
+            ->andWhere('(t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('t.isCompleted = false')
+            ->andWhere('t.isDropped = false')
+            ->andWhere('t.fixedTime IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('today', $today->format('Y-m-d'))
+            ->setParameter('todayCategory', TaskCategory::TODAY->value)
+            ->orderBy('t.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find all incomplete tasks for today that HAVE a fixed time set (for conflict detection).
+     *
+     * @return Task[]
+     */
+    public function findPlannedTasksForToday(User $user, \DateTimeInterface $today): array
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.dailyNote', 'dn')
+            ->where('dn.user = :user')
+            ->andWhere('(t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('t.isCompleted = false')
+            ->andWhere('t.isDropped = false')
+            ->andWhere('t.fixedTime IS NOT NULL')
+            ->setParameter('user', $user)
+            ->setParameter('today', $today->format('Y-m-d'))
+            ->setParameter('todayCategory', TaskCategory::TODAY->value)
+            ->orderBy('t.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
