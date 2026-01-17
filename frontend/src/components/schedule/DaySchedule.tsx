@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -147,6 +148,8 @@ export function DaySchedule({
   onUpdateEvent,
   onDeleteEvent,
 }: DayScheduleProps) {
+  const { t } = useTranslation();
+
   // Calculate layout for overlapping events
   const eventsWithLayout = useMemo(
     () => calculateEventLayout(events),
@@ -158,7 +161,7 @@ export function DaySchedule({
       <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-lg flex items-center gap-2">
           <Clock className="h-5 w-5 text-primary" />
-          Harmonogram
+          {t('schedule.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 p-0 overflow-hidden">
@@ -189,7 +192,7 @@ export function DaySchedule({
             {events.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="text-sm text-muted-foreground">
-                  Brak zaplanowanych wydarzeń
+                  {t('schedule.noEvents')}
                 </p>
               </div>
             )}

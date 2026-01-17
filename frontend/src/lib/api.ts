@@ -3,6 +3,7 @@ import type {
   DailyNoteData,
   SaveDailyNoteRequest,
   Task,
+  TaskCategory,
   Event,
   JournalEntry,
   Note,
@@ -108,6 +109,25 @@ export const api = {
   },
 
   task: {
+    create: async (data: {
+      title: string;
+      date: string;
+      dueDate?: string | null;
+      category?: TaskCategory;
+    }): Promise<Task> => {
+      const response = await fetch(`${API_BASE}/task`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create task');
+      }
+      return response.json();
+    },
+
     update: async (
       id: number,
       data: Partial<Pick<Task, 'isCompleted' | 'title' | 'dueDate' | 'reminderTime'>>
@@ -168,6 +188,20 @@ export const api = {
   },
 
   journal: {
+    create: async (data: { content: string; date: string }): Promise<JournalEntry> => {
+      const response = await fetch(`${API_BASE}/journal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create journal entry');
+      }
+      return response.json();
+    },
+
     update: async (
       id: number,
       data: Partial<Pick<JournalEntry, 'content'>>
@@ -198,6 +232,20 @@ export const api = {
   },
 
   note: {
+    create: async (data: { content: string; date: string }): Promise<Note> => {
+      const response = await fetch(`${API_BASE}/note`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create note');
+      }
+      return response.json();
+    },
+
     update: async (
       id: number,
       data: Partial<Pick<Note, 'content'>>

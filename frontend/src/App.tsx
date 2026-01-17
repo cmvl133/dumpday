@@ -1,8 +1,10 @@
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import {
   fetchDailyNote,
   setCurrentDate,
+  createTask,
   toggleTaskComplete,
   deleteTask,
   updateTask,
@@ -10,8 +12,10 @@ import {
   updateTaskReminder,
   updateEvent,
   deleteEvent,
+  createJournalEntry,
   updateJournalEntry,
   deleteJournalEntry,
+  createNote,
   updateNote,
   deleteNote,
 } from './store/dailyNoteSlice';
@@ -28,9 +32,10 @@ import { CheckInModal } from './components/check-in/CheckInModal';
 import { useAutoCheckIn } from './hooks/useAutoCheckIn';
 import { useReminders } from './hooks/useReminders';
 import { Loader2 } from 'lucide-react';
-import type { AnalysisResponse, DailyNoteData } from './types';
+import type { AnalysisResponse, DailyNoteData, TaskCategory } from './types';
 
 function App() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const {
     currentDate,
@@ -194,6 +199,18 @@ function App() {
     dispatch(deleteJournalEntry(id));
   };
 
+  const handleAddTask = (title: string, dueDate: string | null, category: TaskCategory) => {
+    dispatch(createTask({ title, date: currentDate, dueDate, category }));
+  };
+
+  const handleAddNote = (content: string) => {
+    dispatch(createNote({ content, date: currentDate }));
+  };
+
+  const handleAddJournal = (content: string) => {
+    dispatch(createJournalEntry({ content, date: currentDate }));
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -218,7 +235,7 @@ function App() {
             <ScrollArea className="h-full">
               {isLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <p className="text-muted-foreground">Ładowanie...</p>
+                  <p className="text-muted-foreground">{t('common.loading')}</p>
                 </div>
               ) : displayData ? (
                 <AnalysisResults
@@ -230,19 +247,22 @@ function App() {
                   onUpdateTask={handleUpdateTask}
                   onUpdateTaskDueDate={handleUpdateTaskDueDate}
                   onUpdateTaskReminder={handleUpdateTaskReminder}
+                  onAddTask={handleAddTask}
                   onUpdateNote={handleUpdateNote}
                   onDeleteNote={handleDeleteNote}
+                  onAddNote={handleAddNote}
                   onUpdateJournal={handleUpdateJournal}
                   onDeleteJournal={handleDeleteJournal}
+                  onAddJournal={handleAddJournal}
                 />
               ) : (
                 <div className="flex items-center justify-center h-64">
                   <div className="text-center">
                     <p className="text-muted-foreground mb-2">
-                      Brak danych dla tego dnia
+                      {t('app.noData')}
                     </p>
                     <p className="text-sm text-muted-foreground/70">
-                      Zacznij pisać w sekcji Brain Dump...
+                      {t('app.startTyping')}
                     </p>
                   </div>
                 </div>

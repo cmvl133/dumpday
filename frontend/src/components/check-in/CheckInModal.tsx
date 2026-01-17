@@ -164,7 +164,7 @@ export function CheckInModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <DialogTitle className="sr-only">{t('checkIn.title')}</DialogTitle>
         <DialogDescription className="sr-only">
           {t('checkIn.reviewTasks')}

@@ -52,7 +52,14 @@
     "deleteTask": "Delete task",
     "taskPlaceholder": "What needs to be done?",
     "notes": "Notes",
-    "journal": "Journal"
+    "journal": "Journal",
+    "addNote": "Add note",
+    "addEntry": "Add entry",
+    "notePlaceholder": "Note something...",
+    "journalPlaceholder": "How are you feeling?",
+    "noNotes": "No notes yet",
+    "noEntries": "No entries yet",
+    "newLine": "new line"
   },
   "checkIn": {
     "title": "Check-in",
@@ -210,5 +217,13 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "yesterday": "Yesterday"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "noEvents": "No scheduled events"
+  },
+  "app": {
+    "noData": "No data for this day",
+    "startTyping": "Start typing in the Brain Dump section..."
   }
 }

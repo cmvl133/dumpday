@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
 import { calculateTopPercent, calculateHeightPercent } from '@/lib/utils';
-import type { DailyNoteData, AnalysisResponse } from '@/types';
+import type { DailyNoteData, AnalysisResponse, TaskCategory } from '@/types';
 
 interface DailyNoteState {
   currentDate: string;
@@ -71,6 +71,24 @@ export const saveDailyNote = createAsyncThunk(
 );
 
 // Task operations
+export const createTask = createAsyncThunk(
+  'dailyNote/createTask',
+  async ({
+    title,
+    date,
+    dueDate,
+    category,
+  }: {
+    title: string;
+    date: string;
+    dueDate?: string | null;
+    category?: TaskCategory;
+  }) => {
+    const result = await api.task.create({ title, date, dueDate, category });
+    return { task: result, category: category || 'today' };
+  }
+);
+
 export const toggleTaskComplete = createAsyncThunk(
   'dailyNote/toggleTask',
   async ({ id, isCompleted }: { id: number; isCompleted: boolean }) => {
@@ -140,6 +158,14 @@ export const deleteEvent = createAsyncThunk(
 );
 
 // Journal operations
+export const createJournalEntry = createAsyncThunk(
+  'dailyNote/createJournal',
+  async ({ content, date }: { content: string; date: string }) => {
+    const result = await api.journal.create({ content, date });
+    return result;
+  }
+);
+
 export const updateJournalEntry = createAsyncThunk(
   'dailyNote/updateJournal',
   async ({ id, content }: { id: number; content: string }) => {
@@ -157,6 +183,14 @@ export const deleteJournalEntry = createAsyncThunk(
 );
 
 // Note operations
+export const createNote = createAsyncThunk(
+  'dailyNote/createNote',
+  async ({ content, date }: { content: string; date: string }) => {
+    const result = await api.note.create({ content, date });
+    return result;
+  }
+);
+
 export const updateNote = createAsyncThunk(
   'dailyNote/updateNote',
   async ({ id, content }: { id: number; content: string }) => {
@@ -239,6 +273,13 @@ const dailyNoteSlice = createSlice({
       })
 
       // Task handlers
+      .addCase(createTask.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          const { task, category } = action.payload;
+          state.dailyNote.tasks[category as 'today' | 'scheduled' | 'someday'].push(task);
+        }
+      })
+
       .addCase(toggleTaskComplete.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const task = action.payload;
@@ -339,6 +380,12 @@ const dailyNoteSlice = createSlice({
       })
 
       // Journal handlers
+      .addCase(createJournalEntry.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          state.dailyNote.journal.push(action.payload);
+        }
+      })
+
       .addCase(updateJournalEntry.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const updated = action.payload;
@@ -364,6 +411,12 @@ const dailyNoteSlice = createSlice({
       })
 
       // Note handlers
+      .addCase(createNote.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          state.dailyNote.notes.push(action.payload);
+        }
+      })
+
       .addCase(updateNote.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const updated = action.payload;

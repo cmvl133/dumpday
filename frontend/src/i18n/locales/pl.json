@@ -52,7 +52,14 @@
     "deleteTask": "Usuń zadanie",
     "taskPlaceholder": "Co trzeba zrobić?",
     "notes": "Notatki",
-    "journal": "Dziennik"
+    "journal": "Dziennik",
+    "addNote": "Dodaj notatkę",
+    "addEntry": "Dodaj wpis",
+    "notePlaceholder": "Zanotuj coś...",
+    "journalPlaceholder": "Jak się czujesz?",
+    "noNotes": "Brak notatek",
+    "noEntries": "Brak wpisów",
+    "newLine": "nowa linia"
   },
   "checkIn": {
     "title": "Check-in",
@@ -210,5 +217,13 @@
     "today": "Dziś",
     "tomorrow": "Jutro",
     "yesterday": "Wczoraj"
+  },
+  "schedule": {
+    "title": "Harmonogram",
+    "noEvents": "Brak zaplanowanych wydarzeń"
+  },
+  "app": {
+    "noData": "Brak danych dla tego dnia",
+    "startTyping": "Zacznij pisać w sekcji Brain Dump..."
   }
 }

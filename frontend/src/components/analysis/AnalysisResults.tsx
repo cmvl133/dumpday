@@ -47,10 +47,13 @@ interface AnalysisResultsProps {
   onUpdateTask?: (id: number, title: string) => void;
   onUpdateTaskDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateTaskReminder?: (id: number, reminderTime: string | null) => void;
+  onAddTask?: (title: string, dueDate: string | null, category: 'today' | 'scheduled' | 'someday') => void;
   onUpdateNote?: (id: number, content: string) => void;
   onDeleteNote?: (id: number) => void;
+  onAddNote?: (content: string) => void;
   onUpdateJournal?: (id: number, content: string) => void;
   onDeleteJournal?: (id: number) => void;
+  onAddJournal?: (content: string) => void;
 }
 
 interface CollapsibleCardProps {
@@ -120,10 +123,13 @@ export function AnalysisResults({
   onUpdateTask,
   onUpdateTaskDueDate,
   onUpdateTaskReminder,
+  onAddTask,
   onUpdateNote,
   onDeleteNote,
+  onAddNote,
   onUpdateJournal,
   onDeleteJournal,
+  onAddJournal,
 }: AnalysisResultsProps) {
   const { t } = useTranslation();
   const [collapsedBoxes, setCollapsedBoxes] = useState<BoxId[]>([]);
@@ -172,11 +178,13 @@ export function AnalysisResults({
           tasks={tasks.today || []}
           currentDate={currentDate}
           isTodaySection={true}
+          sectionType="today"
           onToggle={onToggleTask}
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateReminder={onUpdateTaskReminder}
+          onAdd={onAddTask}
           isPreview={isPreview}
         />
       </CollapsibleCard>
@@ -193,11 +201,13 @@ export function AnalysisResults({
         <TaskList
           tasks={tasks.scheduled || []}
           currentDate={currentDate}
+          sectionType="scheduled"
           onToggle={onToggleTask}
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateReminder={onUpdateTaskReminder}
+          onAdd={onAddTask}
           isPreview={isPreview}
         />
       </CollapsibleCard>
@@ -214,11 +224,13 @@ export function AnalysisResults({
         <TaskList
           tasks={tasks.someday || []}
           currentDate={currentDate}
+          sectionType="someday"
           onToggle={onToggleTask}
           onDelete={onDeleteTask}
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateReminder={onUpdateTaskReminder}
+          onAdd={onAddTask}
           isPreview={isPreview}
         />
       </CollapsibleCard>
@@ -237,6 +249,7 @@ export function AnalysisResults({
           isPreview={isPreview}
           onUpdate={onUpdateNote}
           onDelete={onDeleteNote}
+          onAdd={onAddNote}
         />
       </CollapsibleCard>
 
@@ -254,6 +267,7 @@ export function AnalysisResults({
           isPreview={isPreview}
           onUpdate={onUpdateJournal}
           onDelete={onDeleteJournal}
+          onAdd={onAddJournal}
         />
       </CollapsibleCard>
     </div>

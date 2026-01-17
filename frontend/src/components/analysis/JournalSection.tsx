@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { Heart, Pencil, Trash2, Check, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Heart, Pencil, Trash2, Check, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import type { JournalEntry } from '@/types';
 
 interface JournalSectionProps {
@@ -9,6 +11,7 @@ interface JournalSectionProps {
   isPreview?: boolean;
   onUpdate?: (id: number, content: string) => void;
   onDelete?: (id: number) => void;
+  onAdd?: (content: string) => void;
 }
 
 export function JournalSection({
@@ -16,15 +19,21 @@ export function JournalSection({
   isPreview = false,
   onUpdate,
   onDelete,
+  onAdd,
 }: JournalSectionProps) {
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [newEntryContent, setNewEntryContent] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [justAdded, setJustAdded] = useState<number | null>(null);
 
-  if (entries.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground py-2">Brak wpisów</p>
-    );
-  }
+  useEffect(() => {
+    if (isAdding && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isAdding]);
 
   const handleEdit = (entry: JournalEntry) => {
     if (entry.id !== undefined) {
@@ -52,8 +61,44 @@ export function JournalSection({
     }
   };
 
+  const handleStartAdding = () => {
+    setIsAdding(true);
+    setNewEntryContent('');
+  };
+
+  const handleCancelAdding = () => {
+    setIsAdding(false);
+    setNewEntryContent('');
+  };
+
+  const handleSaveEntry = () => {
+    if (!newEntryContent.trim() || !onAdd) return;
+    onAdd(newEntryContent.trim());
+    setNewEntryContent('');
+    setIsAdding(false);
+
+    // Flash effect for newly added entry
+    setTimeout(() => {
+      setJustAdded(entries.length);
+      setTimeout(() => setJustAdded(null), 500);
+    }, 100);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSaveEntry();
+    } else if (e.key === 'Escape') {
+      handleCancelAdding();
+    }
+  };
+
   return (
     <div className="space-y-3">
+      {entries.length === 0 && !isAdding && (
+        <p className="text-sm text-muted-foreground py-2">{t('tasks.noEntries')}</p>
+      )}
+
       {entries.map((entry, index) => {
         const entryId = 'id' in entry && entry.id !== undefined ? entry.id : null;
         const isEditing = entryId !== null && editingId === entryId;
@@ -61,7 +106,10 @@ export function JournalSection({
         return (
           <div
             key={entryId ?? index}
-            className="flex items-start gap-2 py-2 bg-muted/30 rounded-lg px-3 group"
+            className={cn(
+              'flex items-start gap-2 py-2 bg-muted/30 rounded-lg px-3 group transition-all duration-300',
+              justAdded === index && 'bg-primary/10 animate-pulse'
+            )}
           >
             <Heart className="h-4 w-4 text-pink-500 mt-0.5 shrink-0" />
 
@@ -80,7 +128,7 @@ export function JournalSection({
                     onClick={handleSave}
                   >
                     <Check className="h-4 w-4 mr-1 text-green-600" />
-                    Zapisz
+                    {t('common.save')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -88,7 +136,7 @@ export function JournalSection({
                     onClick={handleCancel}
                   >
                     <X className="h-4 w-4 mr-1" />
-                    Anuluj
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </div>
@@ -125,6 +173,36 @@ export function JournalSection({
           </div>
         );
       })}
+
+      {/* Inline add form */}
+      {isAdding && (
+        <div className="py-2 animate-in slide-in-from-top-2 fade-in duration-200">
+          <Textarea
+            ref={textareaRef}
+            value={newEntryContent}
+            onChange={(e) => setNewEntryContent(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('tasks.journalPlaceholder')}
+            className="min-h-[80px]"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Enter - {t('common.save')} · Shift+Enter - {t('tasks.newLine', 'new line')} · Escape - {t('common.cancel')}
+          </p>
+        </div>
+      )}
+
+      {/* Add entry button */}
+      {!isPreview && onAdd && !isAdding && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full mt-2 text-muted-foreground hover:text-foreground"
+          onClick={handleStartAdding}
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          {t('tasks.addEntry')}
+        </Button>
+      )}
     </div>
   );
 }

@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { StickyNote, Pencil, Trash2, Check, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { StickyNote, Pencil, Trash2, Check, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import type { Note } from '@/types';
 
 interface NotesListProps {
@@ -9,6 +11,7 @@ interface NotesListProps {
   isPreview?: boolean;
   onUpdate?: (id: number, content: string) => void;
   onDelete?: (id: number) => void;
+  onAdd?: (content: string) => void;
 }
 
 export function NotesList({
@@ -16,15 +19,21 @@ export function NotesList({
   isPreview = false,
   onUpdate,
   onDelete,
+  onAdd,
 }: NotesListProps) {
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [isAdding, setIsAdding] = useState(false);
+  const [newNoteContent, setNewNoteContent] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [justAdded, setJustAdded] = useState<number | null>(null);
 
-  if (notes.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground py-2">Brak notatek</p>
-    );
-  }
+  useEffect(() => {
+    if (isAdding && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isAdding]);
 
   const handleEdit = (note: Note) => {
     if (note.id !== undefined) {
@@ -52,8 +61,44 @@ export function NotesList({
     }
   };
 
+  const handleStartAdding = () => {
+    setIsAdding(true);
+    setNewNoteContent('');
+  };
+
+  const handleCancelAdding = () => {
+    setIsAdding(false);
+    setNewNoteContent('');
+  };
+
+  const handleSaveNote = () => {
+    if (!newNoteContent.trim() || !onAdd) return;
+    onAdd(newNoteContent.trim());
+    setNewNoteContent('');
+    setIsAdding(false);
+
+    // Flash effect for newly added note
+    setTimeout(() => {
+      setJustAdded(notes.length);
+      setTimeout(() => setJustAdded(null), 500);
+    }, 100);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSaveNote();
+    } else if (e.key === 'Escape') {
+      handleCancelAdding();
+    }
+  };
+
   return (
     <div className="space-y-2">
+      {notes.length === 0 && !isAdding && (
+        <p className="text-sm text-muted-foreground py-2">{t('tasks.noNotes')}</p>
+      )}
+
       {notes.map((note, index) => {
         const noteId = 'id' in note && note.id !== undefined ? note.id : null;
         const isEditing = noteId !== null && editingId === noteId;
@@ -61,7 +106,10 @@ export function NotesList({
         return (
           <div
             key={noteId ?? index}
-            className="flex items-start gap-2 py-2 group"
+            className={cn(
+              'flex items-start gap-2 py-2 group transition-all duration-300',
+              justAdded === index && 'bg-primary/10 animate-pulse'
+            )}
           >
             <StickyNote className="h-4 w-4 text-primary mt-0.5 shrink-0" />
 
@@ -80,7 +128,7 @@ export function NotesList({
                     onClick={handleSave}
                   >
                     <Check className="h-4 w-4 mr-1 text-green-600" />
-                    Zapisz
+                    {t('common.save')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -88,7 +136,7 @@ export function NotesList({
                     onClick={handleCancel}
                   >
                     <X className="h-4 w-4 mr-1" />
-                    Anuluj
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </div>
@@ -125,6 +173,36 @@ export function NotesList({
           </div>
         );
       })}
+
+      {/* Inline add form */}
+      {isAdding && (
+        <div className="py-2 animate-in slide-in-from-top-2 fade-in duration-200">
+          <Textarea
+            ref={textareaRef}
+            value={newNoteContent}
+            onChange={(e) => setNewNoteContent(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t('tasks.notePlaceholder')}
+            className="min-h-[60px]"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Enter - {t('common.save')} · Shift+Enter - {t('tasks.newLine', 'new line')} · Escape - {t('common.cancel')}
+          </p>
+        </div>
+      )}
+
+      {/* Add note button */}
+      {!isPreview && onAdd && !isAdding && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full mt-2 text-muted-foreground hover:text-foreground"
+          onClick={handleStartAdding}
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          {t('tasks.addNote')}
+        </Button>
+      )}
     </div>
   );
 }

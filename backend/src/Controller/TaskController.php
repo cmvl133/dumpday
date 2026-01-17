@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\DailyNote;
+use App\Entity\Task;
 use App\Entity\User;
+use App\Enum\TaskCategory;
+use App\Repository\DailyNoteRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,8 +23,57 @@ class TaskController extends AbstractController
 {
     public function __construct(
         private readonly TaskRepository $taskRepository,
+        private readonly DailyNoteRepository $dailyNoteRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
+    }
+
+    #[Route('', name: 'task_create', methods: ['POST'])]
+    public function create(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['title']) || empty($data['date'])) {
+            return $this->json([
+                'error' => 'Title and date are required',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $date = new \DateTime($data['date']);
+        $dailyNote = $this->dailyNoteRepository->findByUserAndDate($user, $date);
+
+        if ($dailyNote === null) {
+            $dailyNote = new DailyNote();
+            $dailyNote->setUser($user);
+            $dailyNote->setDate($date);
+            $this->entityManager->persist($dailyNote);
+        }
+
+        $task = new Task();
+        $task->setTitle((string) $data['title']);
+        $task->setDailyNote($dailyNote);
+
+        if (isset($data['category']) && TaskCategory::tryFrom($data['category']) !== null) {
+            $task->setCategory(TaskCategory::from($data['category']));
+        }
+
+        if (isset($data['dueDate']) && $data['dueDate'] !== null && $data['dueDate'] !== '') {
+            $task->setDueDate(new \DateTime($data['dueDate']));
+        }
+
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'id' => $task->getId(),
+            'title' => $task->getTitle(),
+            'isCompleted' => $task->isCompleted(),
+            'isDropped' => $task->isDropped(),
+            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+            'category' => $task->getCategory()->value,
+            'completedAt' => $task->getCompletedAt()?->format('c'),
+            'reminderTime' => $task->getReminderTime()?->format('H:i'),
+        ], Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'task_update', methods: ['PATCH'])]

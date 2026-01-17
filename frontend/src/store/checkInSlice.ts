@@ -81,6 +81,8 @@ const checkInSlice = createSlice({
         bestCombo: 0,
       };
       state.error = null;
+      // Update lastCheckInAt when opening to prevent immediate re-open if dismissed
+      state.lastCheckInAt = new Date().toISOString();
     },
     closeCheckIn: (state) => {
       state.isOpen = false;
