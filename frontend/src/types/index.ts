@@ -165,6 +165,7 @@ export interface ScheduleSuggestion {
   duration: number;
   combinedWithEventId: number | null;
   reasoning: string;
+  taskTitle?: string;
 }
 
 export interface GeneratedSchedule {
@@ -177,4 +178,24 @@ export interface PlanningStats {
   planned: number;
   skipped: number;
   totalMinutes: number;
+}
+
+// Rebuild types
+export interface RebuildParsedItems {
+  newTasks: { title: string }[];
+  journalEntries: number;
+  notes: number;
+}
+
+export interface RebuildResponse {
+  schedule: ScheduleSuggestion[];
+  warnings: string[];
+  parsedItems: RebuildParsedItems;
+}
+
+export interface RebuildRequest {
+  keepTaskIds: number[];
+  keepEventIds: number[];
+  additionalInput: string | null;
+  workUntilTime: string;
 }

@@ -8,7 +8,8 @@
     "error": "Wystąpił błąd",
     "confirm": "Potwierdź",
     "back": "Wstecz",
-    "continue": "Dalej"
+    "continue": "Dalej",
+    "skip": "Pomiń"
   },
   "auth": {
     "login": "Zaloguj się",
@@ -286,5 +287,35 @@
   "app": {
     "noData": "Brak danych dla tego dnia",
     "startTyping": "Zacznij pisać w sekcji Brain Dump..."
+  },
+  "howAreYou": {
+    "title": "Jak leci?",
+    "back": "Wstecz",
+    "quickCheckIn": {
+      "title": "Szybki check-in",
+      "description": "Szybki przegląd tasków"
+    },
+    "planDay": {
+      "title": "Zaplanuj dzień",
+      "description": "Estymuj czasy i zaplanuj taski"
+    },
+    "dayFellApart": {
+      "title": "Dzień się rozjechał",
+      "description": "Przebuduj dzień od zera"
+    },
+    "rebuild": {
+      "whatsHappening": "Co jeszcze aktualne?",
+      "whatsHappeningDesc": "Odznacz co odpadło",
+      "tasks": "Zadania",
+      "events": "Wydarzenia",
+      "anythingElse": "Co jeszcze się dzieje?",
+      "anythingElsePlaceholder": "Nowe zadania, jak się czujesz, zmiany w planie...",
+      "workUntil": "Do której możesz pracować?",
+      "customTime": "Inna godzina",
+      "rebuild": "Przebuduj",
+      "generating": "Generuję...",
+      "newPlan": "Oto nowy plan",
+      "alsoAdded": "Dodano też: {{journal}} wpis, {{notes}} notatek"
+    }
   }
 }

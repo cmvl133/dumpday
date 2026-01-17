@@ -5,6 +5,7 @@ import authReducer from './authSlice';
 import checkInReducer from './checkInSlice';
 import settingsReducer from './settingsSlice';
 import planningReducer from './planningSlice';
+import howAreYouReducer from './howAreYouSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     checkIn: checkInReducer,
     settings: settingsReducer,
     planning: planningReducer,
+    howAreYou: howAreYouReducer,
   },
 });
 

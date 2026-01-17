@@ -28,9 +28,8 @@ import { AnalysisResults } from './components/analysis/AnalysisResults';
 import { DaySchedule } from './components/schedule/DaySchedule';
 import { ScrollArea } from './components/ui/scroll-area';
 import { LoginPage } from './components/auth/LoginPage';
-import { CheckInModal } from './components/check-in/CheckInModal';
-import { PlanningModal } from './components/planning/PlanningModal';
-import { useAutoCheckIn } from './hooks/useAutoCheckIn';
+import { HowAreYouModal } from './components/how-are-you';
+import { useAutoModal } from './hooks/useAutoModal';
 import { useReminders } from './hooks/useReminders';
 import { Loader2 } from 'lucide-react';
 import type { AnalysisResponse, DailyNoteData, TaskCategory } from './types';
@@ -49,7 +48,7 @@ function App() {
     (state) => state.auth
   );
 
-  useAutoCheckIn();
+  useAutoModal();
   useReminders();
 
   useEffect(() => {
@@ -301,8 +300,7 @@ function App() {
         </div>
       </main>
 
-      <CheckInModal />
-      <PlanningModal />
+      <HowAreYouModal />
     </div>
   );
 }

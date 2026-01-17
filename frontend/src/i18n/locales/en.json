@@ -8,7 +8,8 @@
     "error": "An error occurred",
     "confirm": "Confirm",
     "back": "Back",
-    "continue": "Continue"
+    "continue": "Continue",
+    "skip": "Skip"
   },
   "auth": {
     "login": "Log in",
@@ -286,5 +287,35 @@
   "app": {
     "noData": "No data for this day",
     "startTyping": "Start typing in the Brain Dump section..."
+  },
+  "howAreYou": {
+    "title": "How are you doing?",
+    "back": "Back",
+    "quickCheckIn": {
+      "title": "Quick check-in",
+      "description": "Quick review of your tasks"
+    },
+    "planDay": {
+      "title": "Plan my day",
+      "description": "Estimate times and schedule tasks"
+    },
+    "dayFellApart": {
+      "title": "Day fell apart",
+      "description": "Rebuild your day from scratch"
+    },
+    "rebuild": {
+      "whatsHappening": "What's still happening?",
+      "whatsHappeningDesc": "Uncheck what got cancelled",
+      "tasks": "Tasks",
+      "events": "Events",
+      "anythingElse": "Anything else going on?",
+      "anythingElsePlaceholder": "New tasks, how you're feeling, schedule changes...",
+      "workUntil": "What time can you work until?",
+      "customTime": "Custom time",
+      "rebuild": "Rebuild",
+      "generating": "Generating...",
+      "newPlan": "Here's your new plan",
+      "alsoAdded": "Also added: {{journal}} journal, {{notes}} notes"
+    }
   }
 }

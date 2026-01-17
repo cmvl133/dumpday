@@ -15,6 +15,8 @@ import type {
   PlanningTaskData,
   GeneratedSchedule,
   ScheduleSuggestion,
+  RebuildRequest,
+  RebuildResponse,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -407,6 +409,38 @@ export const api = {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to accept schedule');
+      }
+      return response.json();
+    },
+  },
+
+  rebuild: {
+    generate: async (data: RebuildRequest): Promise<RebuildResponse> => {
+      const response = await fetch(`${API_BASE}/rebuild`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to generate rebuild schedule');
+      }
+      return response.json();
+    },
+
+    accept: async (
+      schedule: ScheduleSuggestion[]
+    ): Promise<{ success: boolean }> => {
+      const response = await fetch(`${API_BASE}/rebuild/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schedule }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to accept rebuild schedule');
       }
       return response.json();
     },
