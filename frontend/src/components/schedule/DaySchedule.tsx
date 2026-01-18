@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock, Plus } from 'lucide-react';
+import { Clock, Plus, Maximize2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { TimeSlot } from './TimeSlot';
 import { EventBlock } from './EventBlock';
-import { TaskDot } from './TaskDot';
+import { TaskBlock } from './TaskBlock';
 import { AddEventForm } from './AddEventForm';
 import type { ScheduleEvent, Task } from '@/types';
 
@@ -20,6 +20,7 @@ interface DayScheduleProps {
   ) => void;
   onDeleteEvent?: (id: number) => void;
   onToggleTask?: (id: number, isCompleted: boolean) => void;
+  onExpand?: () => void;
 }
 
 export interface EventWithLayout extends ScheduleEvent {
@@ -27,8 +28,15 @@ export interface EventWithLayout extends ScheduleEvent {
   totalColumns: number;
 }
 
+export interface TaskWithLayout extends Task {
+  topPercent: number;
+  heightPercent: number;
+  offsetIndex: number;
+}
+
 const SCHEDULE_START_HOUR = 6;
 const SCHEDULE_END_HOUR = 22;
+const TOTAL_MINUTES = (SCHEDULE_END_HOUR - SCHEDULE_START_HOUR) * 60;
 const HOURS = Array.from(
   { length: SCHEDULE_END_HOUR - SCHEDULE_START_HOUR },
   (_, i) => i + SCHEDULE_START_HOUR
@@ -147,15 +155,82 @@ function calculateEventLayout(events: ScheduleEvent[]): EventWithLayout[] {
   return result;
 }
 
-// Convert time string "HH:MM" to percent of schedule (6:00-22:00 = 16 hours)
-function timeToPercent(time: string): number {
-  const [hours, minutes] = time.split(':').map(Number);
-  const totalMinutes = hours * 60 + minutes;
-  const scheduleStartMinutes = SCHEDULE_START_HOUR * 60;
-  const scheduleEndMinutes = SCHEDULE_END_HOUR * 60;
-  const scheduleDuration = scheduleEndMinutes - scheduleStartMinutes;
+// Check if two tasks overlap in time
+function tasksOverlap(a: { startMinutes: number; endMinutes: number }, b: { startMinutes: number; endMinutes: number }): boolean {
+  return a.startMinutes < b.endMinutes && b.startMinutes < a.endMinutes;
+}
 
-  return ((totalMinutes - scheduleStartMinutes) / scheduleDuration) * 100;
+// Calculate task layout - narrow bars on the right side
+function calculateTaskLayout(tasks: Task[]): TaskWithLayout[] {
+  const scheduledTasks = tasks.filter((t) => t.fixedTime);
+  if (scheduledTasks.length === 0) return [];
+
+  // Calculate time ranges for each task
+  const taskRanges = scheduledTasks.map((task) => {
+    const startMinutes = timeToMinutes(task.fixedTime!);
+    const duration = task.estimatedMinutes || 30;
+    return {
+      task,
+      startMinutes,
+      endMinutes: startMinutes + duration,
+    };
+  });
+
+  // Sort by start time
+  taskRanges.sort((a, b) => a.startMinutes - b.startMinutes);
+
+  // Assign offset indices for overlapping tasks
+  const result: TaskWithLayout[] = [];
+  const columns: typeof taskRanges[0][][] = [];
+
+  for (const taskRange of taskRanges) {
+    // Find first column where task doesn't overlap
+    let placed = false;
+    for (let col = 0; col < columns.length; col++) {
+      const canPlace = !columns[col].some((t) => tasksOverlap(t, taskRange));
+      if (canPlace) {
+        columns[col].push(taskRange);
+        const topPercent = ((taskRange.startMinutes - SCHEDULE_START_HOUR * 60) / TOTAL_MINUTES) * 100;
+        const heightPercent = ((taskRange.endMinutes - taskRange.startMinutes) / TOTAL_MINUTES) * 100;
+        result.push({
+          ...taskRange.task,
+          topPercent,
+          heightPercent,
+          offsetIndex: col,
+        });
+        placed = true;
+        break;
+      }
+    }
+
+    if (!placed) {
+      columns.push([taskRange]);
+      const topPercent = ((taskRange.startMinutes - SCHEDULE_START_HOUR * 60) / TOTAL_MINUTES) * 100;
+      const heightPercent = ((taskRange.endMinutes - taskRange.startMinutes) / TOTAL_MINUTES) * 100;
+      result.push({
+        ...taskRange.task,
+        topPercent,
+        heightPercent,
+        offsetIndex: columns.length - 1,
+      });
+    }
+  }
+
+  return result;
+}
+
+// Get current time as percent of schedule
+function getCurrentTimePercent(): number | null {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+
+  if (hours < SCHEDULE_START_HOUR || hours >= SCHEDULE_END_HOUR) {
+    return null;
+  }
+
+  const totalMinutes = (hours - SCHEDULE_START_HOUR) * 60 + minutes;
+  return (totalMinutes / TOTAL_MINUTES) * 100;
 }
 
 export function DaySchedule({
@@ -165,15 +240,33 @@ export function DaySchedule({
   onUpdateEvent,
   onDeleteEvent,
   onToggleTask,
+  onExpand,
 }: DayScheduleProps) {
   const { t } = useTranslation();
   const [expandedHours, setExpandedHours] = useState<number[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [currentTimePercent, setCurrentTimePercent] = useState<number | null>(getCurrentTimePercent);
+
+  // Update current time every minute
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTimePercent(getCurrentTimePercent());
+    };
+
+    const interval = setInterval(updateTime, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   // Calculate layout for overlapping events
   const eventsWithLayout = useMemo(
     () => calculateEventLayout(events),
     [events]
+  );
+
+  // Calculate layout for tasks (narrow bars on the right)
+  const tasksWithLayout = useMemo(
+    () => calculateTaskLayout(scheduledTasks),
+    [scheduledTasks]
   );
 
   // Group events by hour for overflow handling
@@ -209,36 +302,6 @@ export function DaySchedule({
     return { visible, overflow };
   }, [eventsByHour, expandedHours]);
 
-  // Calculate positions for scheduled tasks
-  // Add offset to center dots in the middle of the time slot (half hour = ~3.125%)
-  const slotOffsetPercent = (100 / (SCHEDULE_END_HOUR - SCHEDULE_START_HOUR)) / 2;
-  const taskPositions = useMemo(() => {
-    return scheduledTasks
-      .filter((task) => task.fixedTime)
-      .map((task) => ({
-        task,
-        topPercent: timeToPercent(task.fixedTime!) + slotOffsetPercent,
-      }));
-  }, [scheduledTasks, slotOffsetPercent]);
-
-  // Group tasks by approximate position (within 5% of each other)
-  const groupedTasks = useMemo(() => {
-    const groups: { tasks: typeof taskPositions; topPercent: number }[] = [];
-
-    for (const taskPos of taskPositions) {
-      const existingGroup = groups.find(
-        (g) => Math.abs(g.topPercent - taskPos.topPercent) < 5
-      );
-      if (existingGroup) {
-        existingGroup.tasks.push(taskPos);
-      } else {
-        groups.push({ tasks: [taskPos], topPercent: taskPos.topPercent });
-      }
-    }
-
-    return groups;
-  }, [taskPositions]);
-
   const toggleHourExpand = (hour: number) => {
     setExpandedHours((prev) =>
       prev.includes(hour) ? prev.filter((h) => h !== hour) : [...prev, hour]
@@ -248,10 +311,23 @@ export function DaySchedule({
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3 shrink-0">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Clock className="h-4 w-4 text-primary" />
-          {t('schedule.title')}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary" />
+            {t('schedule.title')}
+          </CardTitle>
+          {onExpand && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onExpand}
+              title={t('schedule.expand')}
+            >
+              <Maximize2 className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <ScrollArea className="flex-1">
@@ -263,6 +339,30 @@ export function DaySchedule({
             {HOURS.map((hour) => (
               <TimeSlot key={hour} hour={hour} />
             ))}
+
+            {/* Half-hour lines */}
+            {HOURS.map((hour) => (
+              <div
+                key={`half-${hour}`}
+                className="absolute left-14 right-0 border-t border-dashed border-muted-foreground/20"
+                style={{
+                  top: `${((hour - SCHEDULE_START_HOUR + 0.5) / (SCHEDULE_END_HOUR - SCHEDULE_START_HOUR)) * 100}%`,
+                }}
+              />
+            ))}
+
+            {/* Current time indicator */}
+            {currentTimePercent !== null && (
+              <div
+                className="absolute left-0 right-0 z-20 pointer-events-none"
+                style={{ top: `${currentTimePercent}%` }}
+              >
+                <div className="relative">
+                  <div className="absolute left-12 right-0 border-t-2 border-red-500" />
+                  <div className="absolute left-10 -top-1.5 w-3 h-3 rounded-full bg-red-500" />
+                </div>
+              </div>
+            )}
 
             {/* Event blocks */}
             {visibleEvents.visible.map((event, index) => (
@@ -291,30 +391,20 @@ export function DaySchedule({
               </button>
             ))}
 
-            {/* Task dots */}
-            {groupedTasks.map((group, groupIndex) => (
-              <div
-                key={`task-group-${groupIndex}`}
-                className="absolute right-2 flex flex-row items-center gap-1 z-10 -translate-y-1/2"
-                style={{ top: `${group.topPercent}%` }}
-              >
-                {group.tasks.slice(0, 3).map(({ task }, taskIndex) => (
-                  <TaskDot
-                    key={task.id ?? taskIndex}
-                    task={task}
-                    onToggle={onToggleTask}
-                  />
-                ))}
-                {group.tasks.length > 3 && (
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    +{group.tasks.length - 3}
-                  </span>
-                )}
-              </div>
+            {/* Task blocks - narrow bars on the right */}
+            {tasksWithLayout.map((task, index) => (
+              <TaskBlock
+                key={task.id ?? index}
+                task={task}
+                topPercent={task.topPercent}
+                heightPercent={task.heightPercent}
+                offsetIndex={task.offsetIndex}
+                onToggle={onToggleTask}
+              />
             ))}
 
             {/* Empty state */}
-            {events.length === 0 && (
+            {events.length === 0 && tasksWithLayout.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="text-sm text-muted-foreground">
                   {t('schedule.noEvents')}

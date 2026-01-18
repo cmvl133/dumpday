@@ -227,7 +227,10 @@
     "title": "Harmonogram",
     "noEvents": "Brak zaplanowanych wydarzeń",
     "moreEvents": "+{{count}} więcej",
-    "moreTasks": "+{{count}} zadań"
+    "moreTasks": "+{{count}} zadań",
+    "expand": "Rozwiń harmonogram",
+    "unscheduledTasks": "Niezaplanowane zadania",
+    "allTasksScheduled": "Wszystkie zadania zaplanowane"
   },
   "events": {
     "addEvent": "Dodaj wydarzenie",

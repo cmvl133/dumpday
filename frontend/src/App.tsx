@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import {
@@ -28,6 +28,7 @@ import { DaySwitcher } from './components/layout/DaySwitcher';
 import { BrainDumpInput } from './components/brain-dump/BrainDumpInput';
 import { AnalysisResults } from './components/analysis/AnalysisResults';
 import { DaySchedule } from './components/schedule/DaySchedule';
+import { ScheduleExpandedModal } from './components/schedule/ScheduleExpandedModal';
 import { ScrollArea } from './components/ui/scroll-area';
 import { LoginPage } from './components/auth/LoginPage';
 import { HowAreYouModal } from './components/how-are-you';
@@ -49,6 +50,8 @@ function App() {
   const { isAuthenticated, isLoading: authLoading } = useAppSelector(
     (state) => state.auth
   );
+
+  const [isScheduleExpanded, setIsScheduleExpanded] = useState(false);
 
   useAutoModal();
   useReminders();
@@ -86,10 +89,11 @@ function App() {
 
   // Merge persisted data with preview data when both exist
   // Must be before conditional returns to follow Rules of Hooks
-  const { displayData, scheduleEvents, scheduledTasks } = useMemo((): {
+  const { displayData, scheduleEvents, scheduledTasks, unscheduledTasks } = useMemo((): {
     displayData: AnalysisResponse | DailyNoteData;
     scheduleEvents: DailyNoteData['schedule'];
     scheduledTasks: DailyNoteData['tasks']['today'];
+    unscheduledTasks: DailyNoteData['tasks']['today'];
   } => {
     if (!analysisPreview) {
       const data = dailyNote ?? emptyDayData;
@@ -102,6 +106,7 @@ function App() {
         displayData: data,
         scheduleEvents: data.schedule || [],
         scheduledTasks: allTasks.filter((t) => t.fixedTime),
+        unscheduledTasks: allTasks.filter((t) => !t.fixedTime && !t.isCompleted && t.id),
       };
     }
 
@@ -110,6 +115,7 @@ function App() {
         displayData: analysisPreview,
         scheduleEvents: analysisPreview.schedule || [],
         scheduledTasks: [],
+        unscheduledTasks: [],
       };
     }
 
@@ -165,6 +171,7 @@ function App() {
       displayData: merged,
       scheduleEvents: merged.schedule,
       scheduledTasks: persistedTasks.filter((t) => t.fixedTime),
+      unscheduledTasks: persistedTasks.filter((t) => !t.fixedTime && !t.isCompleted && t.id),
     };
   }, [dailyNote, analysisPreview]);
 
@@ -307,12 +314,24 @@ function App() {
               onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
               onToggleTask={handleToggleTask}
+              onExpand={() => setIsScheduleExpanded(true)}
             />
           </div>
         </div>
       </main>
 
       <HowAreYouModal />
+
+      <ScheduleExpandedModal
+        isOpen={isScheduleExpanded}
+        onClose={() => setIsScheduleExpanded(false)}
+        events={scheduleEvents}
+        scheduledTasks={scheduledTasks}
+        unscheduledTasks={unscheduledTasks}
+        onUpdateEvent={handleUpdateEvent}
+        onDeleteEvent={handleDeleteEvent}
+        onUpdateTaskTime={handleUpdateTaskFixedTime}
+      />
     </div>
   );
 }

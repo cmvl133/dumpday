@@ -227,7 +227,10 @@
     "title": "Schedule",
     "noEvents": "No scheduled events",
     "moreEvents": "+{{count}} more",
-    "moreTasks": "+{{count}} tasks"
+    "moreTasks": "+{{count}} tasks",
+    "expand": "Expand schedule",
+    "unscheduledTasks": "Unscheduled tasks",
+    "allTasksScheduled": "All tasks scheduled"
   },
   "events": {
     "addEvent": "Add event",
