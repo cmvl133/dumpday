@@ -12,8 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class AuthCodeService
 {
     private const CODE_VALIDITY_MINUTES = 10;
+
     private const MAX_CODES_PER_HOUR = 3;
+
     private const MAX_ATTEMPTS = 3;
+
     private const BLOCK_MINUTES = 15;
 
     public function __construct(
@@ -90,7 +93,7 @@ class AuthCodeService
     {
         $latestCode = $this->loginCodeRepository->findLatestForUser($user);
 
-        if ($latestCode !== null && !$latestCode->isExpired()) {
+        if ($latestCode !== null && ! $latestCode->isExpired()) {
             $latestCode->incrementAttempts();
             $this->entityManager->flush();
         }

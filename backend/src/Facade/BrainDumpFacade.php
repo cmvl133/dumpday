@@ -83,7 +83,7 @@ class BrainDumpFacade
 
         foreach ($this->taskExtractor->extract($analysisResult, $dailyNote) as $task) {
             $normalizedTitle = mb_strtolower(trim($task->getTitle()));
-            if (!in_array($normalizedTitle, $existingTaskTitles, true)) {
+            if (! in_array($normalizedTitle, $existingTaskTitles, true)) {
                 $dailyNote->addTask($task);
                 $existingTaskTitles[] = $normalizedTitle;
             }
@@ -114,7 +114,7 @@ class BrainDumpFacade
                 }
             }
 
-            if (!$isDuplicate) {
+            if (! $isDuplicate) {
                 $dailyNote->addEvent($event);
                 $existingEvents[] = $event;
             }
@@ -128,7 +128,7 @@ class BrainDumpFacade
 
         foreach ($this->journalExtractor->extract($analysisResult, $dailyNote) as $journalEntry) {
             $normalizedContent = mb_strtolower(trim($journalEntry->getContent()));
-            if (!in_array($normalizedContent, $existingJournalContents, true)) {
+            if (! in_array($normalizedContent, $existingJournalContents, true)) {
                 $dailyNote->addJournalEntry($journalEntry);
                 $existingJournalContents[] = $normalizedContent;
             }
@@ -142,7 +142,7 @@ class BrainDumpFacade
 
         foreach ($this->noteExtractor->extract($analysisResult, $dailyNote) as $note) {
             $normalizedContent = mb_strtolower(trim($note->getContent()));
-            if (!in_array($normalizedContent, $existingNoteContents, true)) {
+            if (! in_array($normalizedContent, $existingNoteContents, true)) {
                 $dailyNote->addNote($note);
                 $existingNoteContents[] = $normalizedContent;
             }
@@ -187,6 +187,7 @@ class BrainDumpFacade
                 'fixedTime' => $task->getFixedTime()?->format('H:i'),
                 'canCombineWithEvents' => $task->getCanCombineWithEvents(),
                 'needsFullFocus' => $task->isNeedsFullFocus(),
+                'recurringTaskId' => $task->getRecurringTask()?->getId(),
             ];
         }
 
@@ -235,6 +236,7 @@ class BrainDumpFacade
                 'fixedTime' => $task->getFixedTime()?->format('H:i'),
                 'canCombineWithEvents' => $task->getCanCombineWithEvents(),
                 'needsFullFocus' => $task->isNeedsFullFocus(),
+                'recurringTaskId' => $task->getRecurringTask()?->getId(),
             ];
 
             $category = $task->getCategory()->value;

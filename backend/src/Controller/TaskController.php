@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\DailyNote;
+use App\Entity\RecurringTask;
 use App\Entity\Task;
 use App\Entity\User;
+use App\Enum\RecurrenceType;
 use App\Enum\TaskCategory;
 use App\Repository\DailyNoteRepository;
 use App\Repository\TaskRepository;
+use App\Service\RecurringSyncService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,6 +28,7 @@ class TaskController extends AbstractController
         private readonly TaskRepository $taskRepository,
         private readonly DailyNoteRepository $dailyNoteRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly RecurringSyncService $recurringSyncService,
     ) {
     }
 
@@ -77,6 +81,7 @@ class TaskController extends AbstractController
             'fixedTime' => $task->getFixedTime()?->format('H:i'),
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
+            'recurringTaskId' => $task->getRecurringTask()?->getId(),
         ], Response::HTTP_CREATED);
     }
 
@@ -99,13 +104,27 @@ class TaskController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
+        $generatedNextTask = null;
         if (isset($data['isCompleted'])) {
             $isCompleted = (bool) $data['isCompleted'];
+            $wasCompleted = $task->isCompleted();
             $task->setIsCompleted($isCompleted);
             if ($isCompleted && $task->getCompletedAt() === null) {
                 $task->setCompletedAt(new \DateTimeImmutable());
             } elseif (! $isCompleted) {
                 $task->setCompletedAt(null);
+            }
+
+            // Generate next occurrence if completing a recurring task
+            if ($isCompleted && ! $wasCompleted && $task->getRecurringTask() !== null) {
+                $recurringTask = $task->getRecurringTask();
+                $nextDate = $this->findNextOccurrenceDate($recurringTask);
+                if ($nextDate !== null) {
+                    $generatedNextTask = $this->recurringSyncService->generateTask($recurringTask, $nextDate);
+                    if ($generatedNextTask !== null) {
+                        $recurringTask->setLastGeneratedDate($nextDate);
+                    }
+                }
             }
         }
 
@@ -152,7 +171,7 @@ class TaskController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json([
+        $response = [
             'id' => $task->getId(),
             'title' => $task->getTitle(),
             'isCompleted' => $task->isCompleted(),
@@ -165,7 +184,19 @@ class TaskController extends AbstractController
             'fixedTime' => $task->getFixedTime()?->format('H:i'),
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
-        ]);
+            'recurringTaskId' => $task->getRecurringTask()?->getId(),
+        ];
+
+        // Include generated next task info if one was created
+        if ($generatedNextTask !== null) {
+            $response['generatedNextTask'] = [
+                'id' => $generatedNextTask->getId(),
+                'title' => $generatedNextTask->getTitle(),
+                'date' => $generatedNextTask->getDailyNote()?->getDate()?->format('Y-m-d'),
+            ];
+        }
+
+        return $this->json($response);
     }
 
     #[Route('/{id}', name: 'task_delete', methods: ['DELETE'])]
@@ -189,5 +220,49 @@ class TaskController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Find the next occurrence date for a recurring task.
+     */
+    private function findNextOccurrenceDate(RecurringTask $recurringTask): ?\DateTimeInterface
+    {
+        $today = new \DateTime('today');
+        $endDate = $recurringTask->getEndDate();
+
+        // Check up to 365 days ahead
+        for ($i = 1; $i <= 365; $i++) {
+            $date = (clone $today)->modify("+{$i} days");
+
+            // Stop if we're past the end date
+            if ($endDate !== null && $date > $endDate) {
+                return null;
+            }
+
+            if ($this->matchesRecurrencePattern($recurringTask, $date)) {
+                return $date;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if a date matches the recurrence pattern.
+     */
+    private function matchesRecurrencePattern(RecurringTask $recurringTask, \DateTimeInterface $date): bool
+    {
+        $dayOfWeek = (int) $date->format('w'); // 0 = Sunday, 6 = Saturday
+        $dayOfMonth = (int) $date->format('j');
+        $startDayOfWeek = (int) $recurringTask->getStartDate()->format('w');
+        $startDayOfMonth = (int) $recurringTask->getStartDate()->format('j');
+
+        return match ($recurringTask->getRecurrenceType()) {
+            RecurrenceType::DAILY => true,
+            RecurrenceType::WEEKLY => $dayOfWeek === $startDayOfWeek,
+            RecurrenceType::WEEKDAYS => $dayOfWeek >= 1 && $dayOfWeek <= 5,
+            RecurrenceType::MONTHLY => $dayOfMonth === $startDayOfMonth,
+            RecurrenceType::CUSTOM => in_array($dayOfWeek, $recurringTask->getRecurrenceDays() ?? [], true),
+        };
     }
 }

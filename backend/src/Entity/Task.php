@@ -34,7 +34,9 @@ class Task
     #[ORM\Column(type: 'string', enumType: TaskCategory::class)]
     private TaskCategory $category = TaskCategory::TODAY;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: [
+        'default' => false,
+    ])]
     private bool $isDropped = false;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
@@ -52,8 +54,14 @@ class Task
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $canCombineWithEvents = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[ORM\Column(type: 'boolean', options: [
+        'default' => false,
+    ])]
     private bool $needsFullFocus = false;
+
+    #[ORM\ManyToOne(targetEntity: RecurringTask::class, inversedBy: 'generatedTasks')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?RecurringTask $recurringTask = null;
 
     public function getId(): ?int
     {
@@ -200,6 +208,18 @@ class Task
     public function setNeedsFullFocus(bool $needsFullFocus): static
     {
         $this->needsFullFocus = $needsFullFocus;
+
+        return $this;
+    }
+
+    public function getRecurringTask(): ?RecurringTask
+    {
+        return $this->recurringTask;
+    }
+
+    public function setRecurringTask(?RecurringTask $recurringTask): static
+    {
+        $this->recurringTask = $recurringTask;
 
         return $this;
     }

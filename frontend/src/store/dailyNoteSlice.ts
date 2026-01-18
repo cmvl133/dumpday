@@ -36,6 +36,14 @@ const initialState: DailyNoteState = {
 export const fetchDailyNote = createAsyncThunk(
   'dailyNote/fetch',
   async (date: string) => {
+    // In dev mode, sync recurring tasks before fetching daily note
+    if (import.meta.env.DEV) {
+      try {
+        await api.recurring.sync(date);
+      } catch {
+        // Ignore sync errors in dev mode - endpoint may not be available
+      }
+    }
     const result = await api.dailyNote.get(date);
     return result;
   }
@@ -224,6 +232,48 @@ const dailyNoteSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    updateTaskRecurringId: (
+      state,
+      action: PayloadAction<{ taskId: number; recurringTaskId: number }>
+    ) => {
+      if (state.dailyNote) {
+        const { taskId, recurringTaskId } = action.payload;
+        const categories = ['today', 'scheduled', 'someday'] as const;
+        for (const category of categories) {
+          const taskList = state.dailyNote.tasks[category];
+          const index = taskList.findIndex((t) => t.id === taskId);
+          if (index !== -1) {
+            taskList[index] = { ...taskList[index], recurringTaskId };
+            break;
+          }
+        }
+      }
+    },
+    clearTaskRecurringId: (state, action: PayloadAction<{ taskId: number }>) => {
+      if (state.dailyNote) {
+        const { taskId } = action.payload;
+        const categories = ['today', 'scheduled', 'someday'] as const;
+        for (const category of categories) {
+          const taskList = state.dailyNote.tasks[category];
+          const index = taskList.findIndex((t) => t.id === taskId);
+          if (index !== -1) {
+            taskList[index] = { ...taskList[index], recurringTaskId: null };
+            break;
+          }
+        }
+      }
+    },
+    removeTaskFromUI: (state, action: PayloadAction<{ taskId: number }>) => {
+      if (state.dailyNote) {
+        const { taskId } = action.payload;
+        const categories = ['today', 'scheduled', 'someday'] as const;
+        for (const category of categories) {
+          state.dailyNote.tasks[category] = state.dailyNote.tasks[category].filter(
+            (t) => t.id !== taskId
+          );
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -448,6 +498,9 @@ export const {
   setRawContent,
   clearAnalysisPreview,
   clearError,
+  updateTaskRecurringId,
+  clearTaskRecurringId,
+  removeTaskFromUI,
 } = dailyNoteSlice.actions;
 
 export default dailyNoteSlice.reducer;

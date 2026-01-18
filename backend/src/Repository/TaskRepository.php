@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\RecurringTask;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Enum\TaskCategory;
@@ -129,5 +130,21 @@ class TaskRepository extends ServiceEntityRepository
             ->orderBy('t.id', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Find a task generated from a recurring task for a specific date.
+     */
+    public function findByRecurringTaskAndDate(RecurringTask $recurringTask, \DateTimeInterface $date): ?Task
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.dailyNote', 'dn')
+            ->where('t.recurringTask = :recurringTask')
+            ->andWhere('dn.date = :date')
+            ->setParameter('recurringTask', $recurringTask)
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

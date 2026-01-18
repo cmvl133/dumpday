@@ -20,6 +20,8 @@ class UserRepository extends ServiceEntityRepository
 
     public function findByEmail(string $email): ?User
     {
-        return $this->findOneBy(['email' => $email]);
+        return $this->findOneBy([
+            'email' => $email,
+        ]);
     }
 }

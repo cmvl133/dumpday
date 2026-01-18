@@ -317,5 +317,34 @@
       "newPlan": "Oto nowy plan",
       "alsoAdded": "Dodano też: {{journal}} wpis, {{notes}} notatek"
     }
+  },
+  "recurring": {
+    "title": "Powtarzające się",
+    "makeRecurring": "Ustaw jako powtarzające",
+    "stopRecurring": "Zatrzymaj powtarzanie",
+    "daily": "Codziennie",
+    "weekly": "Co tydzień",
+    "weekdays": "Dni robocze (Pn-Pt)",
+    "monthly": "Co miesiąc",
+    "custom": "Wybrane dni",
+    "endDate": "Data końcowa",
+    "noEndDate": "Bez daty końcowej",
+    "selectDays": "Wybierz dni",
+    "days": {
+      "sun": "Nd",
+      "mon": "Pn",
+      "tue": "Wt",
+      "wed": "Śr",
+      "thu": "Cz",
+      "fri": "Pt",
+      "sat": "Sb"
+    },
+    "deleteConfirm": {
+      "title": "Usunąć powtarzające się zadanie?",
+      "justThis": "Tylko to",
+      "justThisDesc": "Usuń tylko tę instancję",
+      "allFuture": "To i wszystkie przyszłe",
+      "allFutureDesc": "Zatrzymaj powtarzanie"
+    }
   }
 }

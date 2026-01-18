@@ -28,22 +28,34 @@ class CheckIn
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $completedAt = null;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $statsDone = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $statsTomorrow = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $statsToday = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $statsDropped = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $statsOverdueCleared = 0;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: [
+        'default' => 0,
+    ])]
     private int $bestCombo = 0;
 
     public function getId(): ?int

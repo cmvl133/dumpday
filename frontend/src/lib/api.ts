@@ -17,6 +17,8 @@ import type {
   ScheduleSuggestion,
   RebuildRequest,
   RebuildResponse,
+  RecurringTask,
+  RecurrenceType,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -441,6 +443,97 @@ export const api = {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to accept rebuild schedule');
+      }
+      return response.json();
+    },
+  },
+
+  recurring: {
+    list: async (): Promise<RecurringTask[]> => {
+      const response = await fetch(`${API_BASE}/recurring`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch recurring tasks');
+      }
+      return response.json();
+    },
+
+    create: async (data: {
+      title: string;
+      recurrenceType: RecurrenceType;
+      recurrenceDays?: number[] | null;
+      startDate?: string;
+      endDate?: string | null;
+      category?: TaskCategory;
+      estimatedMinutes?: number | null;
+      fixedTime?: string | null;
+      linkTaskId?: number;
+    }): Promise<RecurringTask & { linkedTaskId?: number }> => {
+      const response = await fetch(`${API_BASE}/recurring`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create recurring task');
+      }
+      return response.json();
+    },
+
+    update: async (
+      id: number,
+      data: Partial<Omit<RecurringTask, 'id' | 'createdAt'>>
+    ): Promise<RecurringTask> => {
+      const response = await fetch(`${API_BASE}/recurring/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to update recurring task');
+      }
+      return response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+      const response = await fetch(`${API_BASE}/recurring/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to delete recurring task');
+      }
+    },
+
+    deleteAll: async (id: number): Promise<{ deletedTasks: number }> => {
+      const response = await fetch(`${API_BASE}/recurring/${id}/all`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to delete recurring task');
+      }
+      return response.json();
+    },
+
+    sync: async (date?: string): Promise<{ generated: number; tasks: { id: number; title: string }[] }> => {
+      const response = await fetch(`${API_BASE}/recurring/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to sync recurring tasks');
       }
       return response.json();
     },

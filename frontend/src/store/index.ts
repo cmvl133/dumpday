@@ -6,6 +6,7 @@ import checkInReducer from './checkInSlice';
 import settingsReducer from './settingsSlice';
 import planningReducer from './planningSlice';
 import howAreYouReducer from './howAreYouSlice';
+import recurringReducer from './recurringSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     settings: settingsReducer,
     planning: planningReducer,
     howAreYou: howAreYouReducer,
+    recurring: recurringReducer,
   },
 });
 

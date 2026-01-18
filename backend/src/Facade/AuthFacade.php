@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Facade;
 
-use App\Entity\User;
 use App\Service\AuthCodeService;
 use App\Service\AuthMailerService;
 use App\Service\UserService;
@@ -22,14 +21,14 @@ class AuthFacade
     {
         $email = mb_strtolower(trim($email));
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return [
                 'success' => false,
                 'message' => 'Podaj prawidłowy adres email.',
             ];
         }
 
-        if (!$this->userService->isEmailAllowed($email)) {
+        if (! $this->userService->isEmailAllowed($email)) {
             return [
                 'success' => true,
                 'message' => 'Jeśli adres jest zarejestrowany, otrzymasz kod na email.',
@@ -66,14 +65,14 @@ class AuthFacade
         $email = mb_strtolower(trim($email));
         $code = trim($code);
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return [
                 'success' => false,
                 'message' => 'Nieprawidłowy adres email.',
             ];
         }
 
-        if (strlen($code) !== 6 || !ctype_digit($code)) {
+        if (strlen($code) !== 6 || ! ctype_digit($code)) {
             return [
                 'success' => false,
                 'message' => 'Nieprawidłowy format kodu.',
@@ -96,7 +95,7 @@ class AuthFacade
             ];
         }
 
-        if (!$this->authCodeService->verifyCode($user, $code)) {
+        if (! $this->authCodeService->verifyCode($user, $code)) {
             return [
                 'success' => false,
                 'message' => 'Nieprawidłowy email lub kod.',

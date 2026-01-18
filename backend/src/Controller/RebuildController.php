@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -49,7 +48,7 @@ class RebuildController extends AbstractController
         // 1. Get all today's tasks and clear fixedTime for tasks not in keepTaskIds
         $todayTasks = $this->taskRepository->findTodayIncompleteTasks($user, $today);
         foreach ($todayTasks as $task) {
-            if (!in_array($task->getId(), $keepTaskIds, true)) {
+            if (! in_array($task->getId(), $keepTaskIds, true)) {
                 // Clear the fixedTime so it can be rescheduled
                 $task->setFixedTime(null);
             }
@@ -67,7 +66,9 @@ class RebuildController extends AbstractController
             foreach (['today', 'scheduled', 'someday'] as $category) {
                 $newTaskCount += count($analysisResult['tasks'][$category] ?? []);
             }
-            $parsedItems['newTasks'] = array_map(fn ($t) => ['title' => $t['title']], $analysisResult['tasks']['today'] ?? []);
+            $parsedItems['newTasks'] = array_map(fn ($t) => [
+                'title' => $t['title'],
+            ], $analysisResult['tasks']['today'] ?? []);
             $parsedItems['journalEntries'] = count($analysisResult['journal'] ?? []);
             $parsedItems['notes'] = count($analysisResult['notes'] ?? []);
         }
@@ -96,7 +97,9 @@ class RebuildController extends AbstractController
 
         // 7. Enrich schedule with task titles
         $taskIds = array_map(fn ($item) => $item['taskId'], $schedule['schedule']);
-        $allTasks = $this->taskRepository->findBy(['id' => $taskIds]);
+        $allTasks = $this->taskRepository->findBy([
+            'id' => $taskIds,
+        ]);
         $taskTitles = [];
         foreach ($allTasks as $task) {
             $taskTitles[$task->getId()] = $task->getTitle();
@@ -126,7 +129,7 @@ class RebuildController extends AbstractController
                 continue;
             }
 
-            if (!empty($item['suggestedTime'])) {
+            if (! empty($item['suggestedTime'])) {
                 $task->setFixedTime(new \DateTimeImmutable($item['suggestedTime']));
             }
 
@@ -137,6 +140,8 @@ class RebuildController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json(['success' => true]);
+        return $this->json([
+            'success' => true,
+        ]);
     }
 }

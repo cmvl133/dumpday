@@ -45,7 +45,7 @@ class AuthController extends AbstractController
 
         $result = $this->authFacade->verifyCode($email, $code);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return new JsonResponse([
                 'success' => false,
                 'message' => $result['message'],

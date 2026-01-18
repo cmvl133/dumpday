@@ -61,18 +61,24 @@ class CheckInController extends AbstractController
         $task = $this->taskRepository->find($id);
 
         if ($task === null) {
-            return $this->json(['error' => 'Task not found'], Response::HTTP_NOT_FOUND);
+            return $this->json([
+                'error' => 'Task not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
-            return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $data = json_decode($request->getContent(), true);
         $action = $data['action'] ?? null;
 
         if (! in_array($action, ['done', 'tomorrow', 'today', 'drop'], true)) {
-            return $this->json(['error' => 'Invalid action'], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'Invalid action',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         switch ($action) {

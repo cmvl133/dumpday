@@ -33,7 +33,7 @@ class UserProvider implements UserProviderInterface
 
     public function refreshUser(UserInterface $user): UserInterface
     {
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new \InvalidArgumentException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 

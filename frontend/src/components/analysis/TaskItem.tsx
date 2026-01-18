@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Trash2, Pencil, Check, X, Calendar, Clock } from 'lucide-react';
+import { Trash2, Pencil, Check, X, Calendar, Clock, Repeat } from 'lucide-react';
+import { RecurringSettings } from '@/components/tasks/RecurringSettings';
+import { DeleteRecurringConfirm } from '@/components/tasks/DeleteRecurringConfirm';
 import confetti from 'canvas-confetti';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
@@ -75,6 +77,8 @@ interface TaskItemProps {
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateFixedTime?: (id: number, fixedTime: string | null) => void;
   isPreview?: boolean;
+  recurringTaskId?: number | null;
+  category?: string;
 }
 
 export function TaskItem({
@@ -91,14 +95,20 @@ export function TaskItem({
   onUpdateDueDate,
   onUpdateFixedTime,
   isPreview = false,
+  recurringTaskId,
+  category = 'today',
 }: TaskItemProps) {
   const confettiStyle = useSelector((state: RootState) => state.settings.confettiStyle);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
   const [isEditingTime, setIsEditingTime] = useState(false);
   const [timeValue, setTimeValue] = useState(fixedTime || '');
+  const [showRecurringSettings, setShowRecurringSettings] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const dateInputRef = useRef<HTMLInputElement>(null);
   const checkboxWrapperRef = useRef<HTMLDivElement>(null);
+
+  const isRecurring = recurringTaskId !== undefined && recurringTaskId !== null;
 
   // For "today" section, show context date; for others show dueDate
   const displayDate = isTodaySection ? (dueDate || currentDate) : dueDate;
@@ -122,6 +132,16 @@ export function TaskItem({
   };
 
   const handleDelete = () => {
+    if (id !== undefined && onDelete) {
+      if (isRecurring) {
+        setShowDeleteConfirm(true);
+      } else {
+        onDelete(id);
+      }
+    }
+  };
+
+  const handleDeleteJustThis = () => {
     if (id !== undefined && onDelete) {
       onDelete(id);
     }
@@ -236,10 +256,13 @@ export function TaskItem({
         <>
           <span
             className={cn(
-              'flex-1 text-sm',
+              'flex-1 text-sm flex items-center gap-1',
               isCompleted && 'line-through text-muted-foreground'
             )}
           >
+            {isRecurring && (
+              <Repeat className="h-3 w-3 text-primary shrink-0" />
+            )}
             {title}
           </span>
 
@@ -329,6 +352,18 @@ export function TaskItem({
                   </Button>
                 </>
               )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => setShowRecurringSettings(true)}
+                title={isRecurring ? 'Edit recurring' : 'Make recurring'}
+              >
+                <Repeat className={cn(
+                  "h-3.5 w-3.5",
+                  isRecurring ? "text-primary" : "text-muted-foreground hover:text-primary"
+                )} />
+              </Button>
               {onUpdate && (
                 <Button
                   variant="ghost"
@@ -352,6 +387,28 @@ export function TaskItem({
             </div>
           )}
         </>
+      )}
+
+      {/* Recurring Settings Dialog */}
+      <RecurringSettings
+        isOpen={showRecurringSettings}
+        onClose={() => setShowRecurringSettings(false)}
+        taskId={id}
+        taskTitle={title}
+        taskCategory={category as 'today' | 'scheduled' | 'someday'}
+        recurringTaskId={recurringTaskId}
+      />
+
+      {/* Delete Recurring Confirmation Dialog */}
+      {id !== undefined && recurringTaskId && (
+        <DeleteRecurringConfirm
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          taskId={id}
+          taskTitle={title}
+          recurringTaskId={recurringTaskId}
+          onDeleteJustThis={handleDeleteJustThis}
+        />
       )}
     </div>
   );

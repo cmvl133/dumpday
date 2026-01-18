@@ -1,5 +1,21 @@
 export type TaskCategory = 'today' | 'scheduled' | 'someday';
 
+export type RecurrenceType = 'daily' | 'weekly' | 'weekdays' | 'monthly' | 'custom';
+
+export interface RecurringTask {
+  id: number;
+  title: string;
+  recurrenceType: RecurrenceType;
+  recurrenceDays: number[] | null;
+  startDate: string;
+  endDate: string | null;
+  category: TaskCategory;
+  estimatedMinutes: number | null;
+  fixedTime: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface Task {
   id?: number;
   title: string;
@@ -13,6 +29,7 @@ export interface Task {
   fixedTime?: string | null;
   canCombineWithEvents?: number[] | null;
   needsFullFocus?: boolean;
+  recurringTaskId?: number | null;
 }
 
 export type CheckInInterval = 'off' | '1h' | '2h' | '3h' | '4h';

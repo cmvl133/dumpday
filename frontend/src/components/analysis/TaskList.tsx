@@ -124,6 +124,8 @@ export function TaskList({
               onUpdateDueDate={onUpdateDueDate}
               onUpdateFixedTime={onUpdateFixedTime}
               isPreview={isPreview}
+              recurringTaskId={'recurringTaskId' in task ? task.recurringTaskId : undefined}
+              category={sectionType}
             />
           </div>
         ))}

@@ -41,19 +41,29 @@ class User implements UserInterface
     #[ORM\OneToMany(targetEntity: LoginCode::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $loginCodes;
 
-    #[ORM\Column(length: 20, options: ['default' => '3h'])]
+    #[ORM\Column(length: 20, options: [
+        'default' => '3h',
+    ])]
     private string $checkInInterval = '3h';
 
-    #[ORM\Column(options: ['default' => false])]
+    #[ORM\Column(options: [
+        'default' => false,
+    ])]
     private bool $zenMode = false;
 
-    #[ORM\Column(length: 20, options: ['default' => 'normal'])]
+    #[ORM\Column(length: 20, options: [
+        'default' => 'normal',
+    ])]
     private string $reminderTone = 'normal';
 
-    #[ORM\Column(length: 5, options: ['default' => 'en'])]
+    #[ORM\Column(length: 5, options: [
+        'default' => 'en',
+    ])]
     private string $language = 'en';
 
-    #[ORM\Column(length: 20, options: ['default' => 'neon'])]
+    #[ORM\Column(length: 20, options: [
+        'default' => 'neon',
+    ])]
     private string $confettiStyle = 'neon';
 
     public function __construct()

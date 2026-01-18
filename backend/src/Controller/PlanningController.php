@@ -93,11 +93,15 @@ class PlanningController extends AbstractController
         $task = $this->taskRepository->find($id);
 
         if ($task === null) {
-            return $this->json(['error' => 'Task not found'], Response::HTTP_NOT_FOUND);
+            return $this->json([
+                'error' => 'Task not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
-            return $this->json(['error' => 'Access denied'], Response::HTTP_FORBIDDEN);
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -144,7 +148,9 @@ class PlanningController extends AbstractController
         $taskIds = $data['taskIds'] ?? [];
 
         if (empty($taskIds)) {
-            return $this->json(['error' => 'No tasks provided'], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'error' => 'No tasks provided',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $today = new \DateTime('today');
@@ -164,7 +170,7 @@ class PlanningController extends AbstractController
         $taskIdsToSchedule = array_map(fn ($t) => $t->getId(), $tasksToSchedule);
         $existingPlannedTasks = array_filter(
             $existingPlannedTasks,
-            fn ($t) => !in_array($t->getId(), $taskIdsToSchedule, true)
+            fn ($t) => ! in_array($t->getId(), $taskIdsToSchedule, true)
         );
 
         $schedule = $this->scheduleGenerator->generate(
@@ -210,6 +216,8 @@ class PlanningController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json(['success' => true]);
+        return $this->json([
+            'success' => true,
+        ]);
     }
 }
