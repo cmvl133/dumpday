@@ -70,6 +70,11 @@ class RecurringSyncService
             return false;
         }
 
+        // Don't generate if there's still an incomplete task for this recurring task
+        if ($this->taskRepository->hasIncompleteTaskForRecurring($recurringTask)) {
+            return false;
+        }
+
         // Check recurrence pattern
         return $this->matchesRecurrencePattern($recurringTask, $date);
     }

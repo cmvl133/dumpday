@@ -147,4 +147,22 @@ class TaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Check if there's an incomplete task for a recurring task.
+     * Used to prevent generating new occurrences until previous is completed.
+     */
+    public function hasIncompleteTaskForRecurring(RecurringTask $recurringTask): bool
+    {
+        $count = $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.recurringTask = :recurringTask')
+            ->andWhere('t.isCompleted = false')
+            ->andWhere('t.isDropped = false')
+            ->setParameter('recurringTask', $recurringTask)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
 }
