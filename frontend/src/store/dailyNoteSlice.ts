@@ -233,6 +233,15 @@ export const deleteNote = createAsyncThunk(
   }
 );
 
+// Tag operations
+export const assignTaskTags = createAsyncThunk(
+  'dailyNote/assignTaskTags',
+  async ({ id, tagIds }: { id: number; tagIds: number[] }) => {
+    const result = await api.task.assignTags(id, tagIds);
+    return result;
+  }
+);
+
 const dailyNoteSlice = createSlice({
   name: 'dailyNote',
   initialState,
@@ -520,6 +529,24 @@ const dailyNoteSlice = createSlice({
           state.dailyNote.notes = state.dailyNote.notes.filter(
             (n) => n.id !== id
           );
+        }
+      })
+
+      // Tag handlers
+      .addCase(assignTaskTags.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          const task = action.payload;
+          const categories = ['today', 'scheduled', 'someday', 'overdue'] as const;
+          for (const category of categories) {
+            const taskList = state.dailyNote.tasks[category];
+            if (taskList) {
+              const index = taskList.findIndex((t) => t.id === task.id);
+              if (index !== -1) {
+                taskList[index] = { ...taskList[index], tags: task.tags };
+                break;
+              }
+            }
+          }
         }
       });
   },

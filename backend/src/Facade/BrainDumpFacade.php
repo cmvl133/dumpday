@@ -194,6 +194,11 @@ class BrainDumpFacade
                     'canCombineWithEvents' => $task->getCanCombineWithEvents(),
                     'needsFullFocus' => $task->isNeedsFullFocus(),
                     'recurringTaskId' => $task->getRecurringTask()?->getId(),
+                    'tags' => array_map(fn ($tag) => [
+                        'id' => $tag->getId(),
+                        'name' => $tag->getName(),
+                        'color' => $tag->getColor(),
+                    ], $task->getTags()->toArray()),
                 ];
             }
         }
@@ -217,6 +222,11 @@ class BrainDumpFacade
                 'canCombineWithEvents' => $task->getCanCombineWithEvents(),
                 'needsFullFocus' => $task->isNeedsFullFocus(),
                 'recurringTaskId' => $task->getRecurringTask()?->getId(),
+                'tags' => array_map(fn ($tag) => [
+                    'id' => $tag->getId(),
+                    'name' => $tag->getName(),
+                    'color' => $tag->getColor(),
+                ], $task->getTags()->toArray()),
             ];
         }
 
@@ -266,6 +276,11 @@ class BrainDumpFacade
                 'canCombineWithEvents' => $task->getCanCombineWithEvents(),
                 'needsFullFocus' => $task->isNeedsFullFocus(),
                 'recurringTaskId' => $task->getRecurringTask()?->getId(),
+                'tags' => array_map(fn ($tag) => [
+                    'id' => $tag->getId(),
+                    'name' => $tag->getName(),
+                    'color' => $tag->getColor(),
+                ], $task->getTags()->toArray()),
             ];
 
             $category = $task->getCategory()->value;

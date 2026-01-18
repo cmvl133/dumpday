@@ -27,6 +27,24 @@ class NoteController extends AbstractController
     ) {
     }
 
+    #[Route('s', name: 'note_list', methods: ['GET'])]
+    public function list(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $sort = $request->query->get('sort', 'newest');
+        $notes = $this->noteRepository->findByUserSorted($user, $sort);
+
+        return $this->json(array_map(fn(Note $note) => $this->serializeNote($note), $notes));
+    }
+
+    #[Route('/search', name: 'note_search', methods: ['GET'])]
+    public function search(#[CurrentUser] User $user, Request $request): JsonResponse
+    {
+        $query = $request->query->get('q', '');
+        $notes = $this->noteRepository->findByUserWithSearch($user, $query);
+
+        return $this->json(array_map(fn(Note $note) => $this->serializeNote($note), $notes));
+    }
+
     #[Route('', name: 'note_create', methods: ['POST'])]
     public function create(#[CurrentUser] User $user, Request $request): JsonResponse
     {
@@ -52,13 +70,18 @@ class NoteController extends AbstractController
         $note->setContent((string) $data['content']);
         $note->setDailyNote($dailyNote);
 
+        if (isset($data['title'])) {
+            $note->setTitle($data['title']);
+        }
+
+        if (isset($data['format'])) {
+            $note->setFormat($data['format']);
+        }
+
         $this->entityManager->persist($note);
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $note->getId(),
-            'content' => $note->getContent(),
-        ], Response::HTTP_CREATED);
+        return $this->json($this->serializeNote($note), Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'note_update', methods: ['PATCH'])]
@@ -84,12 +107,17 @@ class NoteController extends AbstractController
             $note->setContent((string) $data['content']);
         }
 
+        if (array_key_exists('title', $data)) {
+            $note->setTitle($data['title']);
+        }
+
+        if (isset($data['format'])) {
+            $note->setFormat($data['format']);
+        }
+
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $note->getId(),
-            'content' => $note->getContent(),
-        ]);
+        return $this->json($this->serializeNote($note));
     }
 
     #[Route('/{id}', name: 'note_delete', methods: ['DELETE'])]
@@ -113,5 +141,20 @@ class NoteController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function serializeNote(Note $note): array
+    {
+        return [
+            'id' => $note->getId(),
+            'content' => $note->getContent(),
+            'title' => $note->getTitle(),
+            'format' => $note->getFormat(),
+            'createdAt' => $note->getCreatedAt()?->format('c'),
+            'updatedAt' => $note->getUpdatedAt()?->format('c'),
+        ];
     }
 }

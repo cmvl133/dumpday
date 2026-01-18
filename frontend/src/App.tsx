@@ -10,6 +10,7 @@ import {
   updateTask,
   updateTaskDueDate,
   updateTaskFixedTime,
+  assignTaskTags,
   updateEvent,
   deleteEvent,
   createJournalEntry,
@@ -19,6 +20,7 @@ import {
   updateNote,
   deleteNote,
 } from './store/dailyNoteSlice';
+import { fetchTags } from './store/tagSlice';
 import { checkAuth } from './store/authSlice';
 import { fetchSettings } from './store/settingsSlice';
 import { Header } from './components/layout/Header';
@@ -64,6 +66,7 @@ function App() {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchSettings());
+      dispatch(fetchTags());
     }
   }, [isAuthenticated, dispatch]);
 
@@ -203,6 +206,10 @@ function App() {
     dispatch(updateTaskFixedTime({ id, fixedTime }));
   };
 
+  const handleTaskTagsChange = (id: number, tagIds: number[]) => {
+    dispatch(assignTaskTags({ id, tagIds }));
+  };
+
   const handleUpdateEvent = (
     id: number,
     data: { title?: string; startTime?: string; endTime?: string }
@@ -278,6 +285,7 @@ function App() {
                   onUpdateTask={handleUpdateTask}
                   onUpdateTaskDueDate={handleUpdateTaskDueDate}
                   onUpdateTaskFixedTime={handleUpdateTaskFixedTime}
+                  onTaskTagsChange={handleTaskTagsChange}
                   onAddTask={handleAddTask}
                   onUpdateNote={handleUpdateNote}
                   onDeleteNote={handleDeleteNote}

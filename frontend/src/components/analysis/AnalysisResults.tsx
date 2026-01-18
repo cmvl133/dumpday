@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { TaskList } from './TaskList';
 import { NotesList } from './NotesList';
 import { JournalSection } from './JournalSection';
+import { TagFilterBar } from '@/components/tags/TagFilterBar';
+import { useTagFilter } from '@/hooks/useTagFilter';
 import { cn } from '@/lib/utils';
 import type { AnalysisResponse, DailyNoteData } from '@/types';
 
@@ -48,6 +50,7 @@ interface AnalysisResultsProps {
   onUpdateTask?: (id: number, title: string) => void;
   onUpdateTaskDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateTaskFixedTime?: (id: number, fixedTime: string | null) => void;
+  onTaskTagsChange?: (id: number, tagIds: number[]) => void;
   onAddTask?: (title: string, dueDate: string | null, category: 'today' | 'scheduled' | 'someday') => void;
   onUpdateNote?: (id: number, content: string) => void;
   onDeleteNote?: (id: number) => void;
@@ -124,6 +127,7 @@ export function AnalysisResults({
   onUpdateTask,
   onUpdateTaskDueDate,
   onUpdateTaskFixedTime,
+  onTaskTagsChange,
   onAddTask,
   onUpdateNote,
   onDeleteNote,
@@ -134,6 +138,7 @@ export function AnalysisResults({
 }: AnalysisResultsProps) {
   const { t } = useTranslation();
   const [collapsedBoxes, setCollapsedBoxes] = useState<BoxId[]>([]);
+  const { filterTasks } = useTagFilter();
 
   useEffect(() => {
     setCollapsedBoxes(getCollapsedBoxes());
@@ -155,11 +160,31 @@ export function AnalysisResults({
   const notes = data.notes;
   const journal = data.journal;
 
-  const todayCount = tasks.today?.length || 0;
-  const scheduledCount = tasks.scheduled?.length || 0;
-  const somedayCount = tasks.someday?.length || 0;
-  // overdue only exists on DailyNoteData, not AnalysisResponse
-  const overdueCount = ('overdue' in tasks && tasks.overdue?.length) || 0;
+  // Apply tag filtering to tasks (only for saved tasks with IDs)
+  const filteredTasks = useMemo(() => {
+    // Type guard to check if tasks have ids (are saved tasks)
+    const hasTags = (taskArray: typeof tasks.today) => {
+      return taskArray.every((t) => 'id' in t);
+    };
+
+    const todayTasks = tasks.today || [];
+    const scheduledTasks = tasks.scheduled || [];
+    const somedayTasks = tasks.someday || [];
+    const overdueTasks = 'overdue' in tasks ? (tasks as DailyNoteData['tasks']).overdue || [] : [];
+
+    return {
+      today: hasTags(todayTasks) ? filterTasks(todayTasks as DailyNoteData['tasks']['today']) : todayTasks,
+      scheduled: hasTags(scheduledTasks) ? filterTasks(scheduledTasks as DailyNoteData['tasks']['scheduled']) : scheduledTasks,
+      someday: hasTags(somedayTasks) ? filterTasks(somedayTasks as DailyNoteData['tasks']['someday']) : somedayTasks,
+      overdue: filterTasks(overdueTasks),
+    };
+  }, [tasks, filterTasks]);
+
+  // Use filtered counts when filtering is active
+  const todayCount = filteredTasks.today.length;
+  const scheduledCount = filteredTasks.scheduled.length;
+  const somedayCount = filteredTasks.someday.length;
+  const overdueCount = filteredTasks.overdue.length;
   const laterCount = somedayCount + overdueCount;
 
   // Later section should auto-expand if there are overdue tasks
@@ -185,6 +210,9 @@ export function AnalysisResults({
         </Badge>
       )}
 
+      {/* Tag Filter Bar */}
+      {!isPreview && <TagFilterBar />}
+
       {/* TODO Today - always visible, cannot collapse */}
       <CollapsibleCard
         icon={<CheckCircle2 className="h-4 w-4 text-green-600" />}
@@ -194,7 +222,7 @@ export function AnalysisResults({
         canCollapse={false}
       >
         <TaskList
-          tasks={tasks.today || []}
+          tasks={filteredTasks.today}
           currentDate={currentDate}
           isTodaySection={true}
           sectionType="today"
@@ -203,6 +231,7 @@ export function AnalysisResults({
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateFixedTime={onUpdateTaskFixedTime}
+          onTagsChange={onTaskTagsChange}
           onAdd={onAddTask}
           isPreview={isPreview}
         />
@@ -218,7 +247,7 @@ export function AnalysisResults({
         onToggle={() => toggleBox('scheduled')}
       >
         <TaskList
-          tasks={tasks.scheduled || []}
+          tasks={filteredTasks.scheduled}
           currentDate={currentDate}
           sectionType="scheduled"
           onToggle={onToggleTask}
@@ -226,6 +255,7 @@ export function AnalysisResults({
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateFixedTime={onUpdateTaskFixedTime}
+          onTagsChange={onTaskTagsChange}
           onAdd={onAddTask}
           isPreview={isPreview}
         />
@@ -241,10 +271,10 @@ export function AnalysisResults({
         onToggle={() => toggleBox('someday')}
       >
         {/* Overdue tasks first */}
-        {overdueCount > 0 && 'overdue' in tasks && (
+        {overdueCount > 0 && (
           <div className="mb-4">
             <TaskList
-              tasks={tasks.overdue || []}
+              tasks={filteredTasks.overdue}
               currentDate={currentDate}
               sectionType="someday"
               isOverdue={true}
@@ -253,13 +283,14 @@ export function AnalysisResults({
               onUpdate={onUpdateTask}
               onUpdateDueDate={onUpdateTaskDueDate}
               onUpdateFixedTime={onUpdateTaskFixedTime}
+              onTagsChange={onTaskTagsChange}
               isPreview={isPreview}
             />
           </div>
         )}
         {/* Regular someday tasks */}
         <TaskList
-          tasks={tasks.someday || []}
+          tasks={filteredTasks.someday}
           currentDate={currentDate}
           sectionType="someday"
           onToggle={onToggleTask}
@@ -267,6 +298,7 @@ export function AnalysisResults({
           onUpdate={onUpdateTask}
           onUpdateDueDate={onUpdateTaskDueDate}
           onUpdateFixedTime={onUpdateTaskFixedTime}
+          onTagsChange={onTaskTagsChange}
           onAdd={onAddTask}
           isPreview={isPreview}
         />
@@ -283,6 +315,7 @@ export function AnalysisResults({
       >
         <NotesList
           notes={notes}
+          currentDate={currentDate}
           isPreview={isPreview}
           onUpdate={onUpdateNote}
           onDelete={onDeleteNote}

@@ -248,8 +248,8 @@ export function DaySchedule({
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3 shrink-0">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Clock className="h-5 w-5 text-primary" />
+        <CardTitle className="text-base flex items-center gap-2">
+          <Clock className="h-4 w-4 text-primary" />
           {t('schedule.title')}
         </CardTitle>
       </CardHeader>

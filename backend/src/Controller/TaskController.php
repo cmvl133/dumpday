@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Enum\RecurrenceType;
 use App\Enum\TaskCategory;
 use App\Repository\DailyNoteRepository;
+use App\Repository\TagRepository;
 use App\Repository\TaskRepository;
 use App\Service\RecurringSyncService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,7 @@ class TaskController extends AbstractController
     public function __construct(
         private readonly TaskRepository $taskRepository,
         private readonly DailyNoteRepository $dailyNoteRepository,
+        private readonly TagRepository $tagRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly RecurringSyncService $recurringSyncService,
     ) {
@@ -82,6 +84,7 @@ class TaskController extends AbstractController
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
             'recurringTaskId' => $task->getRecurringTask()?->getId(),
+            'tags' => [],
         ], Response::HTTP_CREATED);
     }
 
@@ -185,6 +188,11 @@ class TaskController extends AbstractController
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
             'recurringTaskId' => $task->getRecurringTask()?->getId(),
+            'tags' => array_map(fn ($tag) => [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'color' => $tag->getColor(),
+            ], $task->getTags()->toArray()),
         ];
 
         // Include generated next task info if one was created
@@ -218,6 +226,83 @@ class TaskController extends AbstractController
 
         $this->entityManager->remove($task);
         $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}/tags', name: 'task_assign_tags', methods: ['POST'])]
+    public function assignTags(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
+    {
+        $task = $this->taskRepository->find($id);
+
+        if ($task === null) {
+            return $this->json([
+                'error' => 'Task not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $tagIds = $data['tagIds'] ?? [];
+
+        if (!is_array($tagIds)) {
+            return $this->json([
+                'error' => 'tagIds must be an array',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Clear existing tags
+        foreach ($task->getTags() as $existingTag) {
+            $task->removeTag($existingTag);
+        }
+
+        // Add new tags
+        foreach ($tagIds as $tagId) {
+            $tag = $this->tagRepository->find($tagId);
+            if ($tag !== null && $tag->getUser()?->getId() === $user->getId()) {
+                $task->addTag($tag);
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return $this->json([
+            'id' => $task->getId(),
+            'tags' => array_map(fn ($tag) => [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'color' => $tag->getColor(),
+            ], $task->getTags()->toArray()),
+        ]);
+    }
+
+    #[Route('/{id}/tags/{tagId}', name: 'task_remove_tag', methods: ['DELETE'])]
+    public function removeTag(#[CurrentUser] User $user, int $id, int $tagId): JsonResponse
+    {
+        $task = $this->taskRepository->find($id);
+
+        if ($task === null) {
+            return $this->json([
+                'error' => 'Task not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $tag = $this->tagRepository->find($tagId);
+        if ($tag !== null && $tag->getUser()?->getId() === $user->getId()) {
+            $task->removeTag($tag);
+            $this->entityManager->flush();
+        }
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }

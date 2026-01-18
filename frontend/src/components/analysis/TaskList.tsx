@@ -18,6 +18,7 @@ interface TaskListProps {
   onUpdate?: (id: number, title: string) => void;
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateFixedTime?: (id: number, fixedTime: string | null) => void;
+  onTagsChange?: (id: number, tagIds: number[]) => void;
   onAdd?: (title: string, dueDate: string | null, category: TaskCategory) => void;
   isPreview?: boolean;
 }
@@ -39,6 +40,7 @@ export function TaskList({
   onUpdate,
   onUpdateDueDate,
   onUpdateFixedTime,
+  onTagsChange,
   onAdd,
   isPreview = false,
 }: TaskListProps) {
@@ -126,9 +128,11 @@ export function TaskList({
               onUpdate={onUpdate}
               onUpdateDueDate={onUpdateDueDate}
               onUpdateFixedTime={onUpdateFixedTime}
+              onTagsChange={onTagsChange}
               isPreview={isPreview}
               recurringTaskId={'recurringTaskId' in task ? task.recurringTaskId : undefined}
               category={sectionType}
+              tags={'tags' in task ? task.tags : []}
             />
           </div>
         ))}

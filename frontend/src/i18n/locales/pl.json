@@ -354,5 +354,46 @@
       "allFuture": "To i wszystkie przyszłe",
       "allFutureDesc": "Zatrzymaj powtarzanie"
     }
+  },
+  "tags": {
+    "title": "Tagi",
+    "addTag": "Dodaj tag",
+    "createTag": "Utwórz nowy tag",
+    "editTag": "Edytuj tag",
+    "deleteTag": "Usuń tag",
+    "deleteConfirm": "Usunąć ten tag? Zostanie usunięty ze wszystkich zadań.",
+    "tagName": "Nazwa taga",
+    "tagColor": "Kolor taga",
+    "noTags": "Brak tagów",
+    "manageTags": "Zarządzaj tagami",
+    "manageTagsDesc": "Twórz, edytuj i usuwaj tagi do organizacji zadań",
+    "filter": {
+      "title": "Filtruj po tagach",
+      "clear": "Wyczyść",
+      "mode": "Tryb filtrowania",
+      "and": "WSZYSTKIE",
+      "or": "KTÓRYKOLWIEK"
+    }
+  },
+  "notes": {
+    "title": "Notatki",
+    "addNote": "Dodaj notatkę",
+    "expand": "Rozwiń notatki",
+    "search": "Szukaj notatek...",
+    "noNotes": "Brak notatek",
+    "noResults": "Nie znaleziono notatek",
+    "selectNote": "Wybierz notatkę do edycji",
+    "sort": "Sortuj",
+    "newest": "Najnowsze",
+    "oldest": "Najstarsze",
+    "editor": {
+      "placeholder": "Zacznij pisać...",
+      "bold": "Pogrubienie",
+      "italic": "Kursywa",
+      "heading": "Nagłówek",
+      "bulletList": "Lista punktowana",
+      "numberedList": "Lista numerowana",
+      "link": "Link"
+    }
   }
 }

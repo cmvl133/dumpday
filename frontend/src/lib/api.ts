@@ -19,6 +19,7 @@ import type {
   RebuildResponse,
   RecurringTask,
   RecurrenceType,
+  Tag,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -163,6 +164,94 @@ export const api = {
         throw new Error(error.error || 'Failed to delete task');
       }
     },
+
+    assignTags: async (id: number, tagIds: number[]): Promise<{ id: number; tags: Tag[] }> => {
+      const response = await fetch(`${API_BASE}/task/${id}/tags`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tagIds }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to assign tags');
+      }
+      return response.json();
+    },
+
+    removeTag: async (taskId: number, tagId: number): Promise<void> => {
+      const response = await fetch(`${API_BASE}/task/${taskId}/tags/${tagId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to remove tag');
+      }
+    },
+  },
+
+  tag: {
+    list: async (): Promise<Tag[]> => {
+      const response = await fetch(`${API_BASE}/tag`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch tags');
+      }
+      return response.json();
+    },
+
+    create: async (data: { name: string; color: string }): Promise<Tag> => {
+      const response = await fetch(`${API_BASE}/tag`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create tag');
+      }
+      return response.json();
+    },
+
+    update: async (id: number, data: Partial<Pick<Tag, 'name' | 'color'>>): Promise<Tag> => {
+      const response = await fetch(`${API_BASE}/tag/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to update tag');
+      }
+      return response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+      const response = await fetch(`${API_BASE}/tag/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to delete tag');
+      }
+    },
+
+    colors: async (): Promise<string[]> => {
+      const response = await fetch(`${API_BASE}/tag/colors`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch tag colors');
+      }
+      return response.json();
+    },
   },
 
   event: {
@@ -259,7 +348,29 @@ export const api = {
   },
 
   note: {
-    create: async (data: { content: string; date: string }): Promise<Note> => {
+    list: async (sort: 'newest' | 'oldest' = 'newest'): Promise<Note[]> => {
+      const response = await fetch(`${API_BASE}/notes?sort=${sort}`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch notes');
+      }
+      return response.json();
+    },
+
+    search: async (query: string): Promise<Note[]> => {
+      const response = await fetch(`${API_BASE}/note/search?q=${encodeURIComponent(query)}`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to search notes');
+      }
+      return response.json();
+    },
+
+    create: async (data: { content: string; date: string; title?: string; format?: string }): Promise<Note> => {
       const response = await fetch(`${API_BASE}/note`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -275,7 +386,7 @@ export const api = {
 
     update: async (
       id: number,
-      data: Partial<Pick<Note, 'content'>>
+      data: Partial<Pick<Note, 'content' | 'title' | 'format'>>
     ): Promise<Note> => {
       const response = await fetch(`${API_BASE}/note/${id}`, {
         method: 'PATCH',

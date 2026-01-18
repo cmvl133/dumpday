@@ -1,8 +1,12 @@
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Trash2, Pencil, Check, X, Calendar, Clock, Repeat } from 'lucide-react';
+import { Check, X, Repeat } from 'lucide-react';
 import { RecurringSettings } from '@/components/tasks/RecurringSettings';
 import { DeleteRecurringConfirm } from '@/components/tasks/DeleteRecurringConfirm';
+import { DateTimePopover } from '@/components/tasks/DateTimePopover';
+import { TaskMoreMenu } from '@/components/tasks/TaskMoreMenu';
+import { TagBadge } from '@/components/tags/TagBadge';
+import { TagSelector } from '@/components/tags/TagSelector';
 import confetti from 'canvas-confetti';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import type { RootState } from '@/store';
-import type { ConfettiStyle } from '@/types';
+import type { ConfettiStyle, Tag } from '@/types';
 
 const getConfettiConfig = (style: ConfettiStyle, origin: { x: number; y: number }) => {
   const configs: Record<ConfettiStyle, Parameters<typeof confetti>[0]> = {
@@ -77,9 +81,11 @@ interface TaskItemProps {
   onUpdate?: (id: number, title: string) => void;
   onUpdateDueDate?: (id: number, dueDate: string | null) => void;
   onUpdateFixedTime?: (id: number, fixedTime: string | null) => void;
+  onTagsChange?: (id: number, tagIds: number[]) => void;
   isPreview?: boolean;
   recurringTaskId?: number | null;
   category?: string;
+  tags?: Tag[];
 }
 
 export function TaskItem({
@@ -96,26 +102,23 @@ export function TaskItem({
   onUpdate,
   onUpdateDueDate,
   onUpdateFixedTime,
+  onTagsChange,
   isPreview = false,
   recurringTaskId,
   category = 'today',
+  tags = [],
 }: TaskItemProps) {
   const confettiStyle = useSelector((state: RootState) => state.settings.confettiStyle);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
-  const [isEditingTime, setIsEditingTime] = useState(false);
-  const [timeValue, setTimeValue] = useState(fixedTime || '');
   const [showRecurringSettings, setShowRecurringSettings] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const dateInputRef = useRef<HTMLInputElement>(null);
   const checkboxWrapperRef = useRef<HTMLDivElement>(null);
 
   const isRecurring = recurringTaskId !== undefined && recurringTaskId !== null;
 
   // For "today" section, show context date; for others show dueDate
   const displayDate = isTodaySection ? (dueDate || currentDate) : dueDate;
-  // Date picker defaults to dueDate if set, otherwise context date
-  const dateInputValue = dueDate || currentDate || '';
 
   const handleToggle = () => {
     if (id !== undefined && onToggle) {
@@ -174,47 +177,15 @@ export function TaskItem({
     }
   };
 
-  const handleDateClick = () => {
-    dateInputRef.current?.showPicker();
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpdateDueDate = (newDate: string | null) => {
     if (id !== undefined && onUpdateDueDate) {
-      const newDate = e.target.value || null;
       onUpdateDueDate(id, newDate);
     }
   };
 
-  const handleTimeEdit = () => {
-    setTimeValue(fixedTime || '');
-    setIsEditingTime(true);
-  };
-
-  const handleTimeSave = () => {
+  const handleUpdateFixedTime = (newTime: string | null) => {
     if (id !== undefined && onUpdateFixedTime) {
-      onUpdateFixedTime(id, timeValue || null);
-    }
-    setIsEditingTime(false);
-  };
-
-  const handleTimeCancel = () => {
-    setTimeValue(fixedTime || '');
-    setIsEditingTime(false);
-  };
-
-  const handleTimeClear = () => {
-    if (id !== undefined && onUpdateFixedTime) {
-      onUpdateFixedTime(id, null);
-    }
-    setTimeValue('');
-    setIsEditingTime(false);
-  };
-
-  const handleTimeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleTimeSave();
-    } else if (e.key === 'Escape') {
-      handleTimeCancel();
+      onUpdateFixedTime(id, newTime);
     }
   };
 
@@ -261,14 +232,26 @@ export function TaskItem({
         <>
           <span
             className={cn(
-              'flex-1 text-sm flex items-center gap-1',
+              'flex-1 text-sm flex items-center gap-1 flex-wrap',
               isCompleted && 'line-through text-muted-foreground'
             )}
           >
             {isRecurring && (
               <Repeat className="h-3 w-3 text-primary shrink-0" />
             )}
-            {title}
+            <span className="break-words">{title}</span>
+            {tags.length > 0 && (
+              <span className="flex items-center gap-1 ml-1">
+                {tags.slice(0, 3).map((tag) => (
+                  <TagBadge key={tag.id} tag={tag} />
+                ))}
+                {tags.length > 3 && (
+                  <span className="text-[10px] text-muted-foreground">
+                    +{tags.length - 3}
+                  </span>
+                )}
+              </span>
+            )}
           </span>
 
           {(displayDate || fixedTime) && (
@@ -282,113 +265,38 @@ export function TaskItem({
             </Badge>
           )}
 
-          {!isPreview && id !== undefined && isEditingTime && onUpdateFixedTime && (
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-card/95 backdrop-blur-sm rounded-md px-2 py-1 border border-primary/30 shadow-lg shadow-primary/10">
-              <input
-                type="time"
-                value={timeValue}
-                onChange={(e) => setTimeValue(e.target.value)}
-                onKeyDown={handleTimeKeyDown}
-                className="h-7 w-24 px-2 text-sm"
-                autoFocus
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={handleTimeSave}
-              >
-                <Check className="h-4 w-4 text-[#00ff88]" />
-              </Button>
-              {fixedTime && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={handleTimeClear}
-                  title="Usuń godzinę"
-                >
-                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={handleTimeCancel}
-              >
-                <X className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </div>
-          )}
-
-          {!isPreview && id !== undefined && !isEditingTime && (
+          {!isPreview && id !== undefined && (
             <div className="absolute right-0 top-1/2 -translate-y-1/2 flex opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 rounded">
-              {onUpdateFixedTime && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={handleTimeEdit}
-                  title={fixedTime ? `Godzina: ${fixedTime}` : 'Ustaw godzinę'}
-                >
-                  <Clock className={cn(
-                    "h-3.5 w-3.5",
-                    fixedTime ? "text-primary" : "text-muted-foreground hover:text-primary"
-                  )} />
-                </Button>
+              {/* Date & Time Popover */}
+              {(onUpdateDueDate || onUpdateFixedTime) && (
+                <DateTimePopover
+                  dueDate={dueDate}
+                  fixedTime={fixedTime}
+                  onUpdateDueDate={onUpdateDueDate ? handleUpdateDueDate : undefined}
+                  onUpdateFixedTime={onUpdateFixedTime ? handleUpdateFixedTime : undefined}
+                  defaultDate={currentDate}
+                />
               )}
-              {onUpdateDueDate && (
-                <>
-                  <input
-                    type="date"
-                    ref={dateInputRef}
-                    value={dateInputValue}
-                    onChange={handleDateChange}
-                    className="sr-only"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={handleDateClick}
-                  >
-                    <Calendar className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
-                  </Button>
-                </>
+
+              {/* Tags */}
+              {onTagsChange && (
+                <TagSelector
+                  selectedTags={tags}
+                  onTagsChange={(tagIds) => {
+                    if (id !== undefined) {
+                      onTagsChange(id, tagIds);
+                    }
+                  }}
+                />
               )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={() => setShowRecurringSettings(true)}
-                title={isRecurring ? 'Edit recurring' : 'Make recurring'}
-              >
-                <Repeat className={cn(
-                  "h-3.5 w-3.5",
-                  isRecurring ? "text-primary" : "text-muted-foreground hover:text-primary"
-                )} />
-              </Button>
-              {onUpdate && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={handleEdit}
-                >
-                  <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
-                </Button>
-              )}
-              {onDelete && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={handleDelete}
-                >
-                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                </Button>
-              )}
+
+              {/* More Menu (Edit, Recurring, Delete) */}
+              <TaskMoreMenu
+                isRecurring={isRecurring}
+                onEdit={onUpdate ? handleEdit : undefined}
+                onRecurring={() => setShowRecurringSettings(true)}
+                onDelete={onDelete ? handleDelete : undefined}
+              />
             </div>
           )}
         </>

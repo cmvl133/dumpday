@@ -354,5 +354,46 @@
       "allFuture": "This and all future",
       "allFutureDesc": "Stop the recurring task"
     }
+  },
+  "tags": {
+    "title": "Tags",
+    "addTag": "Add tag",
+    "createTag": "Create new tag",
+    "editTag": "Edit tag",
+    "deleteTag": "Delete tag",
+    "deleteConfirm": "Delete this tag? It will be removed from all tasks.",
+    "tagName": "Tag name",
+    "tagColor": "Tag color",
+    "noTags": "No tags yet",
+    "manageTags": "Manage tags",
+    "manageTagsDesc": "Create, edit, and delete tags for organizing tasks",
+    "filter": {
+      "title": "Filter by tags",
+      "clear": "Clear",
+      "mode": "Filter mode",
+      "and": "ALL",
+      "or": "ANY"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "addNote": "Add note",
+    "expand": "Expand notes",
+    "search": "Search notes...",
+    "noNotes": "No notes yet",
+    "noResults": "No notes found",
+    "selectNote": "Select a note to edit",
+    "sort": "Sort",
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "editor": {
+      "placeholder": "Start typing...",
+      "bold": "Bold",
+      "italic": "Italic",
+      "heading": "Heading",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list",
+      "link": "Link"
+    }
   }
 }

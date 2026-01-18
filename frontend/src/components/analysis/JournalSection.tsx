@@ -150,20 +150,20 @@ export function JournalSection({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-7 w-7"
                         onClick={() => handleEdit(entry as JournalEntry)}
                       >
-                        <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
                       </Button>
                     )}
                     {onDelete && entryId !== null && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-7 w-7"
                         onClick={() => handleDelete(entryId)}
                       >
-                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                       </Button>
                     )}
                   </div>

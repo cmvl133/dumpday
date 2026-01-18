@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StickyNote, Pencil, Trash2, Check, X, Plus } from 'lucide-react';
+import { StickyNote, Pencil, Trash2, Check, X, Plus, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { NotesExpandedModal } from '@/components/notes/NotesExpandedModal';
 import { cn } from '@/lib/utils';
 import type { Note } from '@/types';
 
 interface NotesListProps {
   notes: Note[] | { content: string }[];
+  currentDate?: string;
   isPreview?: boolean;
   onUpdate?: (id: number, content: string) => void;
   onDelete?: (id: number) => void;
@@ -16,6 +18,7 @@ interface NotesListProps {
 
 export function NotesList({
   notes,
+  currentDate = new Date().toISOString().split('T')[0],
   isPreview = false,
   onUpdate,
   onDelete,
@@ -28,6 +31,7 @@ export function NotesList({
   const [newNoteContent, setNewNoteContent] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (isAdding && textareaRef.current) {
@@ -150,20 +154,20 @@ export function NotesList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-7 w-7"
                         onClick={() => handleEdit(note as Note)}
                       >
-                        <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
                       </Button>
                     )}
                     {onDelete && noteId !== null && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-7 w-7"
                         onClick={() => handleDelete(noteId)}
                       >
-                        <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                       </Button>
                     )}
                   </div>
@@ -191,18 +195,42 @@ export function NotesList({
         </div>
       )}
 
-      {/* Add note button */}
-      {!isPreview && onAdd && !isAdding && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full mt-2 text-muted-foreground hover:text-foreground"
-          onClick={handleStartAdding}
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          {t('tasks.addNote')}
-        </Button>
+      {/* Add note and expand buttons */}
+      {!isPreview && (
+        <div className="flex gap-2 mt-2">
+          {onAdd && !isAdding && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex-1 text-muted-foreground hover:text-foreground"
+              onClick={handleStartAdding}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              {t('tasks.addNote')}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => setIsExpanded(true)}
+            title={t('notes.expand')}
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+        </div>
       )}
+
+      {/* Expanded Modal */}
+      <NotesExpandedModal
+        isOpen={isExpanded}
+        onClose={() => setIsExpanded(false)}
+        notes={notes.filter((n): n is Note => 'id' in n)}
+        currentDate={currentDate}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onAdd={onAdd}
+      />
     </div>
   );
 }

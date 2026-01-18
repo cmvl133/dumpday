@@ -2,6 +2,14 @@ export type TaskCategory = 'today' | 'scheduled' | 'someday';
 
 export type RecurrenceType = 'daily' | 'weekly' | 'weekdays' | 'monthly' | 'custom';
 
+export type TagFilterMode = 'and' | 'or';
+
+export interface Tag {
+  id: number;
+  name: string;
+  color: string;
+}
+
 export interface RecurringTask {
   id: number;
   title: string;
@@ -30,6 +38,7 @@ export interface Task {
   canCombineWithEvents?: number[] | null;
   needsFullFocus?: boolean;
   recurringTaskId?: number | null;
+  tags?: Tag[];
 }
 
 export type CheckInInterval = 'off' | '1h' | '2h' | '3h' | '4h';
@@ -104,6 +113,10 @@ export interface JournalEntry {
 export interface Note {
   id?: number;
   content: string;
+  title?: string | null;
+  format?: 'markdown' | 'plaintext';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TasksGroup {
