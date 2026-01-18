@@ -171,11 +171,40 @@ class BrainDumpFacade
             'today' => [],
             'scheduled' => [],
             'someday' => [],
+            'overdue' => [],
         ];
+
+        // Add overdue tasks - only when viewing today's date
+        $today = new \DateTime('today');
+        $isViewingToday = $date->format('Y-m-d') === $today->format('Y-m-d');
+        $overdueTaskIds = [];
+
+        if ($isViewingToday) {
+            $overdueTasks = $this->taskRepository->findOverdueTasks($user, $today);
+            foreach ($overdueTasks as $task) {
+                $overdueTaskIds[] = $task->getId();
+                $tasks['overdue'][] = [
+                    'id' => $task->getId(),
+                    'title' => $task->getTitle(),
+                    'isCompleted' => $task->isCompleted(),
+                    'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+                    'reminderTime' => $task->getReminderTime()?->format('H:i'),
+                    'estimatedMinutes' => $task->getEstimatedMinutes(),
+                    'fixedTime' => $task->getFixedTime()?->format('H:i'),
+                    'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+                    'needsFullFocus' => $task->isNeedsFullFocus(),
+                    'recurringTaskId' => $task->getRecurringTask()?->getId(),
+                ];
+            }
+        }
 
         // Add tasks scheduled for this date to the "today" category
         // (they become "today's tasks" on their due date)
         foreach ($scheduledTasksForDate as $task) {
+            // Skip if already in overdue
+            if (in_array($task->getId(), $overdueTaskIds, true)) {
+                continue;
+            }
             $scheduledTaskIds[] = $task->getId();
             $tasks['today'][] = [
                 'id' => $task->getId(),
@@ -211,11 +240,11 @@ class BrainDumpFacade
             ];
         }
 
-        // Add tasks from the DailyNote (excluding already added scheduled tasks)
+        // Add tasks from the DailyNote (excluding already added scheduled/overdue tasks)
         $dateString = $date->format('Y-m-d');
         foreach ($dailyNote->getTasks() as $task) {
-            // Skip if already added from scheduledTasksForDate
-            if (in_array($task->getId(), $scheduledTaskIds, true)) {
+            // Skip if already added from scheduledTasksForDate or overdue
+            if (in_array($task->getId(), $scheduledTaskIds, true) || in_array($task->getId(), $overdueTaskIds, true)) {
                 continue;
             }
 

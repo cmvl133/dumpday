@@ -1,5 +1,6 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store';
@@ -20,6 +21,7 @@ const toLocalDateString = (date: Date): string => {
 export function DaySwitcher({ date, onDateChange }: DaySwitcherProps) {
   const { t } = useTranslation();
   const language = useSelector((state: RootState) => state.settings.language);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const formatDate = (dateStr: string): string => {
     const dateObj = new Date(dateStr + 'T00:00:00');
@@ -70,18 +72,43 @@ export function DaySwitcher({ date, onDateChange }: DaySwitcherProps) {
 
   const isToday = date === toLocalDateString(new Date());
 
+  const handleDatePickerClick = () => {
+    dateInputRef.current?.showPicker();
+  };
+
+  const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      onDateChange(e.target.value);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center gap-4 py-4">
       <Button variant="outline" size="icon" onClick={goToPrevDay}>
         <ChevronLeft className="h-4 w-4" />
       </Button>
 
-      <div className="text-center min-w-[250px]">
-        <div className="text-lg font-semibold capitalize">
+      <button
+        type="button"
+        onClick={handleDatePickerClick}
+        className="text-center min-w-[250px] hover:bg-muted/50 rounded-lg p-2 transition-colors cursor-pointer group"
+      >
+        <div className="text-lg font-semibold capitalize flex items-center justify-center gap-2">
           {formatDate(date)}
+          <Calendar className="h-4 w-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
         <div className="text-sm text-muted-foreground">{date}</div>
-      </div>
+      </button>
+
+      {/* Hidden date input for native date picker */}
+      <input
+        ref={dateInputRef}
+        type="date"
+        value={date}
+        onChange={handleDateInputChange}
+        className="sr-only"
+        tabIndex={-1}
+      />
 
       <Button variant="outline" size="icon" onClick={goToNextDay}>
         <ChevronRight className="h-4 w-4" />

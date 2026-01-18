@@ -12,6 +12,7 @@ interface TaskListProps {
   currentDate?: string;
   isTodaySection?: boolean;
   sectionType?: TaskCategory;
+  isOverdue?: boolean;
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
@@ -32,6 +33,7 @@ export function TaskList({
   currentDate,
   isTodaySection = false,
   sectionType = 'today',
+  isOverdue = false,
   onToggle,
   onDelete,
   onUpdate,
@@ -118,6 +120,7 @@ export function TaskList({
               fixedTime={'fixedTime' in task ? task.fixedTime : undefined}
               currentDate={currentDate}
               isTodaySection={isTodaySection}
+              isOverdue={isOverdue}
               onToggle={onToggle}
               onDelete={onDelete}
               onUpdate={onUpdate}

@@ -110,6 +110,7 @@ export interface TasksGroup {
   today: Task[];
   scheduled: Task[];
   someday: Task[];
+  overdue?: Task[];
 }
 
 export interface AnalysisResponse {

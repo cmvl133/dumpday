@@ -98,7 +98,7 @@ export function LoginPage() {
                     {t('auth.sending')}
                   </>
                 ) : (
-                  t('auth.sendMagicLink')
+                  t('auth.sendCode')
                 )}
               </Button>
             </form>
@@ -106,7 +106,7 @@ export function LoginPage() {
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div className="text-center mb-4">
                 <p className="text-sm text-muted-foreground">
-                  {t('auth.magicLinkSent', { email: '' })}
+                  {t('auth.codeSent', { email: '' })}
                 </p>
                 <p className="font-medium">{codeEmail}</p>
               </div>

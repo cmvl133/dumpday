@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
@@ -8,6 +8,7 @@ import {
   Heart,
   ChevronDown,
   ChevronRight,
+  AlertTriangle,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -157,6 +158,24 @@ export function AnalysisResults({
   const todayCount = tasks.today?.length || 0;
   const scheduledCount = tasks.scheduled?.length || 0;
   const somedayCount = tasks.someday?.length || 0;
+  // overdue only exists on DailyNoteData, not AnalysisResponse
+  const overdueCount = ('overdue' in tasks && tasks.overdue?.length) || 0;
+  const laterCount = somedayCount + overdueCount;
+
+  // Later section should auto-expand if there are overdue tasks
+  const hasOverdue = overdueCount > 0;
+  const laterSectionCollapsed = useMemo(() => {
+    if (hasOverdue) return false; // Always expanded if overdue
+    return isCollapsed('someday');
+  }, [hasOverdue, collapsedBoxes]);
+
+  // Get later section title with overdue count
+  const laterTitle = useMemo(() => {
+    if (overdueCount > 0) {
+      return `${t('tasks.later')} (${overdueCount} ${t('tasks.overdue').toLowerCase()})`;
+    }
+    return t('tasks.later');
+  }, [overdueCount, t]);
 
   return (
     <div className="space-y-4">
@@ -212,15 +231,33 @@ export function AnalysisResults({
         />
       </CollapsibleCard>
 
-      {/* TODO Someday */}
+      {/* TODO Later (Someday + Overdue) */}
       <CollapsibleCard
         id="someday"
-        icon={<Lightbulb className="h-4 w-4 text-yellow-600" />}
-        title={t('tasks.later')}
-        count={somedayCount}
-        isCollapsed={isCollapsed('someday')}
+        icon={hasOverdue ? <AlertTriangle className="h-4 w-4 text-red-500" /> : <Lightbulb className="h-4 w-4 text-yellow-600" />}
+        title={laterTitle}
+        count={laterCount}
+        isCollapsed={laterSectionCollapsed}
         onToggle={() => toggleBox('someday')}
       >
+        {/* Overdue tasks first */}
+        {overdueCount > 0 && 'overdue' in tasks && (
+          <div className="mb-4">
+            <TaskList
+              tasks={tasks.overdue || []}
+              currentDate={currentDate}
+              sectionType="someday"
+              isOverdue={true}
+              onToggle={onToggleTask}
+              onDelete={onDeleteTask}
+              onUpdate={onUpdateTask}
+              onUpdateDueDate={onUpdateTaskDueDate}
+              onUpdateFixedTime={onUpdateTaskFixedTime}
+              isPreview={isPreview}
+            />
+          </div>
+        )}
+        {/* Regular someday tasks */}
         <TaskList
           tasks={tasks.someday || []}
           currentDate={currentDate}

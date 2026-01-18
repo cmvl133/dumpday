@@ -71,6 +71,7 @@ interface TaskItemProps {
   fixedTime?: string | null;
   currentDate?: string;
   isTodaySection?: boolean;
+  isOverdue?: boolean;
   onToggle?: (id: number, isCompleted: boolean) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (id: number, title: string) => void;
@@ -89,6 +90,7 @@ export function TaskItem({
   fixedTime,
   currentDate,
   isTodaySection = false,
+  isOverdue = false,
   onToggle,
   onDelete,
   onUpdate,
@@ -217,7 +219,10 @@ export function TaskItem({
   };
 
   return (
-    <div className="flex items-center gap-3 py-2 group relative">
+    <div className={cn(
+      "flex items-center gap-3 py-2 group relative",
+      isOverdue && "bg-red-500/10 border-l-2 border-red-500 pl-2 -ml-2 rounded-r"
+    )}>
       {!isPreview && id !== undefined ? (
         <div ref={checkboxWrapperRef}>
           <Checkbox checked={isCompleted} onCheckedChange={handleToggle} />

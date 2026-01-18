@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock } from 'lucide-react';
+import { Clock, Plus } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { TimeSlot } from './TimeSlot';
 import { EventBlock } from './EventBlock';
 import { TaskDot } from './TaskDot';
+import { AddEventForm } from './AddEventForm';
 import type { ScheduleEvent, Task } from '@/types';
 
 interface DayScheduleProps {
@@ -166,6 +168,7 @@ export function DaySchedule({
 }: DayScheduleProps) {
   const { t } = useTranslation();
   const [expandedHours, setExpandedHours] = useState<number[]>([]);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   // Calculate layout for overlapping events
   const eventsWithLayout = useMemo(
@@ -250,8 +253,8 @@ export function DaySchedule({
           {t('schedule.title')}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 p-0 overflow-hidden">
-        <ScrollArea className="h-full">
+      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+        <ScrollArea className="flex-1">
           <div
             className="relative"
             style={{ height: `${HOURS.length * 60}px` }}
@@ -320,6 +323,27 @@ export function DaySchedule({
             )}
           </div>
         </ScrollArea>
+
+        {/* Add event section */}
+        {!isPreview && (
+          showAddForm ? (
+            <div className="shrink-0">
+              <AddEventForm onClose={() => setShowAddForm(false)} />
+            </div>
+          ) : (
+            <div className="p-2 border-t shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowAddForm(true)}
+                className="w-full h-8 text-muted-foreground hover:text-foreground"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('events.addEvent')}
+              </Button>
+            </div>
+          )
+        )}
       </CardContent>
     </Card>
   );

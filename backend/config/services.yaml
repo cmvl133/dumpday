@@ -34,6 +34,7 @@ services:
 
     App\Service\AuthMailerService:
         arguments:
+            $twig: '@twig'
             $mailFrom: '%mail_from%'
 
     App\Controller\RecurringController:

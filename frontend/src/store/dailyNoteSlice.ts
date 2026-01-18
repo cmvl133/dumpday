@@ -143,6 +143,24 @@ export const deleteTask = createAsyncThunk(
 );
 
 // Event operations
+export const createEvent = createAsyncThunk(
+  'dailyNote/createEvent',
+  async ({
+    title,
+    date,
+    startTime,
+    endTime,
+  }: {
+    title: string;
+    date: string;
+    startTime: string;
+    endTime?: string | null;
+  }) => {
+    const result = await api.event.create({ title, date, startTime, endTime });
+    return result;
+  }
+);
+
 export const updateEvent = createAsyncThunk(
   'dailyNote/updateEvent',
   async ({
@@ -388,6 +406,20 @@ const dailyNoteSlice = createSlice({
       })
 
       // Event handlers
+      .addCase(createEvent.fulfilled, (state, action) => {
+        if (state.dailyNote) {
+          const event = action.payload;
+          // Add to events array
+          state.dailyNote.events.push(event);
+          // Add to schedule with calculated positions
+          state.dailyNote.schedule.push({
+            ...event,
+            topPercent: calculateTopPercent(event.startTime),
+            heightPercent: calculateHeightPercent(event.startTime, event.endTime),
+          });
+        }
+      })
+
       .addCase(updateEvent.fulfilled, (state, action) => {
         if (state.dailyNote) {
           const updatedEvent = action.payload;

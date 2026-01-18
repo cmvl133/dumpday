@@ -16,9 +16,9 @@
     "logout": "Log out",
     "email": "Email address",
     "loginTitle": "Welcome to Dopaminder",
-    "sendMagicLink": "Send magic link",
+    "sendCode": "Send login code",
     "checkEmail": "Check your email",
-    "magicLinkSent": "We've sent a magic link to {{email}}",
+    "codeSent": "We've sent a login code to {{email}}",
     "sending": "Sending..."
   },
   "header": {
@@ -47,6 +47,7 @@
     "tomorrow": "Tomorrow",
     "thisWeek": "This week",
     "later": "Later",
+    "overdue": "Overdue",
     "completed": "Completed",
     "noTasks": "No tasks yet",
     "addTask": "Add task",
@@ -227,6 +228,13 @@
     "noEvents": "No scheduled events",
     "moreEvents": "+{{count}} more",
     "moreTasks": "+{{count}} tasks"
+  },
+  "events": {
+    "addEvent": "Add event",
+    "add": "Add",
+    "titlePlaceholder": "Event title",
+    "startTime": "Start time",
+    "endTime": "End time"
   },
   "planning": {
     "title": "Plan Your Day",

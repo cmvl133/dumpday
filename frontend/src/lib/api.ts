@@ -166,6 +166,25 @@ export const api = {
   },
 
   event: {
+    create: async (data: {
+      title: string;
+      date: string;
+      startTime: string;
+      endTime?: string | null;
+    }): Promise<Event> => {
+      const response = await fetch(`${API_BASE}/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create event');
+      }
+      return response.json();
+    },
+
     update: async (
       id: number,
       data: Partial<Pick<Event, 'title' | 'startTime' | 'endTime'>>

@@ -67,22 +67,37 @@ function App() {
     }
   }, [isAuthenticated, dispatch]);
 
+  // Default empty structure for days with no data
+  const emptyDayData: DailyNoteData = useMemo(() => ({
+    id: 0,
+    date: currentDate,
+    rawContent: null,
+    tasks: { today: [], scheduled: [], someday: [], overdue: [] },
+    events: [],
+    schedule: [],
+    notes: [],
+    journal: [],
+    createdAt: '',
+    updatedAt: '',
+  }), [currentDate]);
+
   // Merge persisted data with preview data when both exist
   // Must be before conditional returns to follow Rules of Hooks
   const { displayData, scheduleEvents, scheduledTasks } = useMemo((): {
-    displayData: AnalysisResponse | DailyNoteData | null;
+    displayData: AnalysisResponse | DailyNoteData;
     scheduleEvents: DailyNoteData['schedule'];
     scheduledTasks: DailyNoteData['tasks']['today'];
   } => {
     if (!analysisPreview) {
-      const allTasks = dailyNote ? [
-        ...dailyNote.tasks.today,
-        ...dailyNote.tasks.scheduled,
-        ...dailyNote.tasks.someday,
-      ] : [];
+      const data = dailyNote ?? emptyDayData;
+      const allTasks = [
+        ...data.tasks.today,
+        ...data.tasks.scheduled,
+        ...data.tasks.someday,
+      ];
       return {
-        displayData: dailyNote,
-        scheduleEvents: dailyNote?.schedule || [],
+        displayData: data,
+        scheduleEvents: data.schedule || [],
         scheduledTasks: allTasks.filter((t) => t.fixedTime),
       };
     }
@@ -253,7 +268,7 @@ function App() {
                 <div className="flex items-center justify-center h-64">
                   <p className="text-muted-foreground">{t('common.loading')}</p>
                 </div>
-              ) : displayData ? (
+              ) : (
                 <AnalysisResults
                   data={displayData}
                   currentDate={currentDate}
@@ -271,17 +286,6 @@ function App() {
                   onDeleteJournal={handleDeleteJournal}
                   onAddJournal={handleAddJournal}
                 />
-              ) : (
-                <div className="flex items-center justify-center h-64">
-                  <div className="text-center">
-                    <p className="text-muted-foreground mb-2">
-                      {t('app.noData')}
-                    </p>
-                    <p className="text-sm text-muted-foreground/70">
-                      {t('app.startTyping')}
-                    </p>
-                  </div>
-                </div>
               )}
             </ScrollArea>
           </div>
