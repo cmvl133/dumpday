@@ -293,6 +293,30 @@
       "keepDesc": "Leave the task at this time",
       "reschedule": "Reschedule",
       "rescheduleDesc": "Add to planning queue"
+    },
+    "split": {
+      "header": "Tasks to split",
+      "title": "Task doesn't fit",
+      "duration": "Duration: {{duration}}",
+      "availableTime": "Available today: {{time}}",
+      "freeSlots": "Free time slots",
+      "moreSlots": "+{{count}} more slots",
+      "question": "What would you like to do?",
+      "splitIntoParts": "Split into parts",
+      "splitToday": "Split into {{parts}} parts today",
+      "splitAcrossDays": "Split across today and tomorrow",
+      "moveToTomorrow": "Move to tomorrow",
+      "moveToTomorrowDesc": "Do the whole task tomorrow",
+      "handleManually": "I'll handle it",
+      "handleManuallyDesc": "Skip AI scheduling",
+      "preview": "Split preview",
+      "totalParts": "{{parts}} parts, {{duration}}/{{taskDuration}} min",
+      "acrossDaysWarning": "This task will be split across multiple days",
+      "partLabel": "Part {{number}}",
+      "startTime": "Start",
+      "durationMin": "Duration (min)",
+      "accept": "Accept split",
+      "notEnoughTime": "Missing {{missing}} minutes"
     }
   },
   "app": {

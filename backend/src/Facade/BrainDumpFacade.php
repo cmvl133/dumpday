@@ -183,23 +183,7 @@ class BrainDumpFacade
             $overdueTasks = $this->taskRepository->findOverdueTasks($user, $today);
             foreach ($overdueTasks as $task) {
                 $overdueTaskIds[] = $task->getId();
-                $tasks['overdue'][] = [
-                    'id' => $task->getId(),
-                    'title' => $task->getTitle(),
-                    'isCompleted' => $task->isCompleted(),
-                    'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-                    'reminderTime' => $task->getReminderTime()?->format('H:i'),
-                    'estimatedMinutes' => $task->getEstimatedMinutes(),
-                    'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                    'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                    'needsFullFocus' => $task->isNeedsFullFocus(),
-                    'recurringTaskId' => $task->getRecurringTask()?->getId(),
-                    'tags' => array_map(fn ($tag) => [
-                        'id' => $tag->getId(),
-                        'name' => $tag->getName(),
-                        'color' => $tag->getColor(),
-                    ], $task->getTags()->toArray()),
-                ];
+                $tasks['overdue'][] = $this->serializeTask($task);
             }
         }
 
@@ -211,23 +195,7 @@ class BrainDumpFacade
                 continue;
             }
             $scheduledTaskIds[] = $task->getId();
-            $tasks['today'][] = [
-                'id' => $task->getId(),
-                'title' => $task->getTitle(),
-                'isCompleted' => $task->isCompleted(),
-                'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-                'reminderTime' => $task->getReminderTime()?->format('H:i'),
-                'estimatedMinutes' => $task->getEstimatedMinutes(),
-                'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                'needsFullFocus' => $task->isNeedsFullFocus(),
-                'recurringTaskId' => $task->getRecurringTask()?->getId(),
-                'tags' => array_map(fn ($tag) => [
-                    'id' => $tag->getId(),
-                    'name' => $tag->getName(),
-                    'color' => $tag->getColor(),
-                ], $task->getTags()->toArray()),
-            ];
+            $tasks['today'][] = $this->serializeTask($task);
         }
 
         // If no DailyNote exists but we have scheduled tasks, return minimal data
@@ -265,26 +233,8 @@ class BrainDumpFacade
                 continue;
             }
 
-            $taskData = [
-                'id' => $task->getId(),
-                'title' => $task->getTitle(),
-                'isCompleted' => $task->isCompleted(),
-                'dueDate' => $taskDueDate,
-                'reminderTime' => $task->getReminderTime()?->format('H:i'),
-                'estimatedMinutes' => $task->getEstimatedMinutes(),
-                'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                'needsFullFocus' => $task->isNeedsFullFocus(),
-                'recurringTaskId' => $task->getRecurringTask()?->getId(),
-                'tags' => array_map(fn ($tag) => [
-                    'id' => $tag->getId(),
-                    'name' => $tag->getName(),
-                    'color' => $tag->getColor(),
-                ], $task->getTags()->toArray()),
-            ];
-
             $category = $task->getCategory()->value;
-            $tasks[$category][] = $taskData;
+            $tasks[$category][] = $this->serializeTask($task);
         }
 
         $events = [];
@@ -330,6 +280,35 @@ class BrainDumpFacade
             'schedule' => $schedule,
             'createdAt' => $dailyNote->getCreatedAt()?->format('c'),
             'updatedAt' => $dailyNote->getUpdatedAt()?->format('c'),
+        ];
+    }
+
+    /**
+     * Serialize a task to array including subtask fields.
+     */
+    private function serializeTask($task): array
+    {
+        return [
+            'id' => $task->getId(),
+            'title' => $task->getTitle(),
+            'isCompleted' => $task->isCompleted(),
+            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+            'reminderTime' => $task->getReminderTime()?->format('H:i'),
+            'estimatedMinutes' => $task->getEstimatedMinutes(),
+            'fixedTime' => $task->getFixedTime()?->format('H:i'),
+            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+            'needsFullFocus' => $task->isNeedsFullFocus(),
+            'recurringTaskId' => $task->getRecurringTask()?->getId(),
+            'parentTaskId' => $task->getParentTask()?->getId(),
+            'isPart' => $task->isPart(),
+            'partNumber' => $task->getPartNumber(),
+            'progress' => $task->getProgress(),
+            'hasSubtasks' => $task->hasSubtasks(),
+            'tags' => array_map(fn ($tag) => [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'color' => $tag->getColor(),
+            ], $task->getTags()->toArray()),
         ];
     }
 

@@ -293,6 +293,30 @@
       "keepDesc": "Zostaw zadanie o tej godzinie",
       "reschedule": "Przesuń",
       "rescheduleDesc": "Dodaj do planowania"
+    },
+    "split": {
+      "header": "Zadania do podziału",
+      "title": "Zadanie się nie mieści",
+      "duration": "Czas trwania: {{duration}}",
+      "availableTime": "Dostępne dziś: {{time}}",
+      "freeSlots": "Wolne sloty",
+      "moreSlots": "+{{count}} więcej slotów",
+      "question": "Co chcesz zrobić?",
+      "splitIntoParts": "Podziel na części",
+      "splitToday": "Podziel na {{parts}} części dziś",
+      "splitAcrossDays": "Podziel na dziś i jutro",
+      "moveToTomorrow": "Przenieś na jutro",
+      "moveToTomorrowDesc": "Zrób całe zadanie jutro",
+      "handleManually": "Ogarnę sam",
+      "handleManuallyDesc": "Pomiń AI planowanie",
+      "preview": "Podgląd podziału",
+      "totalParts": "{{parts}} części, {{duration}}/{{taskDuration}} min",
+      "acrossDaysWarning": "To zadanie będzie podzielone na kilka dni",
+      "partLabel": "Część {{number}}",
+      "startTime": "Start",
+      "durationMin": "Czas (min)",
+      "accept": "Zaakceptuj podział",
+      "notEnoughTime": "Brakuje {{missing}} minut"
     }
   },
   "app": {

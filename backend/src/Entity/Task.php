@@ -72,9 +72,26 @@ class Task
     #[ORM\JoinTable(name: 'task_tags')]
     private Collection $tags;
 
+    #[ORM\ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Task $parentTask = null;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(mappedBy: 'parentTask', targetEntity: Task::class)]
+    private Collection $subtasks;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isPart = false;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $partNumber = null;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->subtasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -260,5 +277,117 @@ class Task
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    public function getParentTask(): ?Task
+    {
+        return $this->parentTask;
+    }
+
+    public function setParentTask(?Task $parentTask): static
+    {
+        $this->parentTask = $parentTask;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getSubtasks(): Collection
+    {
+        return $this->subtasks;
+    }
+
+    public function addSubtask(Task $subtask): static
+    {
+        if (!$this->subtasks->contains($subtask)) {
+            $this->subtasks->add($subtask);
+            $subtask->setParentTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubtask(Task $subtask): static
+    {
+        if ($this->subtasks->removeElement($subtask)) {
+            if ($subtask->getParentTask() === $this) {
+                $subtask->setParentTask(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isPart(): bool
+    {
+        return $this->isPart;
+    }
+
+    public function setIsPart(bool $isPart): static
+    {
+        $this->isPart = $isPart;
+
+        return $this;
+    }
+
+    public function getPartNumber(): ?int
+    {
+        return $this->partNumber;
+    }
+
+    public function setPartNumber(?int $partNumber): static
+    {
+        $this->partNumber = $partNumber;
+
+        return $this;
+    }
+
+    /**
+     * Check if all subtasks are completed (for parent tasks).
+     */
+    public function isFullyCompleted(): bool
+    {
+        if ($this->subtasks->isEmpty()) {
+            return $this->isCompleted;
+        }
+
+        foreach ($this->subtasks as $subtask) {
+            if (!$subtask->isCompleted()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get progress string like "2/3" for parent tasks.
+     */
+    public function getProgress(): ?string
+    {
+        if ($this->subtasks->isEmpty()) {
+            return null;
+        }
+
+        $completed = 0;
+        $total = $this->subtasks->count();
+
+        foreach ($this->subtasks as $subtask) {
+            if ($subtask->isCompleted()) {
+                $completed++;
+            }
+        }
+
+        return sprintf('%d/%d', $completed, $total);
+    }
+
+    /**
+     * Check if this task has subtasks.
+     */
+    public function hasSubtasks(): bool
+    {
+        return !$this->subtasks->isEmpty();
     }
 }

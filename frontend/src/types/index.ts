@@ -38,6 +38,11 @@ export interface Task {
   canCombineWithEvents?: number[] | null;
   needsFullFocus?: boolean;
   recurringTaskId?: number | null;
+  parentTaskId?: number | null;
+  isPart?: boolean;
+  partNumber?: number | null;
+  progress?: string | null;
+  hasSubtasks?: boolean;
   tags?: Tag[];
 }
 
@@ -229,4 +234,44 @@ export interface RebuildRequest {
   keepEventIds: number[];
   additionalInput: string | null;
   workUntilTime: string;
+}
+
+// Task Split types
+export interface TimeSlot {
+  startTime: string;
+  endTime: string;
+  duration: number;
+}
+
+export interface SplitPart {
+  startTime: string;
+  duration: number;
+  date: string;
+}
+
+export interface SplitProposal {
+  canSplit: boolean;
+  reason?: string;
+  parts: SplitPart[];
+  overflowToNextDay?: boolean;
+  suggestedSlot?: TimeSlot;
+}
+
+export interface AvailableSlotsResponse {
+  date: string;
+  slots: TimeSlot[];
+  totalAvailable: number;
+}
+
+export interface SplitProposalResponse {
+  taskId: number;
+  taskTitle: string;
+  estimatedMinutes: number | null;
+  date: string;
+  proposal: SplitProposal;
+}
+
+export interface SplitTaskResponse {
+  parentTask: Task;
+  subtasks: Task[];
 }

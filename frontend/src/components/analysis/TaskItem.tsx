@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Check, X, Repeat } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Check, X, Repeat, Scissors, Layers } from 'lucide-react';
 import { RecurringSettings } from '@/components/tasks/RecurringSettings';
 import { DeleteRecurringConfirm } from '@/components/tasks/DeleteRecurringConfirm';
 import { DateTimePopover } from '@/components/tasks/DateTimePopover';
@@ -86,6 +87,11 @@ interface TaskItemProps {
   recurringTaskId?: number | null;
   category?: string;
   tags?: Tag[];
+  // Subtask-related props
+  isPart?: boolean;
+  partNumber?: number | null;
+  progress?: string | null;
+  hasSubtasks?: boolean;
 }
 
 export function TaskItem({
@@ -107,7 +113,12 @@ export function TaskItem({
   recurringTaskId,
   category = 'today',
   tags = [],
+  isPart = false,
+  partNumber,
+  progress,
+  hasSubtasks = false,
 }: TaskItemProps) {
+  const { t } = useTranslation();
   const confettiStyle = useSelector((state: RootState) => state.settings.confettiStyle);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(title);
@@ -239,7 +250,23 @@ export function TaskItem({
             {isRecurring && (
               <Repeat className="h-3 w-3 text-primary shrink-0" />
             )}
+            {isPart && (
+              <Scissors className="h-3 w-3 text-amber-500 shrink-0" />
+            )}
+            {hasSubtasks && (
+              <Layers className="h-3 w-3 text-secondary shrink-0" />
+            )}
             <span className="break-words">{title}</span>
+            {isPart && partNumber && (
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 ml-1">
+                {t('planning.split.partLabel', { number: partNumber })}
+              </Badge>
+            )}
+            {hasSubtasks && progress && (
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-1 border-secondary text-secondary">
+                {progress}
+              </Badge>
+            )}
             {tags.length > 0 && (
               <span className="flex items-center gap-1 ml-1">
                 {tags.slice(0, 3).map((tag) => (

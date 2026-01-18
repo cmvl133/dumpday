@@ -13,6 +13,8 @@ import { FixedTimeStep } from './FixedTimeStep';
 import { CombineEventsStep } from './CombineEventsStep';
 import { ConflictStep } from './ConflictStep';
 import { PlanSummary } from './PlanSummary';
+import { TaskSplitStep } from './TaskSplitStep';
+import { SplitPreview } from './SplitPreview';
 import {
   closePlanning,
   fetchPlanningTasks,
@@ -31,10 +33,18 @@ import {
   resolveConflict,
   nextConflict,
   finishConflictPhase,
+  fetchAvailableSlots,
+  fetchSplitProposal,
+  executeSplit,
+  showSplitPreview,
+  hideSplitPreview,
+  skipSplitTask,
+  finishSplitPhase,
+  setTasksToSplit,
 } from '@/store/planningSlice';
 import { fetchDailyNote } from '@/store/dailyNoteSlice';
 import type { RootState, AppDispatch } from '@/store';
-import type { ScheduleSuggestion } from '@/types';
+import type { ScheduleSuggestion, SplitPart, PlanningTask } from '@/types';
 
 export function PlanningModal() {
   const { t } = useTranslation();
@@ -53,12 +63,18 @@ export function PlanningModal() {
     isLoading,
     isGenerating,
     error,
+    split,
   } = useSelector((state: RootState) => state.planning);
   const { currentDate } = useSelector((state: RootState) => state.dailyNote);
 
   const totalTasks = tasks.length;
   const totalConflicts = conflictingTasks.length;
-  const currentTask = currentPhase === 'conflicts' ? conflictingTasks[currentIndex] : tasks[currentIndex];
+  const totalSplitTasks = split.tasksToSplit.length;
+  const currentTask = currentPhase === 'conflicts'
+    ? conflictingTasks[currentIndex]
+    : currentPhase === 'split'
+    ? split.tasksToSplit[split.currentSplitIndex]
+    : tasks[currentIndex];
   const isComplete = currentPhase === 'planning' && currentIndex >= totalTasks;
 
   useEffect(() => {
@@ -157,18 +173,95 @@ export function PlanningModal() {
     }
   }, [currentTask, currentIndex, totalConflicts, dispatch]);
 
-  const handleGenerateSchedule = useCallback(() => {
+  const handleGenerateSchedule = useCallback(async () => {
     const plannedTaskIds = Object.keys(taskPlanData).map(Number);
     if (plannedTaskIds.length > 0) {
-      dispatch(generateSchedule(plannedTaskIds));
+      const result = await dispatch(generateSchedule(plannedTaskIds)).unwrap();
+
+      // Check for tasks that need splitting (tasks with null suggestedTime and large duration)
+      const tasksNeedingSplit: PlanningTask[] = [];
+      for (const suggestion of result.schedule) {
+        if (suggestion.suggestedTime === null) {
+          const task = tasks.find(t => t.id === suggestion.taskId);
+          if (task && (task.estimatedMinutes || 0) > 30) {
+            tasksNeedingSplit.push(task);
+          }
+        }
+      }
+
+      if (tasksNeedingSplit.length > 0) {
+        dispatch(setTasksToSplit(tasksNeedingSplit));
+        // Fetch available slots for today
+        dispatch(fetchAvailableSlots(currentDate));
+        // Fetch split proposals for each task
+        for (const task of tasksNeedingSplit) {
+          dispatch(fetchSplitProposal({ taskId: task.id, date: currentDate }));
+        }
+      }
     }
-  }, [dispatch, taskPlanData]);
+  }, [dispatch, taskPlanData, tasks, currentDate]);
 
   const handleAcceptSchedule = useCallback(async (modifiedSchedule?: ScheduleSuggestion[]) => {
     await dispatch(acceptSchedule(modifiedSchedule));
     dispatch(fetchDailyNote(currentDate));
     dispatch(closePlanning());
   }, [dispatch, currentDate]);
+
+  // Split handlers
+  const handleSplitTask = useCallback(() => {
+    if (!currentTask) return;
+    const proposal = split.proposals[currentTask.id];
+    if (proposal?.canSplit && proposal.parts.length > 0) {
+      dispatch(showSplitPreview(proposal.parts));
+    }
+  }, [currentTask, split.proposals, dispatch]);
+
+  const handleMoveToTomorrow = useCallback(async () => {
+    if (!currentTask) return;
+    // Update task due date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    try {
+      const { api } = await import('@/lib/api');
+      await api.task.update(currentTask.id, { dueDate: tomorrowStr });
+    } catch (e) {
+      console.error('Failed to move task to tomorrow:', e);
+    }
+
+    // Move to next split task or finish split phase
+    if (split.currentSplitIndex + 1 >= totalSplitTasks) {
+      dispatch(finishSplitPhase());
+    } else {
+      dispatch(skipSplitTask());
+    }
+  }, [currentTask, dispatch, split.currentSplitIndex, totalSplitTasks]);
+
+  const handleSkipSplit = useCallback(() => {
+    if (split.currentSplitIndex + 1 >= totalSplitTasks) {
+      dispatch(finishSplitPhase());
+    } else {
+      dispatch(skipSplitTask());
+    }
+  }, [dispatch, split.currentSplitIndex, totalSplitTasks]);
+
+  const handleAcceptSplit = useCallback(async (parts: SplitPart[]) => {
+    if (!currentTask) return;
+    try {
+      await dispatch(executeSplit({ taskId: currentTask.id, parts })).unwrap();
+      // Check if there are more tasks to split
+      if (split.tasksToSplit.length <= 1) {
+        dispatch(finishSplitPhase());
+      }
+    } catch (e) {
+      console.error('Failed to split task:', e);
+    }
+  }, [currentTask, dispatch, split.tasksToSplit.length]);
+
+  const handleBackFromPreview = useCallback(() => {
+    dispatch(hideSplitPreview());
+  }, [dispatch]);
 
   const renderStepIndicator = () => {
     const steps = ['estimation', 'fixed_time', 'combine'] as const;
@@ -225,6 +318,41 @@ export function PlanningModal() {
                 task={currentTask}
                 onKeep={handleKeepConflict}
                 onReschedule={handleRescheduleConflict}
+              />
+            )}
+          </div>
+        ) : currentPhase === 'split' && totalSplitTasks > 0 ? (
+          <div className="space-y-6 py-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>{t('planning.split.header')}</span>
+                <span>
+                  {split.currentSplitIndex + 1} / {totalSplitTasks}
+                </span>
+              </div>
+              <Progress value={split.currentSplitIndex} max={totalSplitTasks} />
+            </div>
+
+            {currentTask && split.viewMode === 'options' && (
+              <TaskSplitStep
+                key={`split-${currentTask.id}`}
+                task={currentTask}
+                availableSlots={split.availableSlots[currentDate] || []}
+                totalAvailable={split.totalAvailable[currentDate] || 0}
+                proposal={split.proposals[currentTask.id] || null}
+                onSplit={handleSplitTask}
+                onMoveToTomorrow={handleMoveToTomorrow}
+                onSkip={handleSkipSplit}
+              />
+            )}
+
+            {currentTask && split.viewMode === 'preview' && split.editingParts && (
+              <SplitPreview
+                key={`split-preview-${currentTask.id}`}
+                task={currentTask}
+                parts={split.editingParts}
+                onAccept={handleAcceptSplit}
+                onBack={handleBackFromPreview}
               />
             )}
           </div>

@@ -7,11 +7,26 @@ import type {
   GeneratedSchedule,
   PlanningStats,
   ScheduleSuggestion,
+  SplitProposal,
+  SplitPart,
+  TimeSlot,
 } from '@/types';
 
 type PlanningStep = 'estimation' | 'fixed_time' | 'combine';
 
-type PlanningPhase = 'conflicts' | 'planning' | 'summary';
+type PlanningPhase = 'conflicts' | 'planning' | 'split' | 'summary';
+
+type SplitViewMode = 'options' | 'preview';
+
+interface SplitState {
+  tasksToSplit: PlanningTask[];
+  currentSplitIndex: number;
+  proposals: Record<number, SplitProposal>;
+  availableSlots: Record<string, TimeSlot[]>;
+  totalAvailable: Record<string, number>;
+  viewMode: SplitViewMode;
+  editingParts: SplitPart[] | null;
+}
 
 interface PlanningState {
   isOpen: boolean;
@@ -28,7 +43,18 @@ interface PlanningState {
   isLoading: boolean;
   isGenerating: boolean;
   error: string | null;
+  split: SplitState;
 }
+
+const initialSplitState: SplitState = {
+  tasksToSplit: [],
+  currentSplitIndex: 0,
+  proposals: {},
+  availableSlots: {},
+  totalAvailable: {},
+  viewMode: 'options',
+  editingParts: null,
+};
 
 const initialState: PlanningState = {
   isOpen: false,
@@ -50,6 +76,7 @@ const initialState: PlanningState = {
   isLoading: false,
   isGenerating: false,
   error: null,
+  split: initialSplitState,
 };
 
 export const fetchPlanningTasks = createAsyncThunk(
@@ -86,6 +113,30 @@ export const acceptSchedule = createAsyncThunk(
   }
 );
 
+export const fetchAvailableSlots = createAsyncThunk(
+  'planning/fetchAvailableSlots',
+  async (date: string) => {
+    const result = await api.schedule.getAvailableSlots(date);
+    return { date, slots: result.slots, totalAvailable: result.totalAvailable };
+  }
+);
+
+export const fetchSplitProposal = createAsyncThunk(
+  'planning/fetchSplitProposal',
+  async ({ taskId, date }: { taskId: number; date: string }) => {
+    const result = await api.schedule.proposeSplit(taskId, date);
+    return { taskId, proposal: result.proposal };
+  }
+);
+
+export const executeSplit = createAsyncThunk(
+  'planning/executeSplit',
+  async ({ taskId, parts }: { taskId: number; parts: SplitPart[] }) => {
+    const result = await api.task.split(taskId, parts);
+    return { taskId, result };
+  }
+);
+
 const planningSlice = createSlice({
   name: 'planning',
   initialState,
@@ -105,6 +156,7 @@ const planningSlice = createSlice({
         totalMinutes: 0,
       };
       state.error = null;
+      state.split = initialSplitState;
     },
     closePlanning: (state) => {
       state.isOpen = false;
@@ -191,6 +243,39 @@ const planningSlice = createSlice({
         state.currentIndex = 0;
       }
     },
+    // Split-related actions
+    setTasksToSplit: (state, action: PayloadAction<PlanningTask[]>) => {
+      state.split.tasksToSplit = action.payload;
+      state.split.currentSplitIndex = 0;
+      state.split.viewMode = 'options';
+      if (action.payload.length > 0) {
+        state.currentPhase = 'split';
+      }
+    },
+    nextSplitTask: (state) => {
+      state.split.currentSplitIndex += 1;
+      state.split.viewMode = 'options';
+      state.split.editingParts = null;
+    },
+    skipSplitTask: (state) => {
+      // Mark as skipped, move to next
+      state.split.currentSplitIndex += 1;
+      state.split.viewMode = 'options';
+      state.split.editingParts = null;
+    },
+    showSplitPreview: (state, action: PayloadAction<SplitPart[]>) => {
+      state.split.viewMode = 'preview';
+      state.split.editingParts = action.payload;
+    },
+    hideSplitPreview: (state) => {
+      state.split.viewMode = 'options';
+      state.split.editingParts = null;
+    },
+    finishSplitPhase: (state) => {
+      state.currentPhase = 'summary';
+      state.split.tasksToSplit = [];
+      state.split.currentSplitIndex = 0;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -226,6 +311,21 @@ const planningSlice = createSlice({
       })
       .addCase(acceptSchedule.fulfilled, (state) => {
         state.isOpen = false;
+      })
+      .addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+        state.split.availableSlots[action.payload.date] = action.payload.slots;
+        state.split.totalAvailable[action.payload.date] = action.payload.totalAvailable;
+      })
+      .addCase(fetchSplitProposal.fulfilled, (state, action) => {
+        state.split.proposals[action.payload.taskId] = action.payload.proposal;
+      })
+      .addCase(executeSplit.fulfilled, (state, action) => {
+        // Remove the split task from tasksToSplit and move to next
+        const taskId = action.payload.taskId;
+        state.split.tasksToSplit = state.split.tasksToSplit.filter(t => t.id !== taskId);
+        state.split.viewMode = 'options';
+        state.split.editingParts = null;
+        // Note: we don't increment currentSplitIndex since we removed the task
       });
   },
 });
@@ -246,6 +346,12 @@ export const {
   nextConflict,
   finishConflictPhase,
   setPhase,
+  setTasksToSplit,
+  nextSplitTask,
+  skipSplitTask,
+  showSplitPreview,
+  hideSplitPreview,
+  finishSplitPhase,
 } = planningSlice.actions;
 
 export default planningSlice.reducer;

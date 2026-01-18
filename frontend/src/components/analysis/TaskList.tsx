@@ -133,6 +133,10 @@ export function TaskList({
               recurringTaskId={'recurringTaskId' in task ? task.recurringTaskId : undefined}
               category={sectionType}
               tags={'tags' in task ? task.tags : []}
+              isPart={'isPart' in task ? task.isPart : false}
+              partNumber={'partNumber' in task ? task.partNumber : undefined}
+              progress={'progress' in task ? task.progress : undefined}
+              hasSubtasks={'hasSubtasks' in task ? task.hasSubtasks : false}
             />
           </div>
         ))}

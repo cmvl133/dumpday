@@ -84,6 +84,11 @@ class TaskController extends AbstractController
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
             'recurringTaskId' => $task->getRecurringTask()?->getId(),
+            'parentTaskId' => $task->getParentTask()?->getId(),
+            'isPart' => $task->isPart(),
+            'partNumber' => $task->getPartNumber(),
+            'progress' => $task->getProgress(),
+            'hasSubtasks' => $task->hasSubtasks(),
             'tags' => [],
         ], Response::HTTP_CREATED);
     }
@@ -188,6 +193,11 @@ class TaskController extends AbstractController
             'canCombineWithEvents' => $task->getCanCombineWithEvents(),
             'needsFullFocus' => $task->isNeedsFullFocus(),
             'recurringTaskId' => $task->getRecurringTask()?->getId(),
+            'parentTaskId' => $task->getParentTask()?->getId(),
+            'isPart' => $task->isPart(),
+            'partNumber' => $task->getPartNumber(),
+            'progress' => $task->getProgress(),
+            'hasSubtasks' => $task->hasSubtasks(),
             'tags' => array_map(fn ($tag) => [
                 'id' => $tag->getId(),
                 'name' => $tag->getName(),

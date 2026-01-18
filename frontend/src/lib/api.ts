@@ -20,6 +20,10 @@ import type {
   RecurringTask,
   RecurrenceType,
   Tag,
+  SplitPart,
+  AvailableSlotsResponse,
+  SplitProposalResponse,
+  SplitTaskResponse,
 } from '@/types';
 
 const API_BASE = '/api';
@@ -188,6 +192,43 @@ export const api = {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to remove tag');
       }
+    },
+
+    split: async (id: number, parts: SplitPart[]): Promise<SplitTaskResponse> => {
+      const response = await fetch(`${API_BASE}/task/${id}/split`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ parts }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to split task');
+      }
+      return response.json();
+    },
+
+    merge: async (id: number): Promise<Task> => {
+      const response = await fetch(`${API_BASE}/task/${id}/merge`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to merge task');
+      }
+      return response.json();
+    },
+
+    getSubtasks: async (id: number): Promise<{ subtasks: Task[] }> => {
+      const response = await fetch(`${API_BASE}/task/${id}/subtasks`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch subtasks');
+      }
+      return response.json();
     },
   },
 
@@ -664,6 +705,33 @@ export const api = {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.error || 'Failed to sync recurring tasks');
+      }
+      return response.json();
+    },
+  },
+
+  schedule: {
+    getAvailableSlots: async (date: string): Promise<AvailableSlotsResponse> => {
+      const response = await fetch(`${API_BASE}/schedule/available-slots?date=${encodeURIComponent(date)}`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch available slots');
+      }
+      return response.json();
+    },
+
+    proposeSplit: async (taskId: number, date: string): Promise<SplitProposalResponse> => {
+      const response = await fetch(`${API_BASE}/schedule/propose-split`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId, date }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to propose split');
       }
       return response.json();
     },
