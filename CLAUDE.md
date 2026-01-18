@@ -49,6 +49,20 @@ OPENAI_API_KEY=sk-twoj-klucz
 
 **Ważne:** Przed commitowaniem i pushowaniem zmian, poczekaj na potwierdzenie od użytkownika. Użytkownik chce najpierw przetestować zmiany lokalnie, a dopiero potem dać zielone światło na commit/push.
 
+## Wersjonowanie
+
+**WAŻNE:** Każdy commit powinien zawierać numer wersji w tytule!
+
+Format: `feat(vX.X.X): opis zmian`
+
+Przykład: `feat(v0.0.11): Add recurring tasks with auto-generation`
+
+Przed commitem:
+1. Sprawdź aktualną wersję: `ls notes/` (ostatnia to aktualna)
+2. Zwiększ numer wersji dla nowych funkcji
+3. Utwórz notatki w `notes/vX.X.X/notes.md`
+4. Dodaj numer wersji do tytułu commita
+
 ## Release Notes
 
 **PRZYPOMNIENIE:** Przed każdym commitem sprawdź czy release notes są aktualne!
