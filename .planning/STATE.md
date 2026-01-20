@@ -5,11 +5,11 @@
 
 ## Current Status
 
-**Phase:** Phase 3 complete, ready for Phase 4
-**Plan:** —
-**Activity:** Phase 3 verified
+**Phase:** 4 of 5 (Exception Handling)
+**Plan:** 1 of 3 in phase
+**Activity:** Completed 04-01-PLAN.md
 
-Progress: ██████░░░░ 60%
+Progress: ███████░░░ 70%
 
 ## Phase Progress
 
@@ -18,7 +18,7 @@ Progress: ██████░░░░ 60%
 | 1 | Backend Foundation | complete | 3/3 |
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
-| 4 | Exception Handling | pending | — |
+| 4 | Exception Handling | in progress | 1/3 |
 | 5 | Task-Block Matching | pending | — |
 
 ## Completed Work
@@ -37,14 +37,15 @@ Progress: ██████░░░░ 60%
 - [x] **Phase 3 Plan 1:** timeBlockSlice Redux (03-01-SUMMARY.md)
 - [x] **Phase 3 Plan 2:** TimeBlockForm Component (03-02-SUMMARY.md)
 - [x] **Phase 3 Plan 3:** Settings Integration with i18n (03-03-SUMMARY.md)
+- [x] **Phase 4 Plan 1:** TimeBlockException Entity & Repository (04-01-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:plan-phase 4
+/gsd:execute-phase 04-02
 ```
 
-Plan Phase 4: Exception Handling
+Execute Plan 04-02: Exception CRUD API
 
 ## Context Notes
 
@@ -110,6 +111,11 @@ Plan Phase 4: Exception Handling
 - Delete confirmation inline within list item (not separate modal)
 - Settings integration uses border-t separator matching tags section
 
+**Decisions from Plan 04-01:**
+- UniqueConstraint named 'time_block_date_unique' prevents duplicate exceptions per block per date
+- CASCADE delete ensures exceptions removed when TimeBlock deleted
+- DATE_MUTABLE for exceptionDate with Y-m-d format for consistent date comparison
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
@@ -119,7 +125,7 @@ Plan Phase 4: Exception Handling
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Phase 3 complete, verified
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
 
 ---
