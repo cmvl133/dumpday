@@ -147,6 +147,13 @@ Plans:
 - REQ-020: Template unchanged by exceptions
 - REQ-021: Visual indicator
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — TimeBlockException entity, repository, migration
+- [ ] 04-02-PLAN.md — Backend API and service modification for exceptions
+- [ ] 04-03-PLAN.md — Frontend types, API, TimeBlockStrip UI, i18n
+
 **Success Criteria:**
 - [ ] Can skip block for today only
 - [ ] Can modify block times for today only
@@ -156,7 +163,7 @@ Plans:
 
 **Dependencies:** Phase 2 (visualization), Phase 3 (templates exist)
 
-**Status:** pending
+**Status:** planned
 
 ---
 
