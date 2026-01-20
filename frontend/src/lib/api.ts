@@ -799,5 +799,49 @@ export const api = {
         throw new Error(error.error || 'Failed to delete time block');
       }
     },
+
+    skipForDate: async (id: number, date: string): Promise<{ success: boolean; date: string }> => {
+      const response = await fetch(`${API_BASE}/time-block/${id}/skip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to skip time block');
+      }
+      return response.json();
+    },
+
+    modifyForDate: async (
+      id: number,
+      date: string,
+      data: { startTime?: string; endTime?: string }
+    ): Promise<{ success: boolean; date: string; startTime?: string; endTime?: string }> => {
+      const response = await fetch(`${API_BASE}/time-block/${id}/modify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, ...data }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to modify time block');
+      }
+      return response.json();
+    },
+
+    restoreForDate: async (id: number, date: string): Promise<{ success: boolean }> => {
+      const response = await fetch(`${API_BASE}/time-block/${id}/exception?date=${encodeURIComponent(date)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to restore time block');
+      }
+      return response.json();
+    },
   },
 };

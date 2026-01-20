@@ -35,6 +35,10 @@ export interface TimeBlock {
   isActive: boolean;
   createdAt: string;
   tags: Tag[];
+  // Exception fields (present when block has been modified/skipped for a specific date)
+  isException?: boolean;
+  originalStartTime?: string;  // Original time when overridden
+  originalEndTime?: string;
 }
 
 export interface Task {
