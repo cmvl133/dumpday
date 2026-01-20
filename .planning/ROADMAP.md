@@ -67,11 +67,12 @@ Plans:
 - REQ-012: Hover shows block name + edit option
 - REQ-013: Duration visible
 
-**Plans:** 2 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — TimeBlock type, TimeBlockStrip component with diagonal stripes and hover tooltip
-- [ ] 02-02-PLAN.md — TimeBlockBackground container, DaySchedule and ScheduleExpandedModal integration
+- [x] 02-01-PLAN.md — TimeBlock type, TimeBlockStrip component with diagonal stripes and hover tooltip
+- [x] 02-02-PLAN.md — TimeBlockBackground container, DaySchedule and ScheduleExpandedModal integration
+- [ ] 02-03-PLAN.md — Wire timeBlocks from dailyNote to schedule components in App.tsx (gap closure)
 
 **Success Criteria:**
 - [ ] Blocks appear as colored strips on schedule
@@ -83,7 +84,7 @@ Plans:
 
 **Dependencies:** Phase 1 (needs API)
 
-**Status:** planning
+**Status:** in progress
 
 ---
 
