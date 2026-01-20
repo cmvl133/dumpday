@@ -4,6 +4,15 @@ Przeanalizuj poniższy tekst "brain dump" i wyodrębnij z niego ustrukturyzowane
 Dzisiejsza data: {{ current_date }}
 Dzień tygodnia: {{ day_of_week }}
 
+BLOKI CZASOWE UZYTKOWNIKA NA DZIS:
+{% if time_blocks|length > 0 %}
+{% for block in time_blocks %}
+- [ID: {{ block.id }}] {{ block.name }} ({{ block.startTime }} - {{ block.endTime }}): tagi [{% for tag in block.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}]
+{% endfor %}
+{% else %}
+(Brak skonfigurowanych blokow czasowych)
+{% endif %}
+
 Tekst do analizy:
 """
 {{ raw_content }}
@@ -12,8 +21,8 @@ Tekst do analizy:
 Zwróć obiekt JSON z następującą strukturą:
 {
   "tasks": {
-    "today": [{"title": "..."}],
-    "scheduled": [{"title": "...", "dueDate": "YYYY-MM-DD"}],
+    "today": [{"title": "...", "suggestedBlockId": 123, "suggestedBlockName": "Praca"}],
+    "scheduled": [{"title": "...", "dueDate": "YYYY-MM-DD", "suggestedBlockId": null, "suggestedBlockName": null}],
     "someday": [{"title": "..."}]
   },
   "events": [
@@ -95,6 +104,14 @@ ZASADY DZIELENIA ZADAŃ:
   - "Zrobić X i Y" gdzie X i Y to różne rzeczy → DWA osobne zadania
 - Dziel tylko gdy są to WYRAŹNIE RÓŻNE czynności do wykonania osobno
 - W razie wątpliwości - zostaw jako jedno zadanie
+
+ZASADY SUGEROWANIA BLOKOW:
+- Jesli zadanie wyraznie pasuje do bloku czasowego (na podstawie nazwy lub tagow), zasugeruj ten blok
+- Przyklad: "dokonczyc raport do pracy" pasuje do bloku "Praca" z tagiem "praca" -> zasugeruj ten blok
+- Jesli nie ma wyraznego dopasowania lub nie jestes pewien, ustaw suggestedBlockId i suggestedBlockName na null
+- Uzytkownik zobaczy sugestie i moze ja zaakceptowac lub odrzucic
+- Dla zadan "someday" nie sugeruj blokow (nie sa na dzis)
+- Dla zadan "scheduled" z datami w przyszlosci nie sugeruj blokow (tez nie sa na dzis)
 
 Przykłady:
 - "Jutro ugotować obiad" → scheduled: {"title": "Ugotować obiad", "dueDate": "[data jutrzejsza]"}

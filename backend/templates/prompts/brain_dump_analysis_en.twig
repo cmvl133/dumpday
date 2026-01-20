@@ -4,6 +4,15 @@ Analyze the following "brain dump" text and extract structured information from 
 Today's date: {{ current_date }}
 Day of the week: {{ day_of_week }}
 
+USER'S TIME BLOCKS FOR TODAY:
+{% if time_blocks|length > 0 %}
+{% for block in time_blocks %}
+- [ID: {{ block.id }}] {{ block.name }} ({{ block.startTime }} - {{ block.endTime }}): tags [{% for tag in block.tags %}{{ tag.name }}{% if not loop.last %}, {% endif %}{% endfor %}]
+{% endfor %}
+{% else %}
+(No time blocks configured)
+{% endif %}
+
 Text to analyze:
 """
 {{ raw_content }}
@@ -12,8 +21,8 @@ Text to analyze:
 Return a JSON object with the following structure:
 {
   "tasks": {
-    "today": [{"title": "..."}],
-    "scheduled": [{"title": "...", "dueDate": "YYYY-MM-DD"}],
+    "today": [{"title": "...", "suggestedBlockId": 123, "suggestedBlockName": "Work"}],
+    "scheduled": [{"title": "...", "dueDate": "YYYY-MM-DD", "suggestedBlockId": null, "suggestedBlockName": null}],
     "someday": [{"title": "..."}]
   },
   "events": [
@@ -95,6 +104,14 @@ TASK SPLITTING RULES:
   - "Do X and Y" where X and Y are different things → TWO separate tasks
 - Split only when they are CLEARLY DIFFERENT activities to be done separately
 - When in doubt - keep as one task
+
+BLOCK SUGGESTION RULES:
+- If a task clearly relates to a time block's purpose (based on block name or associated tags), suggest that block
+- Example: "finish report for work" relates to a "Work" block with "work" tag -> suggest that block ID
+- If no clear match or if you're unsure, set suggestedBlockId and suggestedBlockName to null
+- User will see the suggestion and can accept or reject it
+- For "someday" tasks, don't suggest blocks (they're not for today)
+- For "scheduled" tasks with future dates, don't suggest blocks (they're not for today either)
 
 Examples:
 - "Cook dinner tomorrow" → scheduled: {"title": "Cook dinner", "dueDate": "[tomorrow's date]"}
