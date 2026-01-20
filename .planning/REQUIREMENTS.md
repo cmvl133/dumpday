@@ -19,7 +19,7 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 | REQ-001 | TimeBlock entity with name, color, startTime, endTime | Must | ✓ Complete |
 | REQ-002 | TimeBlock recurrence (daily, weekly, weekdays, custom days) | Must | ✓ Complete |
 | REQ-003 | TimeBlock ↔ Tag ManyToMany relationship | Must | ✓ Complete |
-| REQ-004 | TimeBlockException entity for per-day overrides | Must | Pending (Phase 4) |
+| REQ-004 | TimeBlockException entity for per-day overrides | Must | ✓ Complete (Phase 4) |
 | REQ-005 | TimeBlock belongs to User (not DailyNote) | Must | ✓ Complete |
 | REQ-006 | CRUD API endpoints for TimeBlock | Must | ✓ Complete |
 | REQ-007 | Endpoint to get active blocks for a date | Must | ✓ Complete |
@@ -44,14 +44,15 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 | REQ-016 | Associate tags with blocks | Must | ✓ Complete |
 | REQ-017 | Preview of weekly schedule | Should | Deferred |
 
-### Exception Handling
+### Exception Handling (Phase 4 — Complete ✓)
 
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| REQ-018 | Skip block for single day ("just today") | Must | One-click from schedule |
-| REQ-019 | Modify block times for single day | Must | Inline editing on schedule |
-| REQ-020 | Exceptions don't affect template | Must | Template changes only in Settings |
-| REQ-021 | Visual indicator for modified blocks | Should | Show it's an exception |
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| REQ-004 | TimeBlockException entity for per-day overrides | Must | ✓ Complete |
+| REQ-018 | Skip block for single day ("just today") | Must | ✓ Complete |
+| REQ-019 | Modify block times for single day | Must | ✓ Complete |
+| REQ-020 | Exceptions don't affect template | Must | ✓ Complete |
+| REQ-021 | Visual indicator for modified blocks | Should | ✓ Complete |
 
 ### Task-Block Matching
 
