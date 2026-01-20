@@ -6,10 +6,10 @@
 ## Current Status
 
 **Phase:** 4 of 5 (Exception Handling)
-**Plan:** 2 of 3 in phase
-**Activity:** Completed 04-02-PLAN.md
+**Plan:** 3 of 3 in phase (COMPLETE)
+**Activity:** Completed 04-03-PLAN.md
 
-Progress: ████████░░ 80%
+Progress: █████████░ 90%
 
 ## Phase Progress
 
@@ -18,7 +18,7 @@ Progress: ████████░░ 80%
 | 1 | Backend Foundation | complete | 3/3 |
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
-| 4 | Exception Handling | in progress | 2/3 |
+| 4 | Exception Handling | complete | 3/3 |
 | 5 | Task-Block Matching | pending | — |
 
 ## Completed Work
@@ -39,14 +39,15 @@ Progress: ████████░░ 80%
 - [x] **Phase 3 Plan 3:** Settings Integration with i18n (03-03-SUMMARY.md)
 - [x] **Phase 4 Plan 1:** TimeBlockException Entity & Repository (04-01-SUMMARY.md)
 - [x] **Phase 4 Plan 2:** Exception CRUD API (04-02-SUMMARY.md)
+- [x] **Phase 4 Plan 3:** Frontend Exception UI (04-03-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase 04-03
+/gsd:execute-phase 05-01
 ```
 
-Execute Plan 04-03: Frontend Exception UI
+Execute Plan 05-01: Task-Block Matching (Phase 5, first plan)
 
 ## Context Notes
 
@@ -123,6 +124,11 @@ Execute Plan 04-03: Frontend Exception UI
 - Upsert pattern: find existing exception or create new, same endpoint for create/update
 - Restore endpoint returns 404 if no exception exists (not silent success)
 
+**Decisions from Plan 04-03:**
+- Exception blocks show both Edit times and Restore buttons (can modify before restoring)
+- Tooltip remains visible during time edit mode (better UX)
+- Exception handlers call API directly and trigger refetch via onRefetch prop
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
@@ -132,7 +138,7 @@ Execute Plan 04-03: Frontend Exception UI
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 04-02-PLAN.md
+Stopped at: Completed 04-03-PLAN.md (Phase 4 complete)
 Resume file: None
 
 ---
