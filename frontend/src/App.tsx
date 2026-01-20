@@ -261,6 +261,10 @@ function App() {
     dispatch(createJournalEntry({ content, date: currentDate }));
   };
 
+  const handleRefetch = () => {
+    dispatch(fetchDailyNote(currentDate));
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -316,11 +320,13 @@ function App() {
               events={scheduleEvents}
               scheduledTasks={scheduledTasks}
               timeBlocks={timeBlocks}
+              date={currentDate}
               isPreview={isPreview}
               onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
               onToggleTask={handleToggleTask}
               onExpand={() => setIsScheduleExpanded(true)}
+              onRefetch={handleRefetch}
             />
           </div>
         </div>
@@ -335,9 +341,11 @@ function App() {
         scheduledTasks={scheduledTasks}
         unscheduledTasks={unscheduledTasks}
         timeBlocks={timeBlocks}
+        date={currentDate}
         onUpdateEvent={handleUpdateEvent}
         onDeleteEvent={handleDeleteEvent}
         onUpdateTaskTime={handleUpdateTaskFixedTime}
+        onRefetch={handleRefetch}
       />
     </div>
   );

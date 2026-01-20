@@ -441,6 +441,11 @@
     "tags": "Associated tags",
     "tagsDesc": "Tasks with these tags fit this block",
     "noTagsSelected": "No tags selected",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "skipToday": "Skip today",
+    "editTimes": "Edit times",
+    "restore": "Restore",
+    "wasOriginal": "was: {{start}} - {{end}}",
+    "modifiedForToday": "Modified for today"
   }
 }

@@ -441,6 +441,11 @@
     "tags": "Powiązane tagi",
     "tagsDesc": "Zadania z tymi tagami pasują do tego bloku",
     "noTagsSelected": "Nie wybrano tagów",
-    "saving": "Zapisuję..."
+    "saving": "Zapisuję...",
+    "skipToday": "Pomiń dzisiaj",
+    "editTimes": "Zmień godziny",
+    "restore": "Przywróć",
+    "wasOriginal": "było: {{start}} - {{end}}",
+    "modifiedForToday": "Zmodyfikowane na dzisiaj"
   }
 }

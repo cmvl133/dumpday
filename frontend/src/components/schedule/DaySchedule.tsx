@@ -9,12 +9,14 @@ import { EventBlock } from './EventBlock';
 import { TaskBlock } from './TaskBlock';
 import { AddEventForm } from './AddEventForm';
 import { TimeBlockBackground } from './TimeBlockBackground';
+import { api } from '@/lib/api';
 import type { ScheduleEvent, Task, TimeBlock } from '@/types';
 
 interface DayScheduleProps {
   events: ScheduleEvent[];
   scheduledTasks?: Task[];
   timeBlocks?: TimeBlock[];
+  date: string;
   isPreview?: boolean;
   onUpdateEvent?: (
     id: number,
@@ -23,6 +25,7 @@ interface DayScheduleProps {
   onDeleteEvent?: (id: number) => void;
   onToggleTask?: (id: number, isCompleted: boolean) => void;
   onExpand?: () => void;
+  onRefetch?: () => void;
 }
 
 export interface EventWithLayout extends ScheduleEvent {
@@ -239,11 +242,13 @@ export function DaySchedule({
   events,
   scheduledTasks = [],
   timeBlocks = [],
+  date,
   isPreview = false,
   onUpdateEvent,
   onDeleteEvent,
   onToggleTask,
   onExpand,
+  onRefetch,
 }: DayScheduleProps) {
   const { t } = useTranslation();
   const [expandedHours, setExpandedHours] = useState<number[]>([]);
@@ -311,6 +316,38 @@ export function DaySchedule({
     );
   };
 
+  // Time block exception handlers
+  const handleSkipBlock = async (blockId: number, blockDate: string) => {
+    try {
+      await api.timeBlock.skipForDate(blockId, blockDate);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to skip block:', error);
+    }
+  };
+
+  const handleModifyBlock = async (
+    blockId: number,
+    blockDate: string,
+    data: { startTime: string; endTime: string }
+  ) => {
+    try {
+      await api.timeBlock.modifyForDate(blockId, blockDate, data);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to modify block:', error);
+    }
+  };
+
+  const handleRestoreBlock = async (blockId: number, blockDate: string) => {
+    try {
+      await api.timeBlock.restoreForDate(blockId, blockDate);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to restore block:', error);
+    }
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3 shrink-0">
@@ -358,6 +395,10 @@ export function DaySchedule({
             {timeBlocks.length > 0 && (
               <TimeBlockBackground
                 timeBlocks={timeBlocks}
+                date={date}
+                onSkipBlock={handleSkipBlock}
+                onModifyBlock={handleModifyBlock}
+                onRestoreBlock={handleRestoreBlock}
               />
             )}
 

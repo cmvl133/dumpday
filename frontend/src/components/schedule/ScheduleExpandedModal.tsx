@@ -20,6 +20,7 @@ import { EventBlock } from './EventBlock';
 import { TimeBlockBackground } from './TimeBlockBackground';
 import { X, GripVertical, Clock, ListTodo } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { api } from '@/lib/api';
 import type { ScheduleEvent, Task, TimeBlock } from '@/types';
 
 // Constants
@@ -40,9 +41,11 @@ interface ScheduleExpandedModalProps {
   scheduledTasks: Task[];
   unscheduledTasks: Task[];
   timeBlocks?: TimeBlock[];
+  date: string;
   onUpdateEvent?: (id: number, data: { title?: string; startTime?: string; endTime?: string }) => void;
   onDeleteEvent?: (id: number) => void;
   onUpdateTaskTime?: (id: number, fixedTime: string | null) => void;
+  onRefetch?: () => void;
 }
 
 // Convert time string "HH:MM" to minutes from midnight
@@ -230,9 +233,11 @@ export function ScheduleExpandedModal({
   scheduledTasks,
   unscheduledTasks,
   timeBlocks = [],
+  date,
   onUpdateEvent,
   onDeleteEvent,
   onUpdateTaskTime,
+  onRefetch,
 }: ScheduleExpandedModalProps) {
   const { t } = useTranslation();
   const [currentTimePercent, setCurrentTimePercent] = useState<number | null>(getCurrentTimePercent);
@@ -361,6 +366,38 @@ export function ScheduleExpandedModal({
     }
   };
 
+  // Time block exception handlers
+  const handleSkipBlock = async (blockId: number, blockDate: string) => {
+    try {
+      await api.timeBlock.skipForDate(blockId, blockDate);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to skip block:', error);
+    }
+  };
+
+  const handleModifyBlock = async (
+    blockId: number,
+    blockDate: string,
+    data: { startTime: string; endTime: string }
+  ) => {
+    try {
+      await api.timeBlock.modifyForDate(blockId, blockDate, data);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to modify block:', error);
+    }
+  };
+
+  const handleRestoreBlock = async (blockId: number, blockDate: string) => {
+    try {
+      await api.timeBlock.restoreForDate(blockId, blockDate);
+      onRefetch?.();
+    } catch (error) {
+      console.error('Failed to restore block:', error);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-6xl h-[90vh] p-0 gap-0">
@@ -428,6 +465,10 @@ export function ScheduleExpandedModal({
                     {timeBlocks.length > 0 && (
                       <TimeBlockBackground
                         timeBlocks={timeBlocks}
+                        date={date}
+                        onSkipBlock={handleSkipBlock}
+                        onModifyBlock={handleModifyBlock}
+                        onRestoreBlock={handleRestoreBlock}
                       />
                     )}
 
