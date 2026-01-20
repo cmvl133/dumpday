@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\TimeBlock;
+use App\Entity\TimeBlockException;
 use App\Entity\User;
 use App\Enum\RecurrenceType;
 use App\Repository\TagRepository;
+use App\Repository\TimeBlockExceptionRepository;
 use App\Repository\TimeBlockRepository;
 use App\Service\TimeBlockService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +35,7 @@ class TimeBlockController extends AbstractController
         private readonly TimeBlockRepository $timeBlockRepository,
         private readonly TagRepository $tagRepository,
         private readonly TimeBlockService $timeBlockService,
+        private readonly TimeBlockExceptionRepository $exceptionRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -59,12 +62,10 @@ class TimeBlockController extends AbstractController
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        // Service now returns arrays with exception data applied
         $blocks = $this->timeBlockService->getActiveBlocksForDate($user, $dateTime);
 
-        return $this->json(array_map(
-            fn (TimeBlock $tb) => $this->serializeTimeBlock($tb),
-            $blocks
-        ));
+        return $this->json($blocks);
     }
 
     #[Route('', name: 'time_block_create', methods: ['POST'])]
@@ -236,6 +237,140 @@ class TimeBlockController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/{id}/skip', name: 'time_block_skip', methods: ['POST'])]
+    public function skip(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
+    {
+        $timeBlock = $this->timeBlockRepository->find($id);
+
+        if ($timeBlock === null) {
+            return $this->json([
+                'error' => 'Time block not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($timeBlock->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+        $date = new \DateTime($data['date'] ?? 'today');
+
+        // Upsert: find existing exception or create new
+        $exception = $this->exceptionRepository->findByTimeBlockAndDate($timeBlock, $date);
+        if ($exception === null) {
+            $exception = new TimeBlockException();
+            $exception->setTimeBlock($timeBlock);
+            $exception->setExceptionDate($date);
+            $this->entityManager->persist($exception);
+        }
+
+        // Mark as skipped and clear any override times
+        $exception->setIsSkipped(true);
+        $exception->setOverrideStartTime(null);
+        $exception->setOverrideEndTime(null);
+
+        $this->entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'date' => $date->format('Y-m-d'),
+        ]);
+    }
+
+    #[Route('/{id}/modify', name: 'time_block_modify', methods: ['POST'])]
+    public function modify(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
+    {
+        $timeBlock = $this->timeBlockRepository->find($id);
+
+        if ($timeBlock === null) {
+            return $this->json([
+                'error' => 'Time block not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($timeBlock->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true) ?? [];
+
+        if (empty($data['startTime']) || empty($data['endTime'])) {
+            return $this->json([
+                'error' => 'startTime and endTime are required',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $date = new \DateTime($data['date'] ?? 'today');
+
+        // Upsert: find existing exception or create new
+        $exception = $this->exceptionRepository->findByTimeBlockAndDate($timeBlock, $date);
+        if ($exception === null) {
+            $exception = new TimeBlockException();
+            $exception->setTimeBlock($timeBlock);
+            $exception->setExceptionDate($date);
+            $this->entityManager->persist($exception);
+        }
+
+        // Set override times and mark as not skipped
+        $exception->setIsSkipped(false);
+        $exception->setOverrideStartTime(new \DateTime($data['startTime']));
+        $exception->setOverrideEndTime(new \DateTime($data['endTime']));
+
+        $this->entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'date' => $date->format('Y-m-d'),
+            'startTime' => $exception->getOverrideStartTime()?->format('H:i'),
+            'endTime' => $exception->getOverrideEndTime()?->format('H:i'),
+        ]);
+    }
+
+    #[Route('/{id}/exception', name: 'time_block_restore', methods: ['DELETE'])]
+    public function restore(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
+    {
+        $timeBlock = $this->timeBlockRepository->find($id);
+
+        if ($timeBlock === null) {
+            return $this->json([
+                'error' => 'Time block not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($timeBlock->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $dateString = $request->query->get('date');
+        if (empty($dateString)) {
+            return $this->json([
+                'error' => 'date query parameter is required',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $date = new \DateTime($dateString);
+        $exception = $this->exceptionRepository->findByTimeBlockAndDate($timeBlock, $date);
+
+        if ($exception === null) {
+            return $this->json([
+                'error' => 'No exception found for this date',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $this->entityManager->remove($exception);
+        $this->entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+        ]);
     }
 
     private function serializeTimeBlock(TimeBlock $tb): array
