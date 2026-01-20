@@ -31,19 +31,20 @@
 **Plans:** 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — TimeBlock entity, Tag inverse relationship, repository, migration
-- [ ] 01-02-PLAN.md — CRUD controller (list, create, update, delete)
-- [ ] 01-03-PLAN.md — TimeBlockService, date endpoint, DailyNote integration
+- [x] 01-01-PLAN.md — TimeBlock entity, Tag inverse relationship, repository, migration
+- [x] 01-02-PLAN.md — CRUD controller (list, create, update, delete)
+- [x] 01-03-PLAN.md — TimeBlockService, date endpoint, DailyNote integration
 
 **Success Criteria:**
-- [ ] TimeBlock entity created with Doctrine ORM
-- [ ] Migration generated and applied
-- [ ] API endpoints return correct JSON structure
-- [ ] TimeBlockService computes active blocks for date
+- [x] TimeBlock entity created with Doctrine ORM
+- [x] Migration generated and applied
+- [x] API endpoints return correct JSON structure
+- [x] TimeBlockService computes active blocks for date
 
 **Dependencies:** None (foundation phase)
 
-**Status:** planned
+**Status:** complete
+**Completed:** 2026-01-20
 
 ---
 

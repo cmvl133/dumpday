@@ -12,18 +12,18 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 
 ## V1 Requirements (This Milestone)
 
-### Backend Foundation
+### Backend Foundation (Phase 1 — Complete ✓)
 
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| REQ-001 | TimeBlock entity with name, color, startTime, endTime | Must | Follow RecurringTask pattern |
-| REQ-002 | TimeBlock recurrence (daily, weekly, weekdays, custom days) | Must | Reuse RecurrenceType enum |
-| REQ-003 | TimeBlock ↔ Tag ManyToMany relationship | Must | For task matching |
-| REQ-004 | TimeBlockException entity for per-day overrides | Must | Skip or modify single occurrence |
-| REQ-005 | TimeBlock belongs to User (not DailyNote) | Must | Template, not instance |
-| REQ-006 | CRUD API endpoints for TimeBlock | Must | GET/POST/PUT/DELETE |
-| REQ-007 | Endpoint to get active blocks for a date | Must | Computed from templates + exceptions |
-| REQ-008 | Include blocks in DailyNote response | Should | Frontend needs blocks with daily data |
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| REQ-001 | TimeBlock entity with name, color, startTime, endTime | Must | ✓ Complete |
+| REQ-002 | TimeBlock recurrence (daily, weekly, weekdays, custom days) | Must | ✓ Complete |
+| REQ-003 | TimeBlock ↔ Tag ManyToMany relationship | Must | ✓ Complete |
+| REQ-004 | TimeBlockException entity for per-day overrides | Must | Pending (Phase 4) |
+| REQ-005 | TimeBlock belongs to User (not DailyNote) | Must | ✓ Complete |
+| REQ-006 | CRUD API endpoints for TimeBlock | Must | ✓ Complete |
+| REQ-007 | Endpoint to get active blocks for a date | Must | ✓ Complete |
+| REQ-008 | Include blocks in DailyNote response | Should | ✓ Complete |
 
 ### Schedule Visualization
 
