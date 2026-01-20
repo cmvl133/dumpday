@@ -5,11 +5,11 @@
 
 ## Current Status
 
-**Phase:** Phase 5 in progress
-**Plan:** 05-02 complete
-**Activity:** Completed AI Awareness plan
+**Phase:** Phase 5 complete
+**Plan:** 05-03 complete
+**Activity:** Completed Frontend Task-Block UI plan
 
-Progress: █████████░ 88%
+Progress: ██████████ 100%
 
 ## Phase Progress
 
@@ -19,7 +19,7 @@ Progress: █████████░ 88%
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
 | 4 | Exception Handling | complete | 3/3 |
-| 5 | Task-Block Matching | in progress | 2/3 |
+| 5 | Task-Block Matching | complete | 3/3 |
 
 ## Completed Work
 
@@ -42,20 +42,25 @@ Progress: █████████░ 88%
 - [x] **Phase 4 Plan 3:** Frontend Exception UI (04-03-SUMMARY.md)
 - [x] **Phase 5 Plan 1:** Task-Block Matching Service (05-01-SUMMARY.md)
 - [x] **Phase 5 Plan 2:** AI Awareness (05-02-SUMMARY.md)
+- [x] **Phase 5 Plan 3:** Frontend Task-Block UI (05-03-SUMMARY.md)
 
 ## Next Action
 
-```
-/gsd:execute-phase .planning/phases/05-task-block-matching/05-03-PLAN.md
-```
+**MILESTONE COMPLETE**
 
-Execute Phase 5 Plan 3: Frontend Task-Block UI
+Time Blocks (v1) milestone has been fully implemented. All 5 phases completed:
+
+1. Backend Foundation - TimeBlock entity, repository, CRUD API
+2. Schedule Visualization - Strip component, background display, App integration
+3. Settings Management UI - Redux slice, form component, settings dialog
+4. Exception Handling - Exception entity, API, frontend UI
+5. Task-Block Matching - Matching service, AI awareness, visual indicators
 
 ## Context Notes
 
 **Key decisions from initialization:**
 - TimeBlock follows RecurringTask pattern (template, not instance)
-- Tag-based task matching (TimeBlock ↔ Tag ↔ Task)
+- Tag-based task matching (TimeBlock <-> Tag <-> Task)
 - Blocks as soft constraints (AI suggests, user decides)
 - "First available block" for task placement
 - Exceptions limited to "just today" (no complex rules)
@@ -142,16 +147,21 @@ Execute Phase 5 Plan 3: Frontend Task-Block UI
 - Only today tasks get block suggestions (not scheduled/someday)
 - Suggestions flow through analyze() response to frontend for preview
 
+**Decisions from Plan 05-03:**
+- Block indicator positioned at bottom of task bar (3x3px dot with white border)
+- Matching block info also displayed in expanded tooltip
+- Translations added for belongsToBlock, suggestedBlock, noBlockMatch
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
 **User feedback (noted for future):**
-- Settings modal getting crowded → consider tabs organization in future
+- Settings modal getting crowded -> consider tabs organization in future
 
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 05-02-PLAN.md
+Stopped at: Completed 05-03-PLAN.md (MILESTONE COMPLETE)
 Resume file: None
 
 ---
