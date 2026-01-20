@@ -8,7 +8,9 @@ use App\Entity\User;
 use App\Repository\EventRepository;
 use App\Repository\TaskRepository;
 use App\Service\PlanningScheduleGenerator;
+use App\Service\TaskBlockMatchingService;
 use App\Service\TaskEventConflictResolver;
+use App\Service\TimeBlockService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +28,8 @@ class PlanningController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly PlanningScheduleGenerator $scheduleGenerator,
         private readonly TaskEventConflictResolver $conflictResolver,
+        private readonly TimeBlockService $timeBlockService,
+        private readonly TaskBlockMatchingService $taskBlockMatchingService,
     ) {
     }
 
@@ -33,10 +37,14 @@ class PlanningController extends AbstractController
     public function getTasks(#[CurrentUser] User $user): JsonResponse
     {
         $today = new \DateTime('today');
+        $currentTime = new \DateTime();
 
         $unplannedTasks = $this->taskRepository->findUnplannedTasksForToday($user, $today);
         $plannedTasks = $this->taskRepository->findPlannedTasksForToday($user, $today);
         $events = $this->eventRepository->findByUserAndDate($user, $today);
+
+        // Get active time blocks for today
+        $activeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $today);
 
         // Find tasks with conflicts (have fixedTime but overlap with events)
         $conflicts = $this->conflictResolver->findConflictingTasks($plannedTasks, $events);
@@ -45,6 +53,8 @@ class PlanningController extends AbstractController
         foreach ($conflicts as $conflict) {
             $task = $conflict['task'];
             $event = $conflict['conflictingEvent'];
+            $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $activeBlocks, $currentTime);
+
             $conflictingTasksData[] = [
                 'id' => $task->getId(),
                 'title' => $task->getTitle(),
@@ -61,22 +71,36 @@ class PlanningController extends AbstractController
                     'startTime' => $event->getStartTime()?->format('H:i'),
                     'endTime' => $event->getEndTime()?->format('H:i'),
                 ],
+                'matchingBlock' => $matchingBlock ? [
+                    'id' => $matchingBlock['id'],
+                    'name' => $matchingBlock['name'],
+                    'color' => $matchingBlock['color'],
+                ] : null,
             ];
         }
 
         return $this->json([
-            'tasks' => array_map(fn ($task) => [
-                'id' => $task->getId(),
-                'title' => $task->getTitle(),
-                'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-                'category' => $task->getCategory()->value,
-                'estimatedMinutes' => $task->getEstimatedMinutes(),
-                'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                'needsFullFocus' => $task->isNeedsFullFocus(),
-                'hasConflict' => false,
-                'conflictingEvent' => null,
-            ], $unplannedTasks),
+            'tasks' => array_map(function ($task) use ($activeBlocks, $currentTime) {
+                $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $activeBlocks, $currentTime);
+
+                return [
+                    'id' => $task->getId(),
+                    'title' => $task->getTitle(),
+                    'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+                    'category' => $task->getCategory()->value,
+                    'estimatedMinutes' => $task->getEstimatedMinutes(),
+                    'fixedTime' => $task->getFixedTime()?->format('H:i'),
+                    'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+                    'needsFullFocus' => $task->isNeedsFullFocus(),
+                    'hasConflict' => false,
+                    'conflictingEvent' => null,
+                    'matchingBlock' => $matchingBlock ? [
+                        'id' => $matchingBlock['id'],
+                        'name' => $matchingBlock['name'],
+                        'color' => $matchingBlock['color'],
+                    ] : null,
+                ];
+            }, $unplannedTasks),
             'conflictingTasks' => $conflictingTasksData,
             'events' => array_map(fn ($event) => [
                 'id' => $event->getId(),
@@ -84,6 +108,7 @@ class PlanningController extends AbstractController
                 'startTime' => $event->getStartTime()?->format('H:i'),
                 'endTime' => $event->getEndTime()?->format('H:i'),
             ], $events),
+            'timeBlocks' => $activeBlocks,
         ]);
     }
 
