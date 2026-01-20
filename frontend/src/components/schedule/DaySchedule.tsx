@@ -8,11 +8,13 @@ import { TimeSlot } from './TimeSlot';
 import { EventBlock } from './EventBlock';
 import { TaskBlock } from './TaskBlock';
 import { AddEventForm } from './AddEventForm';
-import type { ScheduleEvent, Task } from '@/types';
+import { TimeBlockBackground } from './TimeBlockBackground';
+import type { ScheduleEvent, Task, TimeBlock } from '@/types';
 
 interface DayScheduleProps {
   events: ScheduleEvent[];
   scheduledTasks?: Task[];
+  timeBlocks?: TimeBlock[];
   isPreview?: boolean;
   onUpdateEvent?: (
     id: number,
@@ -236,6 +238,7 @@ function getCurrentTimePercent(): number | null {
 export function DaySchedule({
   events,
   scheduledTasks = [],
+  timeBlocks = [],
   isPreview = false,
   onUpdateEvent,
   onDeleteEvent,
@@ -350,6 +353,13 @@ export function DaySchedule({
                 }}
               />
             ))}
+
+            {/* Time block backgrounds */}
+            {timeBlocks.length > 0 && (
+              <TimeBlockBackground
+                timeBlocks={timeBlocks}
+              />
+            )}
 
             {/* Current time indicator */}
             {currentTimePercent !== null && (
