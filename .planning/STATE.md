@@ -5,17 +5,17 @@
 
 ## Current Status
 
-**Phase:** 1 of 5 (Backend Foundation)
-**Plan:** 2 of 3 complete
-**Activity:** Completed 01-02-PLAN.md (TimeBlock CRUD API)
+**Phase:** 1 of 5 (Backend Foundation) - COMPLETE
+**Plan:** 3 of 3 complete
+**Activity:** Completed 01-03-PLAN.md (Schedule for Day Endpoint)
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Phase Progress
 
 | Phase | Name | Status | Plans |
 |-------|------|--------|-------|
-| 1 | Backend Foundation | in progress | 2/3 |
+| 1 | Backend Foundation | complete | 3/3 |
 | 2 | Schedule Visualization | pending | — |
 | 3 | Settings Management UI | pending | — |
 | 4 | Exception Handling | pending | — |
@@ -30,14 +30,15 @@ Progress: [██░░░░░░░░] 20%
 - [x] Roadmap created (ROADMAP.md)
 - [x] **Phase 1 Plan 1:** TimeBlock Entity & Repository (01-01-SUMMARY.md)
 - [x] **Phase 1 Plan 2:** TimeBlock CRUD API (01-02-SUMMARY.md)
+- [x] **Phase 1 Plan 3:** Schedule for Day Endpoint (01-03-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase 01-03
+/gsd:execute-phase 02-01
 ```
 
-Execute Phase 1 Plan 3: Schedule for Day Endpoint
+Execute Phase 2 Plan 1: Schedule Visualization (frontend)
 
 ## Context Notes
 
@@ -64,10 +65,16 @@ Execute Phase 1 Plan 3: Schedule for Day Endpoint
 - Tag replacement on update (clear + add, not merge)
 - Color validation returns 400 on invalid color
 
+**Decisions from Plan 01-03:**
+- Recurrence logic matches RecurringSyncService exactly
+- WEEKLY uses createdAt day-of-week, MONTHLY uses createdAt day-of-month
+- Route /for-date/{date} avoids conflict with /{id} routes
+- DailyNote returns timeBlocks even when no DailyNote entity exists
+
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 01-02-PLAN.md
+Stopped at: Completed 01-03-PLAN.md (Phase 1 complete)
 Resume file: None
 
 ---
