@@ -176,7 +176,6 @@ Plans:
 - Tag-based matching logic in planning service
 - "First available block" algorithm
 - AI block suggestion in brain dump prompt
-- User confirmation UI for suggestions
 - Visual indicator of task-block match
 - Tasks without blocks allowed
 
@@ -187,17 +186,23 @@ Plans:
 - REQ-025: AI suggestion at brain dump
 - REQ-026: Visual indicator
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — TaskBlockMatchingService, PlanningController integration
+- [ ] 05-02-PLAN.md — AI prompt enhancement for block suggestions
+- [ ] 05-03-PLAN.md — Frontend visual indicator, i18n translations
+
 **Success Criteria:**
 - [ ] Tagged tasks auto-assigned to matching block
 - [ ] First available block selected when multiple match
 - [ ] Untagged tasks remain unassigned
 - [ ] AI suggests block during brain dump
-- [ ] User can accept/reject suggestion
 - [ ] Visual shows task-block association
 
 **Dependencies:** Phase 1-4 (full block system)
 
-**Status:** pending
+**Status:** in_progress
 
 ---
 
