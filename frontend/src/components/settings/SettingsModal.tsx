@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Bell, BellOff, Check } from 'lucide-react';
 import { TagManager } from '@/components/tags/TagManager';
+import { TimeBlockSettings } from '@/components/timeblocks/TimeBlockSettings';
 import { updateSettings } from '@/store/settingsSlice';
 import type { RootState, AppDispatch } from '@/store';
 import type { CheckInInterval, ConfettiStyle, Language, ReminderTone } from '@/types';
@@ -240,6 +241,16 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             <TagManager />
             <p className="text-xs text-muted-foreground">
               {t('tags.manageTagsDesc')}
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-3 border-t">
+            <label className="text-sm font-medium">
+              {t('timeBlocks.title')}
+            </label>
+            <TimeBlockSettings />
+            <p className="text-xs text-muted-foreground">
+              {t('timeBlocks.manageBlocksDesc')}
             </p>
           </div>
         </div>
