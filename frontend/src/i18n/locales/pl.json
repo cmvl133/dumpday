@@ -422,5 +422,25 @@
       "numberedList": "Lista numerowana",
       "link": "Link"
     }
+  },
+  "timeBlocks": {
+    "title": "Bloki czasowe",
+    "addBlock": "Dodaj blok",
+    "editBlock": "Edytuj blok",
+    "deleteBlock": "Usuń",
+    "deleteConfirm": "Usunąć ten blok czasowy?",
+    "noBlocks": "Brak bloków czasowych",
+    "manageBlocksDesc": "Twórz bloki czasowe, aby organizować dzień według typu aktywności",
+    "manageBlocks": "Zarządzaj blokami",
+    "name": "Nazwa",
+    "namePlaceholder": "np. Praca głęboka, Spotkania",
+    "color": "Kolor",
+    "startTime": "Czas rozpoczęcia",
+    "endTime": "Czas zakończenia",
+    "recurrence": "Powtarzanie",
+    "tags": "Powiązane tagi",
+    "tagsDesc": "Zadania z tymi tagami pasują do tego bloku",
+    "noTagsSelected": "Nie wybrano tagów",
+    "saving": "Zapisuję..."
   }
 }

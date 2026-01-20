@@ -422,5 +422,25 @@
       "numberedList": "Numbered list",
       "link": "Link"
     }
+  },
+  "timeBlocks": {
+    "title": "Time Blocks",
+    "addBlock": "Add time block",
+    "editBlock": "Edit time block",
+    "deleteBlock": "Delete",
+    "deleteConfirm": "Delete this time block?",
+    "noBlocks": "No time blocks yet",
+    "manageBlocksDesc": "Create time blocks to organize your day by activity type",
+    "manageBlocks": "Manage blocks",
+    "name": "Name",
+    "namePlaceholder": "e.g., Deep Work, Meetings",
+    "color": "Color",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "recurrence": "Recurrence",
+    "tags": "Associated tags",
+    "tagsDesc": "Tasks with these tags fit this block",
+    "noTagsSelected": "No tags selected",
+    "saving": "Saving..."
   }
 }
