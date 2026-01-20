@@ -118,6 +118,105 @@ class TimeBlockController extends AbstractController
         return $this->json($this->serializeTimeBlock($timeBlock), Response::HTTP_CREATED);
     }
 
+    #[Route('/{id}', name: 'time_block_update', methods: ['PATCH'])]
+    public function update(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
+    {
+        $timeBlock = $this->timeBlockRepository->find($id);
+
+        if ($timeBlock === null) {
+            return $this->json([
+                'error' => 'Time block not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($timeBlock->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['name'])) {
+            $timeBlock->setName((string) $data['name']);
+        }
+
+        if (isset($data['color'])) {
+            if (in_array($data['color'], self::ALLOWED_COLORS, true)) {
+                $timeBlock->setColor($data['color']);
+            }
+        }
+
+        if (isset($data['startTime'])) {
+            $timeBlock->setStartTime(new \DateTime($data['startTime']));
+        }
+
+        if (isset($data['endTime'])) {
+            $timeBlock->setEndTime(new \DateTime($data['endTime']));
+        }
+
+        if (isset($data['recurrenceType'])) {
+            $recurrenceType = RecurrenceType::tryFrom($data['recurrenceType']);
+            if ($recurrenceType !== null) {
+                $timeBlock->setRecurrenceType($recurrenceType);
+            }
+        }
+
+        if (array_key_exists('recurrenceDays', $data)) {
+            $timeBlock->setRecurrenceDays(is_array($data['recurrenceDays']) ? $data['recurrenceDays'] : null);
+        }
+
+        if (isset($data['isActive'])) {
+            $timeBlock->setIsActive((bool) $data['isActive']);
+        }
+
+        // Handle tags: if tagIds is provided, clear existing and add new ones
+        if (array_key_exists('tagIds', $data)) {
+            // Clear existing tags
+            foreach ($timeBlock->getTags()->toArray() as $tag) {
+                $timeBlock->removeTag($tag);
+            }
+
+            // Add new tags if provided
+            if (is_array($data['tagIds'])) {
+                foreach ($data['tagIds'] as $tagId) {
+                    $tag = $this->tagRepository->find($tagId);
+                    if ($tag !== null && $tag->getUser()?->getId() === $user->getId()) {
+                        $timeBlock->addTag($tag);
+                    }
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return $this->json($this->serializeTimeBlock($timeBlock));
+    }
+
+    #[Route('/{id}', name: 'time_block_delete', methods: ['DELETE'])]
+    public function delete(#[CurrentUser] User $user, int $id): JsonResponse
+    {
+        $timeBlock = $this->timeBlockRepository->find($id);
+
+        if ($timeBlock === null) {
+            return $this->json([
+                'error' => 'Time block not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($timeBlock->getUser()?->getId() !== $user->getId()) {
+            return $this->json([
+                'error' => 'Access denied',
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        // Soft delete - just deactivate
+        $timeBlock->setIsActive(false);
+        $this->entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
     private function serializeTimeBlock(TimeBlock $tb): array
     {
         return [
