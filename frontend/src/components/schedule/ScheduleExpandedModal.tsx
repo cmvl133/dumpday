@@ -17,9 +17,10 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TimeSlot } from './TimeSlot';
 import { EventBlock } from './EventBlock';
+import { TimeBlockBackground } from './TimeBlockBackground';
 import { X, GripVertical, Clock, ListTodo } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ScheduleEvent, Task } from '@/types';
+import type { ScheduleEvent, Task, TimeBlock } from '@/types';
 
 // Constants
 const SCHEDULE_START_HOUR = 6;
@@ -38,6 +39,7 @@ interface ScheduleExpandedModalProps {
   events: ScheduleEvent[];
   scheduledTasks: Task[];
   unscheduledTasks: Task[];
+  timeBlocks?: TimeBlock[];
   onUpdateEvent?: (id: number, data: { title?: string; startTime?: string; endTime?: string }) => void;
   onDeleteEvent?: (id: number) => void;
   onUpdateTaskTime?: (id: number, fixedTime: string | null) => void;
@@ -227,6 +229,7 @@ export function ScheduleExpandedModal({
   events,
   scheduledTasks,
   unscheduledTasks,
+  timeBlocks = [],
   onUpdateEvent,
   onDeleteEvent,
   onUpdateTaskTime,
@@ -420,6 +423,13 @@ export function ScheduleExpandedModal({
                         }}
                       />
                     ))}
+
+                    {/* Time block backgrounds */}
+                    {timeBlocks.length > 0 && (
+                      <TimeBlockBackground
+                        timeBlocks={timeBlocks}
+                      />
+                    )}
 
                     {/* Current time indicator */}
                     {currentTimePercent !== null && (
