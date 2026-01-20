@@ -35,7 +35,21 @@ class BrainDumpFacade
 
     public function analyze(User $user, string $rawContent, \DateTimeInterface $date): array
     {
-        $aiResponse = $this->analyzer->analyze($rawContent, $date, $user->getLanguage());
+        // Get active time blocks for this date to provide context for AI analysis
+        $timeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $date);
+
+        // Serialize time blocks for the AI prompt
+        $serializedTimeBlocks = array_map(fn ($tb) => [
+            'id' => $tb->getId(),
+            'name' => $tb->getName(),
+            'startTime' => $tb->getStartTime()?->format('H:i'),
+            'endTime' => $tb->getEndTime()?->format('H:i'),
+            'tags' => array_map(fn ($tag) => [
+                'name' => $tag->getName(),
+            ], $tb->getTags()->toArray()),
+        ], $timeBlocks);
+
+        $aiResponse = $this->analyzer->analyze($rawContent, $date, $user->getLanguage(), $serializedTimeBlocks);
 
         $schedule = $this->scheduleBuilder->buildScheduleFromAnalysis(
             $aiResponse['events'] ?? [],

@@ -16,7 +16,16 @@ class BrainDumpAnalyzer
     ) {
     }
 
-    public function analyze(string $rawContent, \DateTimeInterface $date, string $language = 'en'): array
+    /**
+     * Analyze brain dump content and extract structured information.
+     *
+     * @param string $rawContent The raw brain dump text to analyze
+     * @param \DateTimeInterface $date The date for context
+     * @param string $language User's language ('en' or 'pl')
+     * @param array $timeBlocks Time blocks for the day (for AI to suggest block assignments)
+     * @return array Structured analysis result
+     */
+    public function analyze(string $rawContent, \DateTimeInterface $date, string $language = 'en', array $timeBlocks = []): array
     {
         if (empty(trim($rawContent))) {
             return $this->getEmptyResponse();
@@ -31,6 +40,7 @@ class BrainDumpAnalyzer
             'raw_content' => $rawContent,
             'current_date' => $date->format('Y-m-d'),
             'day_of_week' => $dayOfWeek,
+            'time_blocks' => $timeBlocks,
         ]);
 
         try {
