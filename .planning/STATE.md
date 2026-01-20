@@ -6,17 +6,17 @@
 ## Current Status
 
 **Phase:** 2 of 5 (Schedule Visualization)
-**Plan:** 1 of ? in Phase 2
-**Activity:** Completed 02-01-PLAN.md
+**Plan:** 2 of ? in Phase 2
+**Activity:** Completed 02-02-PLAN.md
 
-Progress: ███░░░░░░░ 30%
+Progress: ████░░░░░░ 35%
 
 ## Phase Progress
 
 | Phase | Name | Status | Plans |
 |-------|------|--------|-------|
 | 1 | Backend Foundation | complete | 3/3 |
-| 2 | Schedule Visualization | in progress | 1/? |
+| 2 | Schedule Visualization | in progress | 2/? |
 | 3 | Settings Management UI | pending | — |
 | 4 | Exception Handling | pending | — |
 | 5 | Task-Block Matching | pending | — |
@@ -32,11 +32,12 @@ Progress: ███░░░░░░░ 30%
 - [x] **Phase 1 Plan 2:** TimeBlock CRUD API (01-02-SUMMARY.md)
 - [x] **Phase 1 Plan 3:** Schedule for Day Endpoint (01-03-SUMMARY.md)
 - [x] **Phase 2 Plan 1:** TimeBlock Type & Strip Component (02-01-SUMMARY.md)
+- [x] **Phase 2 Plan 2:** TimeBlockBackground Integration (02-02-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase 02-02
+/gsd:execute-phase 02-03
 ```
 
 Execute next plan in Phase 2: Schedule Visualization
@@ -78,10 +79,16 @@ Execute next plan in Phase 2: Schedule Visualization
 - Diagonal stripe pattern with 45deg angle, 6px/12px stripe width
 - Tooltip positioned to the right (left-full ml-2)
 
+**Decisions from Plan 02-02:**
+- TimeBlockBackground uses useMemo for layout calculation optimization
+- Render TimeBlockBackground after half-hour lines, before current time indicator
+- Optional onEditBlock callback prepared for Phase 3 Settings UI
+- Consistent placement in both schedule views (z-index 5)
+
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
 
 ---
