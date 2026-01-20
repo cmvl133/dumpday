@@ -61,6 +61,11 @@ export interface Task {
   progress?: string | null;
   hasSubtasks?: boolean;
   tags?: Tag[];
+  matchingBlock?: {
+    id: number;
+    name: string;
+    color: string;
+  } | null;
 }
 
 export type CheckInInterval = 'off' | '1h' | '2h' | '3h' | '4h';
