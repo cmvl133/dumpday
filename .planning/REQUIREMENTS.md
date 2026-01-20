@@ -25,15 +25,15 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 | REQ-007 | Endpoint to get active blocks for a date | Must | ✓ Complete |
 | REQ-008 | Include blocks in DailyNote response | Should | ✓ Complete |
 
-### Schedule Visualization
+### Schedule Visualization (Phase 2 — Complete ✓)
 
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| REQ-009 | Display blocks as narrow strips on left side of schedule | Must | Visual distinction from events/tasks |
-| REQ-010 | Diagonal stripe pattern for block backgrounds | Must | CSS repeating-linear-gradient |
-| REQ-011 | Color coding per block type | Must | User-configurable hex color |
-| REQ-012 | Hover shows block name + edit option | Must | Progressive disclosure |
-| REQ-013 | Block duration visible (implicitly via position) | Should | Start/end aligned with time grid |
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| REQ-009 | Display blocks as narrow strips on left side of schedule | Must | ✓ Complete |
+| REQ-010 | Diagonal stripe pattern for block backgrounds | Must | ✓ Complete |
+| REQ-011 | Color coding per block type | Must | ✓ Complete |
+| REQ-012 | Hover shows block name + edit option | Must | ✓ Complete |
+| REQ-013 | Block duration visible (implicitly via position) | Should | ✓ Complete |
 
 ### Settings Management
 

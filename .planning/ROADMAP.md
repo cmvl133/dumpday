@@ -72,19 +72,20 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — TimeBlock type, TimeBlockStrip component with diagonal stripes and hover tooltip
 - [x] 02-02-PLAN.md — TimeBlockBackground container, DaySchedule and ScheduleExpandedModal integration
-- [ ] 02-03-PLAN.md — Wire timeBlocks from dailyNote to schedule components in App.tsx (gap closure)
+- [x] 02-03-PLAN.md — Wire timeBlocks from dailyNote to schedule components in App.tsx (gap closure)
 
 **Success Criteria:**
-- [ ] Blocks appear as colored strips on schedule
-- [ ] Diagonal stripe pattern visible
-- [ ] Position aligns with time grid
-- [ ] Multiple blocks display correctly
-- [ ] No visual interference with events/tasks
-- [ ] Hover tooltip shows block details
+- [x] Blocks appear as colored strips on schedule
+- [x] Diagonal stripe pattern visible
+- [x] Position aligns with time grid
+- [x] Multiple blocks display correctly
+- [x] No visual interference with events/tasks
+- [x] Hover tooltip shows block details
 
 **Dependencies:** Phase 1 (needs API)
 
-**Status:** in progress
+**Status:** complete
+**Completed:** 2026-01-20
 
 ---
 
