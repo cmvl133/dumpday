@@ -6,10 +6,10 @@
 ## Current Status
 
 **Phase:** Phase 5 in progress
-**Plan:** 05-01 complete
-**Activity:** Completed Task-Block Matching Service plan
+**Plan:** 05-02 complete
+**Activity:** Completed AI Awareness plan
 
-Progress: ████████░░ 84%
+Progress: █████████░ 88%
 
 ## Phase Progress
 
@@ -19,7 +19,7 @@ Progress: ████████░░ 84%
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
 | 4 | Exception Handling | complete | 3/3 |
-| 5 | Task-Block Matching | in progress | 1/3 |
+| 5 | Task-Block Matching | in progress | 2/3 |
 
 ## Completed Work
 
@@ -41,14 +41,15 @@ Progress: ████████░░ 84%
 - [x] **Phase 4 Plan 2:** Exception CRUD API (04-02-SUMMARY.md)
 - [x] **Phase 4 Plan 3:** Frontend Exception UI (04-03-SUMMARY.md)
 - [x] **Phase 5 Plan 1:** Task-Block Matching Service (05-01-SUMMARY.md)
+- [x] **Phase 5 Plan 2:** AI Awareness (05-02-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase .planning/phases/05-task-block-matching/05-02-PLAN.md
+/gsd:execute-phase .planning/phases/05-task-block-matching/05-03-PLAN.md
 ```
 
-Execute Phase 5 Plan 2: AI Awareness
+Execute Phase 5 Plan 3: Frontend Task-Block UI
 
 ## Context Notes
 
@@ -135,6 +136,12 @@ Execute Phase 5 Plan 2: AI Awareness
 - First available block = first matching block where endTime > currentTime
 - matchingBlock returns minimal subset: id, name, color
 
+**Decisions from Plan 05-02:**
+- Block suggestions are NOT stored in Task entity - computed dynamically
+- AI sees block id, name, times, and tag names for context
+- Only today tasks get block suggestions (not scheduled/someday)
+- Suggestions flow through analyze() response to frontend for preview
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
@@ -144,7 +151,7 @@ Execute Phase 5 Plan 2: AI Awareness
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 05-01-PLAN.md
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
 
 ---
