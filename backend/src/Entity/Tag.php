@@ -8,6 +8,7 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\TimeBlock;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'tags')]
@@ -38,9 +39,16 @@ class Tag
     #[ORM\ManyToMany(targetEntity: Task::class, mappedBy: 'tags')]
     private Collection $tasks;
 
+    /**
+     * @var Collection<int, TimeBlock>
+     */
+    #[ORM\ManyToMany(targetEntity: TimeBlock::class, mappedBy: 'tags')]
+    private Collection $timeBlocks;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
+        $this->timeBlocks = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -117,6 +125,33 @@ class Tag
     {
         if ($this->tasks->removeElement($task)) {
             $task->removeTag($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TimeBlock>
+     */
+    public function getTimeBlocks(): Collection
+    {
+        return $this->timeBlocks;
+    }
+
+    public function addTimeBlock(TimeBlock $timeBlock): static
+    {
+        if (!$this->timeBlocks->contains($timeBlock)) {
+            $this->timeBlocks->add($timeBlock);
+            $timeBlock->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeBlock(TimeBlock $timeBlock): static
+    {
+        if ($this->timeBlocks->removeElement($timeBlock)) {
+            $timeBlock->removeTag($this);
         }
 
         return $this;
