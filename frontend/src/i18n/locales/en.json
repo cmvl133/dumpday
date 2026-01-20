@@ -64,7 +64,10 @@
     "journalPlaceholder": "How are you feeling?",
     "noNotes": "No notes yet",
     "noEntries": "No entries yet",
-    "newLine": "new line"
+    "newLine": "new line",
+    "belongsToBlock": "In: {{block}}",
+    "suggestedBlock": "Suggested: {{block}}",
+    "noBlockMatch": "No matching block"
   },
   "checkIn": {
     "title": "Check-in",

@@ -64,7 +64,10 @@
     "journalPlaceholder": "Jak się czujesz?",
     "noNotes": "Brak notatek",
     "noEntries": "Brak wpisów",
-    "newLine": "nowa linia"
+    "newLine": "nowa linia",
+    "belongsToBlock": "W: {{block}}",
+    "suggestedBlock": "Sugerowany: {{block}}",
+    "noBlockMatch": "Brak pasującego bloku"
   },
   "checkIn": {
     "title": "Check-in",
