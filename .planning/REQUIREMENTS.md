@@ -54,15 +54,15 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 | REQ-020 | Exceptions don't affect template | Must | ✓ Complete |
 | REQ-021 | Visual indicator for modified blocks | Should | ✓ Complete |
 
-### Task-Block Matching
+### Task-Block Matching (Phase 5 — Complete ✓)
 
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| REQ-022 | Task can have multiple matching blocks (via tags) | Must | Many-to-many through tags |
-| REQ-023 | Task can exist without any block | Must | Flexibility for uncategorized tasks |
-| REQ-024 | Planning puts task in first available matching block | Must | Simple, automatic, no questions |
-| REQ-025 | AI suggests block during brain dump | Should | User confirms/rejects |
-| REQ-026 | Visual indicator of task-block association | Should | Subtle, not overwhelming |
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| REQ-022 | Task can have multiple matching blocks (via tags) | Must | ✓ Complete |
+| REQ-023 | Task can exist without any block | Must | ✓ Complete |
+| REQ-024 | Planning puts task in first available matching block | Must | ✓ Complete |
+| REQ-025 | AI suggests block during brain dump | Should | ✓ Complete |
+| REQ-026 | Visual indicator of task-block association | Should | ✓ Complete |
 
 ---
 

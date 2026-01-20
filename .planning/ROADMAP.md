@@ -189,20 +189,21 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — TaskBlockMatchingService, PlanningController integration
-- [ ] 05-02-PLAN.md — AI prompt enhancement for block suggestions
-- [ ] 05-03-PLAN.md — Frontend visual indicator, i18n translations
+- [x] 05-01-PLAN.md — TaskBlockMatchingService, PlanningController integration
+- [x] 05-02-PLAN.md — AI prompt enhancement for block suggestions
+- [x] 05-03-PLAN.md — Frontend visual indicator, i18n translations
 
 **Success Criteria:**
-- [ ] Tagged tasks auto-assigned to matching block
-- [ ] First available block selected when multiple match
-- [ ] Untagged tasks remain unassigned
-- [ ] AI suggests block during brain dump
-- [ ] Visual shows task-block association
+- [x] Tagged tasks auto-assigned to matching block
+- [x] First available block selected when multiple match
+- [x] Untagged tasks remain unassigned
+- [x] AI suggests block during brain dump
+- [x] Visual shows task-block association
 
 **Dependencies:** Phase 1-4 (full block system)
 
-**Status:** in_progress
+**Status:** complete
+**Completed:** 2026-01-20
 
 ---
 
