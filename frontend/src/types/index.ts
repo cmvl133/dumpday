@@ -24,6 +24,19 @@ export interface RecurringTask {
   createdAt: string;
 }
 
+export interface TimeBlock {
+  id: number;
+  name: string;
+  color: string;           // Hex color, e.g., "#9d4edd"
+  startTime: string;       // "HH:MM" format
+  endTime: string;         // "HH:MM" format
+  recurrenceType: RecurrenceType;
+  recurrenceDays: number[] | null;
+  isActive: boolean;
+  createdAt: string;
+  tags: Tag[];
+}
+
 export interface Task {
   id?: number;
   title: string;
@@ -158,6 +171,7 @@ export interface DailyNoteData {
   notes: Note[];
   journal: JournalEntry[];
   schedule: ScheduleEvent[];
+  timeBlocks: TimeBlock[];
   createdAt: string;
   updatedAt: string;
 }

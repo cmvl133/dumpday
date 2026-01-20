@@ -81,6 +81,7 @@ function App() {
     tasks: { today: [], scheduled: [], someday: [], overdue: [] },
     events: [],
     schedule: [],
+    timeBlocks: [],
     notes: [],
     journal: [],
     createdAt: '',
