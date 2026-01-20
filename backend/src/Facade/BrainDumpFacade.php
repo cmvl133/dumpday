@@ -14,6 +14,7 @@ use App\Service\JournalExtractor;
 use App\Service\NoteExtractor;
 use App\Service\ScheduleBuilder;
 use App\Service\TaskExtractor;
+use App\Service\TimeBlockService;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BrainDumpFacade
@@ -28,6 +29,7 @@ class BrainDumpFacade
         private readonly EntityManagerInterface $entityManager,
         private readonly DailyNoteRepository $dailyNoteRepository,
         private readonly TaskRepository $taskRepository,
+        private readonly TimeBlockService $timeBlockService,
     ) {
     }
 
@@ -198,9 +200,24 @@ class BrainDumpFacade
             $tasks['today'][] = $this->serializeTask($task);
         }
 
-        // If no DailyNote exists but we have scheduled tasks, return minimal data
+        // Get active time blocks for this date
+        $timeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $date);
+        $serializedTimeBlocks = array_map(fn ($tb) => [
+            'id' => $tb->getId(),
+            'name' => $tb->getName(),
+            'color' => $tb->getColor(),
+            'startTime' => $tb->getStartTime()?->format('H:i'),
+            'endTime' => $tb->getEndTime()?->format('H:i'),
+            'tags' => array_map(fn ($tag) => [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'color' => $tag->getColor(),
+            ], $tb->getTags()->toArray()),
+        ], $timeBlocks);
+
+        // If no DailyNote exists but we have scheduled tasks or time blocks, return minimal data
         if ($dailyNote === null) {
-            if (empty($scheduledTasksForDate)) {
+            if (empty($scheduledTasksForDate) && empty($serializedTimeBlocks)) {
                 return null;
             }
 
@@ -213,6 +230,7 @@ class BrainDumpFacade
                 'notes' => [],
                 'journal' => [],
                 'schedule' => [],
+                'timeBlocks' => $serializedTimeBlocks,
                 'createdAt' => null,
                 'updatedAt' => null,
             ];
@@ -278,6 +296,7 @@ class BrainDumpFacade
             'notes' => $notes,
             'journal' => $journal,
             'schedule' => $schedule,
+            'timeBlocks' => $serializedTimeBlocks,
             'createdAt' => $dailyNote->getCreatedAt()?->format('c'),
             'updatedAt' => $dailyNote->getUpdatedAt()?->format('c'),
         ];
