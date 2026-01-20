@@ -20,6 +20,7 @@ import type {
   RecurringTask,
   RecurrenceType,
   Tag,
+  TimeBlock,
   SplitPart,
   AvailableSlotsResponse,
   SplitProposalResponse,
@@ -734,6 +735,69 @@ export const api = {
         throw new Error(error.error || 'Failed to propose split');
       }
       return response.json();
+    },
+  },
+
+  timeBlock: {
+    list: async (): Promise<TimeBlock[]> => {
+      const response = await fetch(`${API_BASE}/time-block`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to fetch time blocks');
+      }
+      return response.json();
+    },
+
+    create: async (data: {
+      name: string;
+      color: string;
+      startTime: string;
+      endTime: string;
+      recurrenceType?: RecurrenceType;
+      recurrenceDays?: number[] | null;
+      tagIds?: number[];
+    }): Promise<TimeBlock> => {
+      const response = await fetch(`${API_BASE}/time-block`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to create time block');
+      }
+      return response.json();
+    },
+
+    update: async (
+      id: number,
+      data: Partial<Omit<TimeBlock, 'id' | 'createdAt' | 'tags'>> & { tagIds?: number[] }
+    ): Promise<TimeBlock> => {
+      const response = await fetch(`${API_BASE}/time-block/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to update time block');
+      }
+      return response.json();
+    },
+
+    delete: async (id: number): Promise<void> => {
+      const response = await fetch(`${API_BASE}/time-block/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || 'Failed to delete time block');
+      }
     },
   },
 };
