@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Enum\RecurrenceType;
 use App\Repository\TagRepository;
 use App\Repository\TimeBlockRepository;
+use App\Service\TimeBlockService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +32,7 @@ class TimeBlockController extends AbstractController
     public function __construct(
         private readonly TimeBlockRepository $timeBlockRepository,
         private readonly TagRepository $tagRepository,
+        private readonly TimeBlockService $timeBlockService,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -43,6 +45,25 @@ class TimeBlockController extends AbstractController
         return $this->json(array_map(
             fn (TimeBlock $tb) => $this->serializeTimeBlock($tb),
             $timeBlocks
+        ));
+    }
+
+    #[Route('/for-date/{date}', name: 'time_block_for_date', methods: ['GET'])]
+    public function getForDate(#[CurrentUser] User $user, string $date): JsonResponse
+    {
+        try {
+            $dateTime = new \DateTime($date);
+        } catch (\Exception) {
+            return $this->json([
+                'error' => 'Invalid date format. Use YYYY-MM-DD.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $blocks = $this->timeBlockService->getActiveBlocksForDate($user, $dateTime);
+
+        return $this->json(array_map(
+            fn (TimeBlock $tb) => $this->serializeTimeBlock($tb),
+            $blocks
         ));
     }
 
