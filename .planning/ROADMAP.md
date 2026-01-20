@@ -25,16 +25,25 @@
 - REQ-003: Tag relationship
 - REQ-005: User ownership
 - REQ-006: CRUD API
+- REQ-007: Get blocks for date endpoint
+- REQ-008: Include blocks in DailyNote response
+
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — TimeBlock entity, Tag inverse relationship, repository, migration
+- [ ] 01-02-PLAN.md — CRUD controller (list, create, update, delete)
+- [ ] 01-03-PLAN.md — TimeBlockService, date endpoint, DailyNote integration
 
 **Success Criteria:**
 - [ ] TimeBlock entity created with Doctrine ORM
 - [ ] Migration generated and applied
 - [ ] API endpoints return correct JSON structure
-- [ ] Tests cover CRUD operations
+- [ ] TimeBlockService computes active blocks for date
 
 **Dependencies:** None (foundation phase)
 
-**Status:** pending
+**Status:** planned
 
 ---
 
@@ -51,8 +60,6 @@
 - Fetching blocks on date change
 
 **Requirements Addressed:**
-- REQ-007: Get blocks for date endpoint
-- REQ-008: Include blocks in DailyNote response
 - REQ-009: Narrow strips on left side
 - REQ-010: Diagonal stripe pattern
 - REQ-011: Color coding
@@ -171,8 +178,8 @@
 
 | Phase | Name | Requirements | Dependencies |
 |-------|------|--------------|--------------|
-| 1 | Backend Foundation | REQ-001,002,003,005,006 | — |
-| 2 | Schedule Visualization | REQ-007,008,009,010,011,013 | Phase 1 |
+| 1 | Backend Foundation | REQ-001,002,003,005,006,007,008 | — |
+| 2 | Schedule Visualization | REQ-009,010,011,013 | Phase 1 |
 | 3 | Settings Management UI | REQ-014,015,016,017 | Phase 1,2 |
 | 4 | Exception Handling | REQ-004,018,019,020,021 | Phase 2,3 |
 | 5 | Task-Block Matching | REQ-022,023,024,025,026 | Phase 1-4 |
