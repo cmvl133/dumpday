@@ -6,10 +6,10 @@
 ## Current Status
 
 **Phase:** 4 of 5 (Exception Handling)
-**Plan:** 1 of 3 in phase
-**Activity:** Completed 04-01-PLAN.md
+**Plan:** 2 of 3 in phase
+**Activity:** Completed 04-02-PLAN.md
 
-Progress: ███████░░░ 70%
+Progress: ████████░░ 80%
 
 ## Phase Progress
 
@@ -18,7 +18,7 @@ Progress: ███████░░░ 70%
 | 1 | Backend Foundation | complete | 3/3 |
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
-| 4 | Exception Handling | in progress | 1/3 |
+| 4 | Exception Handling | in progress | 2/3 |
 | 5 | Task-Block Matching | pending | — |
 
 ## Completed Work
@@ -38,14 +38,15 @@ Progress: ███████░░░ 70%
 - [x] **Phase 3 Plan 2:** TimeBlockForm Component (03-02-SUMMARY.md)
 - [x] **Phase 3 Plan 3:** Settings Integration with i18n (03-03-SUMMARY.md)
 - [x] **Phase 4 Plan 1:** TimeBlockException Entity & Repository (04-01-SUMMARY.md)
+- [x] **Phase 4 Plan 2:** Exception CRUD API (04-02-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase 04-02
+/gsd:execute-phase 04-03
 ```
 
-Execute Plan 04-02: Exception CRUD API
+Execute Plan 04-03: Frontend Exception UI
 
 ## Context Notes
 
@@ -116,6 +117,12 @@ Execute Plan 04-02: Exception CRUD API
 - CASCADE delete ensures exceptions removed when TimeBlock deleted
 - DATE_MUTABLE for exceptionDate with Y-m-d format for consistent date comparison
 
+**Decisions from Plan 04-02:**
+- Service returns arrays (not entities) with exception data to avoid double serialization
+- Skipped blocks are completely excluded from for-date response (not returned with skip flag)
+- Upsert pattern: find existing exception or create new, same endpoint for create/update
+- Restore endpoint returns 404 if no exception exists (not silent success)
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
@@ -125,7 +132,7 @@ Execute Plan 04-02: Exception CRUD API
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 04-01-PLAN.md
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
 
 ---
