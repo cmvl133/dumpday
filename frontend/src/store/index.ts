@@ -8,6 +8,7 @@ import planningReducer from './planningSlice';
 import howAreYouReducer from './howAreYouSlice';
 import recurringReducer from './recurringSlice';
 import tagReducer from './tagSlice';
+import timeBlockReducer from './timeBlockSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     howAreYou: howAreYouReducer,
     recurring: recurringReducer,
     tags: tagReducer,
+    timeBlocks: timeBlockReducer,
   },
 });
 
