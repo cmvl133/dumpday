@@ -90,11 +90,12 @@ function App() {
 
   // Merge persisted data with preview data when both exist
   // Must be before conditional returns to follow Rules of Hooks
-  const { displayData, scheduleEvents, scheduledTasks, unscheduledTasks } = useMemo((): {
+  const { displayData, scheduleEvents, scheduledTasks, unscheduledTasks, timeBlocks } = useMemo((): {
     displayData: AnalysisResponse | DailyNoteData;
     scheduleEvents: DailyNoteData['schedule'];
     scheduledTasks: DailyNoteData['tasks']['today'];
     unscheduledTasks: DailyNoteData['tasks']['today'];
+    timeBlocks: DailyNoteData['timeBlocks'];
   } => {
     if (!analysisPreview) {
       const data = dailyNote ?? emptyDayData;
@@ -108,6 +109,7 @@ function App() {
         scheduleEvents: data.schedule || [],
         scheduledTasks: allTasks.filter((t) => t.fixedTime),
         unscheduledTasks: allTasks.filter((t) => !t.fixedTime && !t.isCompleted && t.id),
+        timeBlocks: data.timeBlocks || [],
       };
     }
 
@@ -117,6 +119,7 @@ function App() {
         scheduleEvents: analysisPreview.schedule || [],
         scheduledTasks: [],
         unscheduledTasks: [],
+        timeBlocks: [],
       };
     }
 
@@ -173,6 +176,7 @@ function App() {
       scheduleEvents: merged.schedule,
       scheduledTasks: persistedTasks.filter((t) => t.fixedTime),
       unscheduledTasks: persistedTasks.filter((t) => !t.fixedTime && !t.isCompleted && t.id),
+      timeBlocks: dailyNote.timeBlocks || [],
     };
   }, [dailyNote, analysisPreview]);
 
@@ -311,6 +315,7 @@ function App() {
             <DaySchedule
               events={scheduleEvents}
               scheduledTasks={scheduledTasks}
+              timeBlocks={timeBlocks}
               isPreview={isPreview}
               onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
@@ -329,6 +334,7 @@ function App() {
         events={scheduleEvents}
         scheduledTasks={scheduledTasks}
         unscheduledTasks={unscheduledTasks}
+        timeBlocks={timeBlocks}
         onUpdateEvent={handleUpdateEvent}
         onDeleteEvent={handleDeleteEvent}
         onUpdateTaskTime={handleUpdateTaskFixedTime}
