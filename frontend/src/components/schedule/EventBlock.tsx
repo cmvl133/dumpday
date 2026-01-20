@@ -62,7 +62,8 @@ export function EventBlock({
   };
 
   // Calculate horizontal positioning for overlapping events
-  const leftOffset = 64; // 16 * 4px = 64px (left-16 in Tailwind)
+  // TimeBlockStrip ends at 76px (56px left + 20px width), add 8px gap
+  const leftOffset = 84;
   const rightMargin = 70; // Reserve space for task bars on the right (2 overlapping tasks = ~58px)
   const availableWidth = `calc(100% - ${leftOffset}px - ${rightMargin}px)`;
   const columnWidth = `calc(${availableWidth} / ${totalColumns})`;
