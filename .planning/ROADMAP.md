@@ -107,6 +107,13 @@ Plans:
 - REQ-016: Associate tags
 - REQ-017: Preview of weekly schedule
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Redux slice and API client for TimeBlock CRUD
+- [ ] 03-02-PLAN.md — TimeBlockForm component with all input fields
+- [ ] 03-03-PLAN.md — TimeBlockSettings component, SettingsModal integration, i18n
+
 **Success Criteria:**
 - [ ] Can create new time block from Settings
 - [ ] Can edit existing block
