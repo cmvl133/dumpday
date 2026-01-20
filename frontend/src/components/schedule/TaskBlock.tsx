@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/types';
@@ -22,6 +23,7 @@ export function TaskBlock({
   offsetIndex = 0,
   onToggle,
 }: TaskBlockProps) {
+  const { t } = useTranslation();
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -91,6 +93,14 @@ export function TaskBlock({
             </span>
           </div>
         )}
+        {/* Block indicator - shows which time block this task belongs to */}
+        {task.matchingBlock && (
+          <div
+            className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border-2 border-white/80"
+            style={{ backgroundColor: task.matchingBlock.color }}
+            title={t('tasks.belongsToBlock', { block: task.matchingBlock.name })}
+          />
+        )}
       </div>
 
       {/* Tooltip - high z-index to be above time indicator */}
@@ -141,6 +151,15 @@ export function TaskBlock({
                       {tag.name}
                     </span>
                   ))}
+                </div>
+              )}
+              {task.matchingBlock && (
+                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-muted-foreground">
+                  <div
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: task.matchingBlock.color }}
+                  />
+                  <span>{t('tasks.belongsToBlock', { block: task.matchingBlock.name })}</span>
                 </div>
               )}
             </div>
