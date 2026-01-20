@@ -6,16 +6,16 @@
 ## Current Status
 
 **Phase:** 1 of 5 (Backend Foundation)
-**Plan:** 1 of 3 complete
-**Activity:** Completed 01-01-PLAN.md (TimeBlock Entity & Repository)
+**Plan:** 2 of 3 complete
+**Activity:** Completed 01-02-PLAN.md (TimeBlock CRUD API)
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
 
 ## Phase Progress
 
 | Phase | Name | Status | Plans |
 |-------|------|--------|-------|
-| 1 | Backend Foundation | in progress | 1/3 |
+| 1 | Backend Foundation | in progress | 2/3 |
 | 2 | Schedule Visualization | pending | — |
 | 3 | Settings Management UI | pending | — |
 | 4 | Exception Handling | pending | — |
@@ -29,14 +29,15 @@ Progress: [█░░░░░░░░░] 10%
 - [x] Requirements defined (REQUIREMENTS.md)
 - [x] Roadmap created (ROADMAP.md)
 - [x] **Phase 1 Plan 1:** TimeBlock Entity & Repository (01-01-SUMMARY.md)
+- [x] **Phase 1 Plan 2:** TimeBlock CRUD API (01-02-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:execute-phase 01-02
+/gsd:execute-phase 01-03
 ```
 
-Execute Phase 1 Plan 2: TimeBlock CRUD API
+Execute Phase 1 Plan 3: Schedule for Day Endpoint
 
 ## Context Notes
 
@@ -58,10 +59,15 @@ Execute Phase 1 Plan 2: TimeBlock CRUD API
 - TIME_MUTABLE for startTime/endTime
 - Join table named time_block_tags
 
+**Decisions from Plan 01-02:**
+- Soft delete for time blocks (isActive=false, not hard delete)
+- Tag replacement on update (clear + add, not merge)
+- Color validation returns 400 on invalid color
+
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 01-01-PLAN.md
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
 
 ---
