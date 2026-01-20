@@ -35,14 +35,14 @@ Time blocks introduce a third entity type on the schedule (alongside events and 
 | REQ-012 | Hover shows block name + edit option | Must | ✓ Complete |
 | REQ-013 | Block duration visible (implicitly via position) | Should | ✓ Complete |
 
-### Settings Management
+### Settings Management (Phase 3 — Complete ✓)
 
-| ID | Requirement | Priority | Notes |
-|----|-------------|----------|-------|
-| REQ-014 | Time block settings page in Settings | Must | CRUD interface for templates |
-| REQ-015 | Configure recurring schedule (days + times) | Must | Similar to recurring tasks UI |
-| REQ-016 | Associate tags with blocks | Must | Dropdown/multi-select existing tags |
-| REQ-017 | Preview of weekly schedule | Should | Visual feedback before saving |
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| REQ-014 | Time block settings page in Settings | Must | ✓ Complete |
+| REQ-015 | Configure recurring schedule (days + times) | Must | ✓ Complete |
+| REQ-016 | Associate tags with blocks | Must | ✓ Complete |
+| REQ-017 | Preview of weekly schedule | Should | Deferred |
 
 ### Exception Handling
 
