@@ -53,18 +53,25 @@ Plans:
 **Goal:** Display time blocks on DaySchedule as visual background layer
 
 **Delivers:**
-- TimeBlockBackground React component
+- TimeBlock TypeScript type matching backend response
+- TimeBlockStrip component with diagonal stripe pattern
+- TimeBlockBackground container component
 - Integration into DaySchedule.tsx
-- Diagonal stripe CSS patterns via Tailwind
-- Color coding from block configuration
-- timeBlockSlice for Redux state management
-- Fetching blocks on date change
+- Integration into ScheduleExpandedModal.tsx
+- Hover tooltip with block name, times, and edit option
 
 **Requirements Addressed:**
 - REQ-009: Narrow strips on left side
 - REQ-010: Diagonal stripe pattern
 - REQ-011: Color coding
+- REQ-012: Hover shows block name + edit option
 - REQ-013: Duration visible
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — TimeBlock type, TimeBlockStrip component with diagonal stripes and hover tooltip
+- [ ] 02-02-PLAN.md — TimeBlockBackground container, DaySchedule and ScheduleExpandedModal integration
 
 **Success Criteria:**
 - [ ] Blocks appear as colored strips on schedule
@@ -72,10 +79,11 @@ Plans:
 - [ ] Position aligns with time grid
 - [ ] Multiple blocks display correctly
 - [ ] No visual interference with events/tasks
+- [ ] Hover tooltip shows block details
 
 **Dependencies:** Phase 1 (needs API)
 
-**Status:** pending
+**Status:** planning
 
 ---
 
@@ -180,7 +188,7 @@ Plans:
 | Phase | Name | Requirements | Dependencies |
 |-------|------|--------------|--------------|
 | 1 | Backend Foundation | REQ-001,002,003,005,006,007,008 | — |
-| 2 | Schedule Visualization | REQ-009,010,011,013 | Phase 1 |
+| 2 | Schedule Visualization | REQ-009,010,011,012,013 | Phase 1 |
 | 3 | Settings Management UI | REQ-014,015,016,017 | Phase 1,2 |
 | 4 | Exception Handling | REQ-004,018,019,020,021 | Phase 2,3 |
 | 5 | Task-Block Matching | REQ-022,023,024,025,026 | Phase 1-4 |
