@@ -5,11 +5,11 @@
 
 ## Current Status
 
-**Phase:** Phase 4 complete, ready for Phase 5
-**Plan:** —
-**Activity:** Phase 4 verified
+**Phase:** Phase 5 in progress
+**Plan:** 05-01 complete
+**Activity:** Completed Task-Block Matching Service plan
 
-Progress: ████████░░ 80%
+Progress: ████████░░ 84%
 
 ## Phase Progress
 
@@ -19,7 +19,7 @@ Progress: ████████░░ 80%
 | 2 | Schedule Visualization | complete | 3/3 |
 | 3 | Settings Management UI | complete | 3/3 |
 | 4 | Exception Handling | complete | 3/3 |
-| 5 | Task-Block Matching | pending | — |
+| 5 | Task-Block Matching | in progress | 1/3 |
 
 ## Completed Work
 
@@ -40,14 +40,15 @@ Progress: ████████░░ 80%
 - [x] **Phase 4 Plan 1:** TimeBlockException Entity & Repository (04-01-SUMMARY.md)
 - [x] **Phase 4 Plan 2:** Exception CRUD API (04-02-SUMMARY.md)
 - [x] **Phase 4 Plan 3:** Frontend Exception UI (04-03-SUMMARY.md)
+- [x] **Phase 5 Plan 1:** Task-Block Matching Service (05-01-SUMMARY.md)
 
 ## Next Action
 
 ```
-/gsd:plan-phase 5
+/gsd:execute-phase .planning/phases/05-task-block-matching/05-02-PLAN.md
 ```
 
-Plan Phase 5: Task-Block Matching
+Execute Phase 5 Plan 2: AI Awareness
 
 ## Context Notes
 
@@ -129,6 +130,11 @@ Plan Phase 5: Task-Block Matching
 - Tooltip remains visible during time edit mode (better UX)
 - Exception handlers call API directly and trigger refetch via onRefetch prop
 
+**Decisions from Plan 05-01:**
+- TaskBlockMatchingService is stateless - receives activeBlocks array as param
+- First available block = first matching block where endTime > currentTime
+- matchingBlock returns minimal subset: id, name, color
+
 **Bug fix during Phase 3:**
 - EventBlock leftOffset increased from 64px to 84px to avoid overlap with TimeBlockStrip (ends at 76px)
 
@@ -138,7 +144,7 @@ Plan Phase 5: Task-Block Matching
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Phase 4 complete, verified
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
 
 ---
