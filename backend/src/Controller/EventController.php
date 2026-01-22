@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Response\EventResponse;
 use App\Entity\DailyNote;
 use App\Entity\Event;
 use App\Entity\User;
@@ -71,13 +72,7 @@ class EventController extends AbstractController
         $this->entityManager->persist($event);
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $event->getId(),
-            'title' => $event->getTitle(),
-            'date' => $event->getDate()?->format('Y-m-d'),
-            'startTime' => $event->getStartTime()?->format('H:i'),
-            'endTime' => $event->getEndTime()?->format('H:i'),
-        ], Response::HTTP_CREATED);
+        return $this->json(EventResponse::fromEntity($event), Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'event_update', methods: ['PATCH'])]
@@ -119,13 +114,7 @@ class EventController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $event->getId(),
-            'title' => $event->getTitle(),
-            'startTime' => $event->getStartTime()?->format('H:i'),
-            'endTime' => $event->getEndTime()?->format('H:i'),
-            'date' => $event->getDate()?->format('Y-m-d'),
-        ]);
+        return $this->json(EventResponse::fromEntity($event));
     }
 
     #[Route('/{id}', name: 'event_delete', methods: ['DELETE'])]

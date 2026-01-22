@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Response\TaskResponse;
 use App\Entity\User;
 use App\Repository\TaskRepository;
 use App\Service\TaskSplitService;
@@ -64,8 +65,8 @@ class TaskSplitController extends AbstractController
             $subtasks = $this->taskSplitService->splitTask($task, $parts);
 
             return $this->json([
-                'parentTask' => $this->serializeTask($task),
-                'subtasks' => array_map([$this, 'serializeTask'], $subtasks),
+                'parentTask' => TaskResponse::fromEntity($task),
+                'subtasks' => array_map(fn($t) => TaskResponse::fromEntity($t), $subtasks),
             ], Response::HTTP_CREATED);
         } catch (\InvalidArgumentException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
@@ -94,7 +95,7 @@ class TaskSplitController extends AbstractController
 
         $mergedTask = $this->taskSplitService->mergeSubtasks($task);
 
-        return $this->json($this->serializeTask($mergedTask));
+        return $this->json(TaskResponse::fromEntity($mergedTask));
     }
 
     /**
@@ -116,7 +117,7 @@ class TaskSplitController extends AbstractController
         $subtasks = $task->getSubtasks()->toArray();
 
         return $this->json([
-            'subtasks' => array_map([$this, 'serializeTask'], $subtasks),
+            'subtasks' => array_map(fn($t) => TaskResponse::fromEntity($t), $subtasks),
         ]);
     }
 
@@ -188,37 +189,5 @@ class TaskSplitController extends AbstractController
             'date' => $date->format('Y-m-d'),
             'proposal' => $proposal,
         ]);
-    }
-
-    /**
-     * Serialize a task to array.
-     */
-    private function serializeTask($task): array
-    {
-        return [
-            'id' => $task->getId(),
-            'title' => $task->getTitle(),
-            'isCompleted' => $task->isCompleted(),
-            'isDropped' => $task->isDropped(),
-            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-            'category' => $task->getCategory()->value,
-            'completedAt' => $task->getCompletedAt()?->format('c'),
-            'reminderTime' => $task->getReminderTime()?->format('H:i'),
-            'estimatedMinutes' => $task->getEstimatedMinutes(),
-            'fixedTime' => $task->getFixedTime()?->format('H:i'),
-            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-            'needsFullFocus' => $task->isNeedsFullFocus(),
-            'recurringTaskId' => $task->getRecurringTask()?->getId(),
-            'parentTaskId' => $task->getParentTask()?->getId(),
-            'isPart' => $task->isPart(),
-            'partNumber' => $task->getPartNumber(),
-            'progress' => $task->getProgress(),
-            'hasSubtasks' => $task->hasSubtasks(),
-            'tags' => array_map(fn ($tag) => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'color' => $tag->getColor(),
-            ], $task->getTags()->toArray()),
-        ];
     }
 }

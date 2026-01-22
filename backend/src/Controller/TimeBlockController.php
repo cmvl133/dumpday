@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Response\TimeBlockResponse;
 use App\Entity\TimeBlock;
 use App\Entity\TimeBlockException;
 use App\Entity\User;
@@ -46,7 +47,7 @@ class TimeBlockController extends AbstractController
         $timeBlocks = $this->timeBlockRepository->findActiveByUser($user);
 
         return $this->json(array_map(
-            fn (TimeBlock $tb) => $this->serializeTimeBlock($tb),
+            fn (TimeBlock $tb) => TimeBlockResponse::fromEntity($tb),
             $timeBlocks
         ));
     }
@@ -137,7 +138,7 @@ class TimeBlockController extends AbstractController
         $this->entityManager->persist($timeBlock);
         $this->entityManager->flush();
 
-        return $this->json($this->serializeTimeBlock($timeBlock), Response::HTTP_CREATED);
+        return $this->json(TimeBlockResponse::fromEntity($timeBlock), Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'time_block_update', methods: ['PATCH'])]
@@ -212,7 +213,7 @@ class TimeBlockController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json($this->serializeTimeBlock($timeBlock));
+        return $this->json(TimeBlockResponse::fromEntity($timeBlock));
     }
 
     #[Route('/{id}', name: 'time_block_delete', methods: ['DELETE'])]
@@ -371,25 +372,5 @@ class TimeBlockController extends AbstractController
         return $this->json([
             'success' => true,
         ]);
-    }
-
-    private function serializeTimeBlock(TimeBlock $tb): array
-    {
-        return [
-            'id' => $tb->getId(),
-            'name' => $tb->getName(),
-            'color' => $tb->getColor(),
-            'startTime' => $tb->getStartTime()?->format('H:i'),
-            'endTime' => $tb->getEndTime()?->format('H:i'),
-            'recurrenceType' => $tb->getRecurrenceType()->value,
-            'recurrenceDays' => $tb->getRecurrenceDays(),
-            'isActive' => $tb->isActive(),
-            'createdAt' => $tb->getCreatedAt()?->format('c'),
-            'tags' => array_map(fn ($tag) => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'color' => $tag->getColor(),
-            ], $tb->getTags()->toArray()),
-        ];
     }
 }

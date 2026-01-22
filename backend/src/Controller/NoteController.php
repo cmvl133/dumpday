@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Response\NoteResponse;
 use App\Entity\DailyNote;
 use App\Entity\Note;
 use App\Entity\User;
@@ -33,7 +34,7 @@ class NoteController extends AbstractController
         $sort = $request->query->get('sort', 'newest');
         $notes = $this->noteRepository->findByUserSorted($user, $sort);
 
-        return $this->json(array_map(fn(Note $note) => $this->serializeNote($note), $notes));
+        return $this->json(array_map(fn(Note $note) => NoteResponse::fromEntity($note), $notes));
     }
 
     #[Route('/search', name: 'note_search', methods: ['GET'])]
@@ -42,7 +43,7 @@ class NoteController extends AbstractController
         $query = $request->query->get('q', '');
         $notes = $this->noteRepository->findByUserWithSearch($user, $query);
 
-        return $this->json(array_map(fn(Note $note) => $this->serializeNote($note), $notes));
+        return $this->json(array_map(fn(Note $note) => NoteResponse::fromEntity($note), $notes));
     }
 
     #[Route('', name: 'note_create', methods: ['POST'])]
@@ -81,7 +82,7 @@ class NoteController extends AbstractController
         $this->entityManager->persist($note);
         $this->entityManager->flush();
 
-        return $this->json($this->serializeNote($note), Response::HTTP_CREATED);
+        return $this->json(NoteResponse::fromEntity($note), Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'note_update', methods: ['PATCH'])]
@@ -117,7 +118,7 @@ class NoteController extends AbstractController
 
         $this->entityManager->flush();
 
-        return $this->json($this->serializeNote($note));
+        return $this->json(NoteResponse::fromEntity($note));
     }
 
     #[Route('/{id}', name: 'note_delete', methods: ['DELETE'])]
@@ -141,20 +142,5 @@ class NoteController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function serializeNote(Note $note): array
-    {
-        return [
-            'id' => $note->getId(),
-            'content' => $note->getContent(),
-            'title' => $note->getTitle(),
-            'format' => $note->getFormat(),
-            'createdAt' => $note->getCreatedAt()?->format('c'),
-            'updatedAt' => $note->getUpdatedAt()?->format('c'),
-        ];
     }
 }
