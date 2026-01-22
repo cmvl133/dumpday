@@ -9,7 +9,7 @@ Work until: {{ work_until_time }}
 FIXED EVENTS (cannot be moved):
 {% if events|length > 0 %}
 {% for event in events %}
-- {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+- [ID: {{ event.id }}] {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}{% if event.allowOverlap %} [ALLOWS TASK OVERLAP]{% else %} [NO OVERLAP - DO NOT SCHEDULE TASKS HERE]{% endif %}
 
 {% endfor %}
 {% else %}

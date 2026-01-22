@@ -8,7 +8,7 @@ Current time: {{ current_time }}
 FIXED EVENTS (cannot be moved):
 {% if events|length > 0 %}
 {% for event in events %}
-- {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+- [ID: {{ event.id }}] {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}{% if event.allowOverlap %} [ALLOWS TASK OVERLAP]{% else %} [NO OVERLAP - DO NOT SCHEDULE TASKS HERE]{% endif %}
 
 {% endfor %}
 {% else %}
@@ -53,6 +53,12 @@ CRITICAL RULES FOR AI-SCHEDULED TASKS (without fixedTime):
 - Example: If Task A starts at 09:00 and takes 45 minutes, it ends at 09:45. The next task should start at 09:50 or later (5 min transition).
 - Spread tasks throughout the day - don't bunch them all at the same time!
 - NOTE: Tasks with fixedTime set by the user may overlap - respect the user's choice and keep their exact time.
+
+EVENT OVERLAP RULES:
+- Events marked [NO OVERLAP] are BLOCKED time slots - treat them like already scheduled tasks!
+- ONLY events marked [ALLOWS TASK OVERLAP] can have tasks scheduled during them
+- Even then, the task MUST have canCombineWithEvents including that event's ID
+- If a task has canCombineWithEvents but the event has [NO OVERLAP], DO NOT combine them
 
 Return JSON:
 {

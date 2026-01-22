@@ -8,7 +8,7 @@ Aktualna godzina: {{ current_time }}
 STAŁE WYDARZENIA (nie można przesuwać):
 {% if events|length > 0 %}
 {% for event in events %}
-- {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+- [ID: {{ event.id }}] {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}{% if event.allowOverlap %} [POZWALA NA NAKŁADANIE ZADAŃ]{% else %} [BEZ NAKŁADANIA - NIE PLANUJ TU ZADAŃ]{% endif %}
 
 {% endfor %}
 {% else %}
@@ -53,6 +53,12 @@ KRYTYCZNE ZASADY DLA ZADAŃ PLANOWANYCH PRZEZ AI (bez fixedTime):
 - Przykład: Jeśli Zadanie A zaczyna się o 09:00 i trwa 45 minut, kończy się o 09:45. Następne zadanie powinno zacząć się o 09:50 lub później (5 min przejścia).
 - Rozłóż zadania w ciągu dnia - nie grupuj ich wszystkich o tej samej godzinie!
 - UWAGA: Zadania z fixedTime ustawionym przez użytkownika mogą się nakładać - respektuj wybór użytkownika i zachowaj dokładną godzinę.
+
+ZASADY NAKŁADANIA WYDARZEŃ:
+- Wydarzenia z [BEZ NAKŁADANIA] to ZABLOKOWANE sloty - traktuj je jak już zaplanowane zadania!
+- TYLKO wydarzenia z [POZWALA NA NAKŁADANIE ZADAŃ] mogą mieć zadania zaplanowane podczas nich
+- Nawet wtedy zadanie MUSI mieć canCombineWithEvents zawierające ID tego wydarzenia
+- Jeśli zadanie ma canCombineWithEvents ale wydarzenie ma [BEZ NAKŁADANIA], NIE łącz ich
 
 Zwróć JSON:
 {

@@ -9,7 +9,7 @@ Pracuję do: {{ work_until_time }}
 STAŁE WYDARZENIA (nie można przesunąć):
 {% if events|length > 0 %}
 {% for event in events %}
-- {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+- [ID: {{ event.id }}] {{ event.title }}: {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}{% if event.allowOverlap %} [POZWALA NA NAKŁADANIE ZADAŃ]{% else %} [BEZ NAKŁADANIA - NIE PLANUJ TU ZADAŃ]{% endif %}
 
 {% endfor %}
 {% else %}
