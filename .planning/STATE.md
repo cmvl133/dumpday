@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 12 (Frontend Slices) - COMPLETE
-**Activity:** Completed Phase 12, ready for Phase 13
+**Phase:** 13 (Frontend Storage) - IN PROGRESS
+**Activity:** Completed 13-01 (Storage Infrastructure)
 
-Progress: [Phase 12] 3/3 plans | [Milestone v2] 4/5 phases
+Progress: [Phase 13] 1/2 plans | [Milestone v2] 4/5 phases
 
 ## Milestones
 
@@ -60,17 +60,18 @@ Progress: [Phase 12] 3/3 plans | [Milestone v2] 4/5 phases
   - [x] 12-01: CheckIn Flow Slice and Coordinator Reduction
   - [x] 12-02: Planning and Rebuild Flow Slices
   - [x] 12-03: Component Integration and Store Wiring
-- Phase 13: Frontend Storage (pending)
+- Phase 13: Frontend Storage - IN PROGRESS
+  - [x] 13-01: Storage Infrastructure (typed constants and useStorage hook)
 
 ## Next Action
 
-**Start Phase 13:**
+**Continue Phase 13:**
 
 ```
-/gsd:research-phase 13
+/gsd:execute-phase 13
 ```
 
-Phase 13 will centralize localStorage access into a dedicated storage module.
+Execute plan 13-02 to migrate existing localStorage consumers to use new storage utilities.
 
 ## Context Notes
 
@@ -193,10 +194,20 @@ Phase 13 will centralize localStorage access into a dedicated storage module.
 - Remove RebuildStep temporary export from howAreYouSlice
 - Delete old checkInSlice.ts and planningSlice.ts (replaced by flow slices)
 
+**Patterns Established (13-01):**
+- Storage module pattern: centralized keys, schema, and typed utilities
+- useStorage hook pattern: [value, setValue, removeValue] tuple with persistence
+- Storage key constants with `as const` for type narrowing
+
+**Key Decisions (13-01):**
+- Kept `tagFilter` key name for backward compatibility with existing user data
+- Exported BoxId type from storage module for AnalysisResults.tsx to import
+- Silent failure in catch blocks for storage operations (storage full or disabled)
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 12-03-PLAN.md (Component Integration and Store Wiring)
+Stopped at: Completed 13-01-PLAN.md (Storage Infrastructure)
 Resume file: None
 
 ---
