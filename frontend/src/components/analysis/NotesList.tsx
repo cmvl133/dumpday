@@ -92,7 +92,7 @@ export function NotesList({
   };
 
   const handleEditInExpanded = (note: Note) => {
-    setExpandWithNoteId(note.id);
+    setExpandWithNoteId(note.id ?? null);
     setIsExpanded(true);
   };
 
