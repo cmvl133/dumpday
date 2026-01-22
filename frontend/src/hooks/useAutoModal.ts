@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '@/store/howAreYouSlice';
 import type { RootState, AppDispatch } from '@/store';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@/lib/storage';
 
 const INTERVAL_MS: Record<string, number> = {
   '1h': 1 * 60 * 60 * 1000,
@@ -10,10 +11,8 @@ const INTERVAL_MS: Record<string, number> = {
   '4h': 4 * 60 * 60 * 1000,
 };
 
-const SESSION_START_KEY = 'dopaminder_session_start';
-
 function getSessionStart(): number {
-  const stored = localStorage.getItem(SESSION_START_KEY);
+  const stored = getStorageItem(STORAGE_KEYS.SESSION_START, '');
   if (stored) {
     const parsed = parseInt(stored, 10);
     // Check if session start is from today
@@ -25,7 +24,7 @@ function getSessionStart(): number {
   }
   // New day or no stored value - set new session start
   const now = Date.now();
-  localStorage.setItem(SESSION_START_KEY, String(now));
+  setStorageItem(STORAGE_KEYS.SESSION_START, String(now));
   return now;
 }
 

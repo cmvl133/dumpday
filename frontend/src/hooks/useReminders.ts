@@ -2,36 +2,24 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/store';
 import { getRandomReminderMessage } from '@/lib/toneMessages';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@/lib/storage';
 import type { Task } from '@/types';
 
-const SENT_REMINDERS_KEY = 'dopaminder_sent_reminders';
-
 function getSentReminders(): Set<string> {
-  try {
-    const stored = localStorage.getItem(SENT_REMINDERS_KEY);
-    if (!stored) return new Set();
-    const data = JSON.parse(stored);
-    // Clean up old entries (older than 24 hours)
-    const now = Date.now();
-    const filtered = Object.entries(data).filter(
-      ([, timestamp]) => now - (timestamp as number) < 24 * 60 * 60 * 1000
-    );
-    return new Set(filtered.map(([key]) => key));
-  } catch {
-    return new Set();
-  }
+  const data = getStorageItem(STORAGE_KEYS.SENT_REMINDERS, {});
+  // Clean up old entries (older than 24 hours)
+  const now = Date.now();
+  const filtered = Object.entries(data).filter(
+    ([, timestamp]) => now - (timestamp as number) < 24 * 60 * 60 * 1000
+  );
+  return new Set(filtered.map(([key]) => key));
 }
 
 function markReminderSent(taskId: number, reminderTime: string): void {
-  try {
-    const stored = localStorage.getItem(SENT_REMINDERS_KEY);
-    const data = stored ? JSON.parse(stored) : {};
-    const key = `${taskId}-${reminderTime}`;
-    data[key] = Date.now();
-    localStorage.setItem(SENT_REMINDERS_KEY, JSON.stringify(data));
-  } catch {
-    // Ignore storage errors
-  }
+  const data = getStorageItem(STORAGE_KEYS.SENT_REMINDERS, {});
+  const key = `${taskId}-${reminderTime}`;
+  data[key] = Date.now();
+  setStorageItem(STORAGE_KEYS.SENT_REMINDERS, data);
 }
 
 function getCurrentTimeHHMM(): string {
