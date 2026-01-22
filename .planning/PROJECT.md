@@ -1,86 +1,87 @@
-# Dopaminder — Time Blocks Milestone
+# Dopaminder
 
 ## What This Is
 
-Dopaminder to aplikacja do planowania dnia dla osób z ADHD. Pozwala na "brain dump" — swobodne wpisywanie myśli, które są analizowane przez AI i organizowane w zadania, wydarzenia, notatki i wpisy dziennika. Ten milestone dodaje **bloki czasowe** — trzeci typ bytu na schedule obok eventów i tasków.
+Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain dump" — swobodne wpisywanie mysli, ktore sa analizowane przez AI i organizowane w zadania, wydarzenia, notatki i wpisy dziennika. Aplikacja zawiera **bloki czasowe** — trzeci typ bytu na schedule obok eventow i taskow, pozwalajacy organizowac dzien w konteksty.
 
 ## Core Value
 
-**Bloki czasowe pozwalają użytkownikowi organizować dzień w konteksty** (praca, relax, rodzina) i automatycznie dopasowywać zadania do odpowiednich przedziałów czasowych, zapobiegając mieszaniu się różnych sfer życia.
+**Struktura z elastycznoscia** — bloki czasowe pozwalaja uzytkownikowi organizowac dzien w konteksty (praca, relax, rodzina) z automatycznym dopasowywaniem zadan, ale bez sztywnych ograniczen. AI sugeruje, uzytkownik decyduje.
 
 ## Requirements
 
 ### Validated
 
-Istniejące funkcjonalności (z codebase map):
-
-- ✓ Brain dump z analizą AI (GPT-4o-mini) — existing
-- ✓ Zadania z kategoriami (today/scheduled/someday) — existing
-- ✓ Eventy z czasem start/end — existing
-- ✓ Notatki z rich text (Tiptap) — existing
-- ✓ Wpisy dziennika — existing
-- ✓ System tagów dla tasków — existing
-- ✓ Recurring tasks z harmonogramem — existing
-- ✓ Wizualizacja schedule'a z drag & drop — existing
-- ✓ Planning mode z AI optimization — existing
-- ✓ Check-in flow — existing
-- ✓ Passwordless email auth — existing
-- ✓ i18n (en/pl) — existing
+- Brain dump z analiza AI (GPT-4o-mini) — v1
+- Zadania z kategoriami (today/scheduled/someday) — v1
+- Eventy z czasem start/end — v1
+- Notatki z rich text (Tiptap) — v1
+- Wpisy dziennika — v1
+- System tagow dla taskow — v1
+- Recurring tasks z harmonogramem — v1
+- Wizualizacja schedule'a z drag & drop — v1
+- Planning mode z AI optimization — v1
+- Check-in flow — v1
+- Passwordless email auth — v1
+- i18n (en/pl) — v1
+- TimeBlock entity z recurrence i tag associations — v1
+- Wizualizacja blokow na schedule (diagonal stripes, hover tooltips) — v1
+- Settings UI dla TimeBlock CRUD — v1
+- Exception handling (skip/modify/restore per day) — v1
+- Task-Block matching via tags z "first available block" — v1
+- AI awareness blokow przy brain dump — v1
 
 ### Active
 
-Nowe wymagania dla tego milestone'u:
-
-- [ ] Bloki czasowe jako nowy typ bytu (entity)
-- [ ] Konfiguracja bloków w Settings (harmonogram: dni tygodnia, godziny)
-- [ ] Powiązanie bloków z tagami (dopasowywanie tasków)
-- [ ] Wizualizacja bloków na schedule (wąskie paski po lewej, skośne wzory)
-- [ ] Edycja wyjątków bloków inline na schedule (zmiana godzin na konkretny dzień)
-- [ ] AI sugeruje bloki przy brain dump (user potwierdza)
-- [ ] Planowanie uwzględnia bloki (task trafia do pierwszego wolnego bloku z listy)
-- [ ] Task może nie mieć przypisanego bloku (elastyczny czasowo)
-- [ ] Hover na bloku pokazuje nazwę + opcję edycji
+(Brak — oczekuje na nowy milestone)
 
 ### Out of Scope
 
-- Nakładające się bloki czasowe — użytkownik ma max 1 blok w danym momencie
-- Automatyczne tworzenie bloków z eventów — bloki są oddzielnym bytem
-- Bloki jako hard constraints — AI sugeruje, ale user może override
+- Nakladajace sie bloki czasowe — max 1 blok w danym momencie
+- Automatyczne tworzenie blokow z eventow — bloki sa oddzielnym bytem
+- Bloki jako hard constraints — AI sugeruje, ale user moze override
+- Shared/team blocks — personal app
+- Block notifications/alarms — istniejace notyfikacje wystarczajace
+- Minute-level precision — 15-30 minute increments only
 
 ## Context
 
-**Istniejąca architektura:**
+**Current State (v1 shipped):**
 - Backend: Symfony 7.4 + Doctrine ORM + PostgreSQL
 - Frontend: React 19 + Redux Toolkit + Tailwind CSS + shadcn/ui
 - AI: OpenAI GPT-4o-mini (brain dump analysis, schedule optimization)
-- DailyNote jako aggregate root dla tasków, eventów, notatek
+- ~9,750 LOC added in v1 milestone
+- 5 phases, 15 plans, 67 commits
 
-**Istniejący system tagów:**
-- Entity `Tag` z relacją ManyToMany do `Task`
-- Zarządzanie tagami w UI
-- Bloki będą powiązane z tagami dla automatycznego dopasowania
+**Tech Stack:**
+- DailyNote jako aggregate root dla taskow, eventow, notatek
+- TimeBlock jako template (recurrence-based, not instance)
+- TimeBlockException dla per-day overrides
+- Tag-based task-block matching
 
-**Schedule UI:**
-- Już istnieje wizualizacja eventów i tasków
-- Drag & drop przez @dnd-kit
-- Expanded modal do szczegółowej edycji
+**User Feedback (v1):**
+- Settings modal getting crowded -> consider tabs in v2
 
 ## Constraints
 
 - **Tech stack**: Symfony + React + PostgreSQL (bez zmian)
 - **AI model**: GPT-4o-mini (koszt i latency)
-- **Backward compatibility**: Istniejące dane (taski, eventy) muszą działać bez bloków
+- **Backward compatibility**: Istniejace dane musza dzialac
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Task ↔ Block przez tagi | Wykorzystuje istniejący system tagów, prostsze niż nowa relacja | — Pending |
-| Bloki wizualnie po lewej schedule'a | Nie przysłania eventów/tasków, czytelna separacja | — Pending |
-| AI sugeruje bloki przy brain dump | Balans między automatyzacją a kontrolą usera | — Pending |
-| Task może nie mieć bloku | Elastyczność dla zadań bez kontekstu czasowego | — Pending |
-| Pierwszy wolny blok przy planowaniu | Proste i automatyczne, bez dodatkowych pytań | — Pending |
-| Edycja wyjątków inline | UX: szybka zmiana bez wchodzenia w Settings | — Pending |
+| Task <-> Block przez tagi | Wykorzystuje istniejacy system tagow | Good |
+| Bloki wizualnie po lewej schedule'a | Nie przyslania eventow/taskow | Good |
+| AI sugeruje bloki przy brain dump | Balans miedzy automatyzacja a kontrola | Good |
+| Task moze nie miec bloku | Elastycznosc dla zadan bez kontekstu | Good |
+| Pierwszy wolny blok przy planowaniu | Proste i automatyczne | Good |
+| Edycja wyjatkow inline | UX: szybka zmiana bez Settings | Good |
+| Soft delete dla TimeBlock | isActive=false zamiast hard delete | Good |
+| Skipped blocks excluded from response | Prostsze API, mniej logiki na froncie | Good |
+| EventBlock leftOffset 84px | Unikniecie overlap z TimeBlockStrip | Good |
 
 ---
-*Last updated: 2026-01-20 after initialization*
+
+*Last updated: 2026-01-22 after v1 Time Blocks milestone*
