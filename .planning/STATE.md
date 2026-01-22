@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v1.1 Bugfixes
-**Phase:** 7 (UI Behavior Fixes) - Complete
-**Activity:** Phase 07 completed and verified
+**Phase:** 8 (AI Planning Fixes) - In Progress
+**Activity:** Completed 08-01-PLAN.md (Event overlap control)
 
-Progress: [Phase 07] 1/1 plans complete
+Progress: [Phase 08] 1/? plans complete
 
 ## Milestones
 
@@ -30,24 +30,31 @@ Progress: [Phase 07] 1/1 plans complete
 - [x] Phase 06-01: Fix Notes Panel Bugs (NOTE-01 through NOTE-04)
 - [x] Phase 06-02: Gap Closure (empty content API, typography plugin, dual buttons UX)
 - [x] Phase 07-01: UI Behavior Fixes (CHKN-01 modal dismiss, UIST-01 task list sync)
+- [x] Phase 08-01: Event Overlap Control (PLAN-01 - allowOverlap property and AI prompt enforcement)
 
 ## Active Work
 
-None - Phase 07 complete. Ready for Phase 08 planning.
+Phase 08: AI Planning Fixes - continuing with remaining plans if any.
 
 ## Next Action
 
-**PHASE 07 COMPLETE**
+**PLAN 08-01 COMPLETE**
 
-All UI behavior fixes implemented and verified:
-1. Check-in modal respects user dismiss intent (CHKN-01)
-2. Task list updates immediately on check-in actions (UIST-01)
+Event overlap control implemented:
+1. Event entity has allowOverlap property (default false)
+2. AI prompts show overlap status and enforce constraints
+3. Frontend Event type updated
 
 Ready for:
-1. Manual testing of check-in modal and task list behavior
-2. Planning Phase 8 (AI Planning Fixes)
+1. Manual testing of AI scheduling with events
+2. Continue to next plan in Phase 08 if any
 
 ## Context Notes
+
+**Decisions from 08-01:**
+- Default allowOverlap=false (conservative - events block tasks unless explicitly allowed)
+- Optional property in frontend for backward compatibility
+- Added event ID to prompt event listings for better AI task-event matching
 
 **Decisions from 07-01:**
 - Use extraReducer addCase pattern for cross-slice coordination (no circular imports)
@@ -69,7 +76,7 @@ Ready for:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed Phase 07
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
 
 ---
