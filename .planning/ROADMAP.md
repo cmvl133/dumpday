@@ -10,7 +10,7 @@
 |-------|------|------|--------------|--------|
 | 6 | Notes Panel Fixes | Fix all notes-related bugs + UX improvements | NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06 | Complete |
 | 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Complete |
-| 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Planned |
+| 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Complete ✓ |
 
 ## Phase Details
 
@@ -79,8 +79,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Add allowOverlap property to Event entity, update AI prompts (PLAN-01)
-- [ ] 08-02-PLAN.md — Investigate task splitting (PLAN-02), verify scheduled tasks (PLAN-03)
+- [x] 08-01-PLAN.md — Add allowOverlap property to Event entity, update AI prompts (PLAN-01)
+- [x] 08-02-PLAN.md — Investigate task splitting (PLAN-02), verify scheduled tasks (PLAN-03)
 
 ---
 
@@ -107,4 +107,4 @@ All 11 requirements mapped:
 ---
 
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 after Phase 8 planning*
+*Last updated: 2026-01-22 after Phase 8 complete — v1.1 Bugfixes milestone complete*

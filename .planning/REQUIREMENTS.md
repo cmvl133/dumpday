@@ -22,9 +22,9 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ### AI Planning
 
-- [ ] **PLAN-01**: AI does not schedule tasks during events without overlap permission
-- [ ] **PLAN-02**: AI task splitting behavior works as expected (investigate and fix)
-- [ ] **PLAN-03**: Scheduled tasks (with date, no time) appear in daily planning
+- [x] **PLAN-01**: AI does not schedule tasks during events without overlap permission
+- [x] **PLAN-02**: AI task splitting behavior works as expected (investigate and fix)
+- [x] **PLAN-03**: Scheduled tasks (with date, no time) appear in daily planning
 
 ### UI State
 
@@ -50,9 +50,9 @@ Bugfixes and polish for v1 Time Blocks release.
 | NOTE-06 | 6 | Complete |
 | CHKN-01 | 7 | Complete |
 | UIST-01 | 7 | Complete |
-| PLAN-01 | 8 | Pending |
-| PLAN-02 | 8 | Pending |
-| PLAN-03 | 8 | Pending |
+| PLAN-01 | 8 | Complete |
+| PLAN-02 | 8 | Complete |
+| PLAN-03 | 8 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 11 total
@@ -61,4 +61,4 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after Phase 7 complete*
+*Last updated: 2026-01-22 after Phase 8 complete — all v1.1 requirements complete*

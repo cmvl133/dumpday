@@ -11,18 +11,18 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 ## Current Status
 
-**Milestone:** v1.1 Bugfixes
-**Phase:** 8 (AI Planning Fixes) - In Progress
-**Activity:** Completed 08-02-PLAN.md (PLAN-02/PLAN-03 investigation)
+**Milestone:** v1.1 Bugfixes - Complete
+**Phase:** 8 (AI Planning Fixes) - Complete
+**Activity:** Milestone complete - all 3 phases verified
 
-Progress: [Phase 08] 2/? plans complete
+Progress: [Phase 08] 2/2 plans complete | [Milestone v1.1] 3/3 phases complete
 
 ## Milestones
 
 | Version | Name | Status | Shipped |
 |---------|------|--------|---------|
 | v1 | Time Blocks | Complete | 2026-01-20 |
-| v1.1 | Bugfixes | In Progress | — |
+| v1.1 | Bugfixes | Complete | 2026-01-22 |
 
 ## Completed Work
 
@@ -35,23 +35,21 @@ Progress: [Phase 08] 2/? plans complete
 
 ## Active Work
 
-Phase 08: AI Planning Fixes - continuing with remaining plans if any.
+None - v1.1 Bugfixes milestone complete.
 
 ## Next Action
 
-**PLAN 08-02 COMPLETE**
+**MILESTONE v1.1 COMPLETE**
 
-Investigation results:
-1. PLAN-02 (task splitting): Works as designed - no changes needed
-2. PLAN-03 (scheduled tasks): Bug fixed - overdue tasks now included in planning view
-
-Fix applied:
-- Changed `dueDate = :today` to `dueDate <= :today` in TaskRepository queries
-- Affects findUnplannedTasksForToday() and findPlannedTasksForToday()
+All 11 bugfixes implemented:
+- Phase 6: Notes Panel Fixes (6 requirements)
+- Phase 7: UI Behavior Fixes (2 requirements)
+- Phase 8: AI Planning Fixes (3 requirements)
 
 Ready for:
-1. Manual testing of planning with overdue tasks
-2. Continue to next plan in Phase 08 if any
+1. Manual testing of all fixes
+2. Milestone audit (`/gsd:audit-milestone`)
+3. Archive milestone (`/gsd:complete-milestone`)
 
 ## Context Notes
 
@@ -85,7 +83,7 @@ Ready for:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 08-02-PLAN.md
+Stopped at: Completed v1.1 Bugfixes milestone
 Resume file: None
 
 ---
