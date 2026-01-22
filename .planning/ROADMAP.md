@@ -8,7 +8,7 @@
 
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
-| 6 | Notes Panel Fixes | Fix all notes-related bugs | NOTE-01, NOTE-02, NOTE-03, NOTE-04 | Pending |
+| 6 | Notes Panel Fixes | Fix all notes-related bugs | NOTE-01, NOTE-02, NOTE-03, NOTE-04 | Planned |
 | 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Pending |
 | 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Pending |
 
@@ -30,7 +30,10 @@
 3. WYSIWYG editor shows formatted text while editing (bold, italic, lists)
 4. Note preview displays rendered HTML, not raw tags
 
-**Estimated Plans:** 1-2
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Fix all Notes panel bugs (duplicate close button, add note flow, HTML preview)
 
 ---
 
