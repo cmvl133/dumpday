@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 11 (Backend Tests) - COMPLETE
-**Activity:** Completed 11-04-PLAN.md (PlanningService Unit Tests)
+**Activity:** Completed 11-05-PLAN.md (Task API Integration Tests)
 
-Progress: [Phase 11] 4/4 plans COMPLETE | [Milestone v2] 3/5 phases
+Progress: [Phase 11] 5/5 plans COMPLETE | [Milestone v2] 3/5 phases
 
 ## Milestones
 
@@ -31,7 +31,7 @@ Progress: [Phase 11] 4/4 plans COMPLETE | [Milestone v2] 3/5 phases
 - [x] v1.1 Bugfixes milestone (3 phases, 5 plans)
 - [x] Phase 9: Backend DTOs (6 plans)
 - [x] Phase 10: Backend Services (5 plans)
-- [x] Phase 11: Backend Tests (4 plans)
+- [x] Phase 11: Backend Tests (5 plans)
 
 ## Active Work
 
@@ -54,6 +54,7 @@ Progress: [Phase 11] 4/4 plans COMPLETE | [Milestone v2] 3/5 phases
   - [x] 11-02: DTO Request Validation Tests
   - [x] 11-03: Service Unit Tests
   - [x] 11-04: PlanningService Unit Tests
+  - [x] 11-05: Task API Integration Tests
 - Phase 12: Frontend Slices (pending)
 - Phase 13: Frontend Storage (pending)
 
@@ -65,12 +66,13 @@ Progress: [Phase 11] 4/4 plans COMPLETE | [Milestone v2] 3/5 phases
 /gsd:execute-phase 12
 ```
 
-Phase 11 complete with 180+ unit tests covering:
+Phase 11 complete with 200+ unit tests and 20 integration tests covering:
 - RecurrenceService (17 tests)
 - DuplicateDetectionService (24 tests)
 - DTO validation (81 tests)
 - TaskService (38 tests)
 - PlanningService (28 tests)
+- TaskController integration (20 tests)
 
 ## Context Notes
 
@@ -123,6 +125,12 @@ Phase 11 complete with 180+ unit tests covering:
 - Ownership test pattern: Mock User.getId() and DailyNote.getUser() chain
 - Private property helper: Reusable setTaskDailyNote() for entity relationship setup
 
+**Patterns Established (11-05):**
+- Integration test pattern: WebTestCase with createClient() in setUp()
+- Database isolation: DQL DELETE in FK order (Task, DailyNote, User)
+- Authentication simulation: loginUser() for authenticated requests
+- Run with explicit APP_ENV=test to override Docker container env
+
 **Key Decisions (09-06):**
 - PlanningController keeps inline serialization - planning-specific fields don't fit base DTOs
 - TaskUpdateRequest integration deferred to Phase 10 - PATCH null vs missing field semantics
@@ -161,10 +169,15 @@ Phase 11 complete with 180+ unit tests covering:
 - Used Reflection to set private dailyNote property on Task for ownership tests
 - Testing PATCH semantics via array_key_exists behavior validation
 
+**Key Decisions (11-05):**
+- Run integration tests with explicit APP_ENV=test to override Docker container env
+- Return 404 (not 403) for other users' tasks to avoid revealing resource existence
+- Adapted tests to existing API (no GET single task endpoint in TaskController)
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 11-04-PLAN.md (PlanningService Unit Tests)
+Stopped at: Completed 11-05-PLAN.md (Task API Integration Tests)
 Resume file: None
 
 ---
