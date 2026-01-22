@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 11 (Backend Tests) - VERIFIED COMPLETE
-**Activity:** Phase 11 verified and complete, ready for Phase 12
+**Phase:** 12 (Frontend Slices) - IN PROGRESS
+**Activity:** Completed 12-02, ready for 12-03
 
-Progress: [Phase 11] 5/5 plans ✓ | [Milestone v2] 3/5 phases
+Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
 
 ## Milestones
 
@@ -49,24 +49,27 @@ Progress: [Phase 11] 5/5 plans ✓ | [Milestone v2] 3/5 phases
   - [x] 10-03: PlanningService (planning mode operations)
   - [x] 10-04: Controller Refactoring (TaskController, PlanningController thin wrappers)
   - [x] 10-05: BrainDumpFacade Refactoring (duplicate detection delegation)
-- Phase 11: Backend Tests - VERIFIED ✓
+- Phase 11: Backend Tests - VERIFIED
   - [x] 11-01: Testing Infrastructure Setup (Pure Logic Services)
   - [x] 11-02: DTO Request Validation Tests
   - [x] 11-03: Service Unit Tests
   - [x] 11-04: PlanningService Unit Tests
   - [x] 11-05: Task API Integration Tests
-- Phase 12: Frontend Slices (pending)
+- Phase 12: Frontend Slices - IN PROGRESS
+  - [x] 12-01: CheckIn Flow Slice Extraction
+  - [x] 12-02: Planning and Rebuild Flow Slices
+  - [ ] 12-03: Component Integration and Store Wiring
 - Phase 13: Frontend Storage (pending)
 
 ## Next Action
 
-**Ready for Phase 12:**
+**Continue Phase 12:**
 
 ```
-/gsd:plan-phase 12-frontend-slices
+/gsd:execute-phase 12-03
 ```
 
-Phase 11 complete with 265 tests. Backend refactoring complete. Next: Frontend slice restructuring.
+Plan 03 will update component imports and integrate slices into store.
 
 ## Context Notes
 
@@ -74,14 +77,14 @@ Phase 11 complete with 265 tests. Backend refactoring complete. Next: Frontend s
 - Backend: Task serializacja zduplikowana 6+ razy - RESOLVED (DTOs)
 - Backend: matchesRecurrencePattern() w 2 miejscach - RESOLVED (RecurrenceService)
 - Backend: 30+ EntityManager calls w kontrolerach - RESOLVED (Services)
-- Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild)
+- Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild) - IN PROGRESS (slices extracted)
 - Frontend: localStorage rozrzucony po modulach
 
 **v2 Approach:**
 - DTOs first (foundation for services) - COMPLETE
 - Services extract logic (controllers become thin) - COMPLETE
 - Tests verify services work - COMPLETE
-- Frontend slices split (parallel with backend) - NEXT
+- Frontend slices split (parallel with backend) - IN PROGRESS
 - Storage centralization last (may need slice changes)
 
 **Patterns Established (09-01 through 09-06):**
@@ -124,6 +127,12 @@ Phase 11 complete with 265 tests. Backend refactoring complete. Next: Frontend s
 - Database isolation: DQL DELETE in FK order (Task, DailyNote, User)
 - Authentication simulation: loginUser() for authenticated requests
 - Run with explicit APP_ENV=test to override Docker container env
+
+**Patterns Established (12-01 through 12-02):**
+- Flow slice pattern: dedicated slice per modal flow (checkInFlowSlice, planningFlowSlice, rebuildFlowSlice)
+- Coordinator import pattern: import selectMode/closeModal from howAreYouSlice for extraReducers
+- State cast pattern: getState() as { sliceName: SliceState } for thunks accessing own state
+- ensureTaskData helper: DRY pattern for task plan data initialization
 
 **Key Decisions (09-06):**
 - PlanningController keeps inline serialization - planning-specific fields don't fit base DTOs
@@ -168,10 +177,15 @@ Phase 11 complete with 265 tests. Backend refactoring complete. Next: Frontend s
 - Return 404 (not 403) for other users' tasks to avoid revealing resource existence
 - Adapted tests to existing API (no GET single task endpoint in TaskController)
 
+**Key Decisions (12-02):**
+- New thunk action type prefixes: planningFlow/* and rebuildFlow/* for slice isolation
+- RebuildStep exported from rebuildFlowSlice (canonical location, Plan 03 will update imports)
+- Underscore prefix for unused state params in extraReducers
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 11-05-PLAN.md (Task API Integration Tests)
+Stopped at: Completed 12-02-PLAN.md (Planning and Rebuild Flow Slices)
 Resume file: None
 
 ---
