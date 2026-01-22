@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 9 (Backend DTOs) - In progress
-**Activity:** Completed plan 09-02
+**Activity:** Completed plan 09-01 (Base Response DTOs)
 
-Progress: [Phase 09] 1/6 plans | [Milestone v2] 0/5 phases
+Progress: [Phase 09] 2/6 plans | [Milestone v2] 0/5 phases
 
 ## Milestones
 
@@ -34,6 +34,7 @@ Progress: [Phase 09] 1/6 plans | [Milestone v2] 0/5 phases
 
 **v2 Architecture Refactoring:**
 - Phase 9: Backend DTOs (6 plans)
+  - [x] 09-01: Base Response DTOs (Tag, Event, Note, JournalEntry)
   - [x] 09-02: Task Request DTOs
 - Phase 10: Backend Services (TBD)
 - Phase 11: Backend Tests (TBD)
@@ -45,10 +46,10 @@ Progress: [Phase 09] 1/6 plans | [Milestone v2] 0/5 phases
 **Execute next plan:**
 
 ```
-/gsd:execute-phase 09-01
+/gsd:execute-phase 09-03
 ```
 
-Or continue with 09-03 (depends on 09-01).
+(09-03 depends on 09-01, now ready)
 
 ## Context Notes
 
@@ -66,7 +67,8 @@ Or continue with 09-03 (depends on 09-01).
 - Frontend slices split (parallel with backend)
 - Storage centralization last (may need slice changes)
 
-**Patterns Established (09-02):**
+**Patterns Established (09-01, 09-02):**
+- Response DTO: final readonly class with fromEntity() static factory
 - Request DTO: final readonly class with #[Assert\*] attributes
 - String types for dates in DTOs (convert in service layer)
 - HH:MM regex for time validation
@@ -74,7 +76,7 @@ Or continue with 09-03 (depends on 09-01).
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 09-02-PLAN.md (Task Request DTOs)
+Stopped at: Completed 09-01-PLAN.md (Base Response DTOs)
 Resume file: None
 
 ---
