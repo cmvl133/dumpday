@@ -90,6 +90,7 @@ class TaskRepository extends ServiceEntityRepository
 
     /**
      * Find all incomplete tasks for today that don't have a fixed time set yet (for Planning Mode).
+     * Includes overdue tasks (dueDate <= today) so they appear in planning.
      *
      * @return Task[]
      */
@@ -98,7 +99,7 @@ class TaskRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->join('t.dailyNote', 'dn')
             ->where('dn.user = :user')
-            ->andWhere('(t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('(t.dueDate <= :today OR (t.category = :todayCategory AND dn.date = :today))')
             ->andWhere('t.isCompleted = false')
             ->andWhere('t.isDropped = false')
             ->andWhere('t.fixedTime IS NULL')
@@ -112,6 +113,7 @@ class TaskRepository extends ServiceEntityRepository
 
     /**
      * Find all incomplete tasks for today that HAVE a fixed time set (for conflict detection).
+     * Includes overdue tasks (dueDate <= today) for consistent behavior with findUnplannedTasksForToday.
      *
      * @return Task[]
      */
@@ -120,7 +122,7 @@ class TaskRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->join('t.dailyNote', 'dn')
             ->where('dn.user = :user')
-            ->andWhere('(t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('(t.dueDate <= :today OR (t.category = :todayCategory AND dn.date = :today))')
             ->andWhere('t.isCompleted = false')
             ->andWhere('t.isDropped = false')
             ->andWhere('t.fixedTime IS NOT NULL')
