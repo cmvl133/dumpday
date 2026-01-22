@@ -38,6 +38,7 @@ export function NotesExpandedModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [editContent, setEditContent] = useState('');
+  const [pendingNewNote, setPendingNewNote] = useState(false);
 
   // Load all notes when modal opens
   useEffect(() => {
@@ -59,8 +60,14 @@ export function NotesExpandedModal({
     try {
       const result = await api.note.list(sortOrder);
       setNotes(result);
-      // If we had a selected note, try to keep it selected
-      if (selectedNote) {
+
+      // Auto-select newest note if we just added one
+      if (pendingNewNote && result.length > 0 && sortOrder === 'newest') {
+        setSelectedNote(result[0]);
+        setEditContent(result[0].content);
+        setPendingNewNote(false);
+      } else if (selectedNote) {
+        // If we had a selected note, try to keep it selected
         const stillExists = result.find((n) => n.id === selectedNote.id);
         if (stillExists) {
           setSelectedNote(stillExists);
@@ -132,9 +139,9 @@ export function NotesExpandedModal({
 
   const handleAddNote = () => {
     if (onAdd) {
+      setPendingNewNote(true);
       onAdd('');
-      // Reload to get the new note
-      setTimeout(loadNotes, 100);
+      setTimeout(loadNotes, 150);
     }
   };
 
