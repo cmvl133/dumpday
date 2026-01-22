@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\DTO\Response\EventResponse;
-use App\DTO\Response\TaskResponse;
 use App\Entity\User;
-use App\Repository\EventRepository;
-use App\Repository\TaskRepository;
 use App\Service\PlanningScheduleGenerator;
+use App\Service\PlanningService;
 use App\Service\TaskBlockMatchingService;
-use App\Service\TaskEventConflictResolver;
-use App\Service\TimeBlockService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,12 +20,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class PlanningController extends AbstractController
 {
     public function __construct(
-        private readonly TaskRepository $taskRepository,
-        private readonly EventRepository $eventRepository,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly PlanningService $planningService,
+        private readonly TaskService $taskService,
         private readonly PlanningScheduleGenerator $scheduleGenerator,
-        private readonly TaskEventConflictResolver $conflictResolver,
-        private readonly TimeBlockService $timeBlockService,
         private readonly TaskBlockMatchingService $taskBlockMatchingService,
     ) {
     }
@@ -40,120 +32,42 @@ class PlanningController extends AbstractController
     {
         $today = new \DateTime('today');
         $currentTime = new \DateTime();
+        $data = $this->planningService->getTasksForPlanning($user, $today);
 
-        $unplannedTasks = $this->taskRepository->findUnplannedTasksForToday($user, $today);
-        $plannedTasks = $this->taskRepository->findPlannedTasksForToday($user, $today);
-        $events = $this->eventRepository->findByUserAndDate($user, $today);
-
-        // Get active time blocks for today
-        $activeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $today);
-
-        // Find tasks with conflicts (have fixedTime but overlap with events)
-        $conflicts = $this->conflictResolver->findConflictingTasks($plannedTasks, $events);
         $conflictingTasksData = [];
-
-        foreach ($conflicts as $conflict) {
+        foreach ($data['conflicts'] as $conflict) {
             $task = $conflict['task'];
             $event = $conflict['conflictingEvent'];
-            $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $activeBlocks, $currentTime);
-
-            $conflictingTasksData[] = [
-                'id' => $task->getId(),
-                'title' => $task->getTitle(),
-                'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-                'category' => $task->getCategory()->value,
-                'estimatedMinutes' => $task->getEstimatedMinutes(),
-                'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                'needsFullFocus' => $task->isNeedsFullFocus(),
-                'hasConflict' => true,
-                'conflictingEvent' => [
-                    'id' => $event->getId(),
-                    'title' => $event->getTitle(),
-                    'startTime' => $event->getStartTime()?->format('H:i'),
-                    'endTime' => $event->getEndTime()?->format('H:i'),
-                ],
-                'matchingBlock' => $matchingBlock ? [
-                    'id' => $matchingBlock['id'],
-                    'name' => $matchingBlock['name'],
-                    'color' => $matchingBlock['color'],
-                ] : null,
-            ];
+            $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $data['activeBlocks'], $currentTime);
+            $conflictingTasksData[] = $this->serializeTaskForPlanning($task, true, $event, $matchingBlock);
         }
 
         return $this->json([
-            'tasks' => array_map(function ($task) use ($activeBlocks, $currentTime) {
-                $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $activeBlocks, $currentTime);
-
-                return [
-                    'id' => $task->getId(),
-                    'title' => $task->getTitle(),
-                    'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-                    'category' => $task->getCategory()->value,
-                    'estimatedMinutes' => $task->getEstimatedMinutes(),
-                    'fixedTime' => $task->getFixedTime()?->format('H:i'),
-                    'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-                    'needsFullFocus' => $task->isNeedsFullFocus(),
-                    'hasConflict' => false,
-                    'conflictingEvent' => null,
-                    'matchingBlock' => $matchingBlock ? [
-                        'id' => $matchingBlock['id'],
-                        'name' => $matchingBlock['name'],
-                        'color' => $matchingBlock['color'],
-                    ] : null,
-                ];
-            }, $unplannedTasks),
+            'tasks' => array_map(function ($task) use ($data, $currentTime) {
+                $matchingBlock = $this->taskBlockMatchingService->findFirstAvailableBlock($task, $data['activeBlocks'], $currentTime);
+                return $this->serializeTaskForPlanning($task, false, null, $matchingBlock);
+            }, $data['unplannedTasks']),
             'conflictingTasks' => $conflictingTasksData,
             'events' => array_map(fn ($event) => [
                 'id' => $event->getId(),
                 'title' => $event->getTitle(),
                 'startTime' => $event->getStartTime()?->format('H:i'),
                 'endTime' => $event->getEndTime()?->format('H:i'),
-            ], $events),
-            'timeBlocks' => $activeBlocks,
+            ], $data['events']),
+            'timeBlocks' => $data['activeBlocks'],
         ]);
     }
 
     #[Route('/task/{id}', name: 'planning_task_save', methods: ['POST'])]
     public function saveTaskPlanning(#[CurrentUser] User $user, int $id, Request $request): JsonResponse
     {
-        $task = $this->taskRepository->find($id);
-
+        $task = $this->taskService->findByIdAndUser($id, $user);
         if ($task === null) {
-            return $this->json([
-                'error' => 'Task not found',
-            ], Response::HTTP_NOT_FOUND);
-        }
-
-        if ($task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
-            return $this->json([
-                'error' => 'Access denied',
-            ], Response::HTTP_FORBIDDEN);
+            return $this->json(['error' => 'Task not found'], Response::HTTP_NOT_FOUND);
         }
 
         $data = json_decode($request->getContent(), true);
-
-        if (array_key_exists('estimatedMinutes', $data)) {
-            $task->setEstimatedMinutes($data['estimatedMinutes'] !== null ? (int) $data['estimatedMinutes'] : null);
-        }
-
-        if (array_key_exists('fixedTime', $data)) {
-            if ($data['fixedTime'] === null || $data['fixedTime'] === '') {
-                $task->setFixedTime(null);
-            } else {
-                $task->setFixedTime(new \DateTimeImmutable($data['fixedTime']));
-            }
-        }
-
-        if (array_key_exists('canCombineWithEvents', $data)) {
-            $task->setCanCombineWithEvents($data['canCombineWithEvents']);
-        }
-
-        if (array_key_exists('needsFullFocus', $data)) {
-            $task->setNeedsFullFocus((bool) $data['needsFullFocus']);
-        }
-
-        $this->entityManager->flush();
+        $task = $this->planningService->updatePlanningFields($task, $data);
 
         return $this->json([
             'success' => true,
@@ -173,36 +87,27 @@ class PlanningController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $taskIds = $data['taskIds'] ?? [];
-
         if (empty($taskIds)) {
-            return $this->json([
-                'error' => 'No tasks provided',
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'No tasks provided'], Response::HTTP_BAD_REQUEST);
         }
 
         $today = new \DateTime('today');
-        $tasksToSchedule = [];
+        $planningData = $this->planningService->getTasksForPlanning($user, $today);
 
-        foreach ($taskIds as $taskId) {
-            $task = $this->taskRepository->find($taskId);
-            if ($task !== null && $task->getDailyNote()?->getUser()?->getId() === $user->getId()) {
-                $tasksToSchedule[] = $task;
-            }
-        }
+        $tasksToSchedule = array_filter(
+            array_map(fn ($id) => $this->taskService->findByIdAndUser($id, $user), $taskIds),
+            fn ($task) => $task !== null
+        );
 
-        $events = $this->eventRepository->findByUserAndDate($user, $today);
-
-        // Get already planned tasks (with fixedTime) that are NOT being rescheduled
-        $existingPlannedTasks = $this->taskRepository->findPlannedTasksForToday($user, $today);
         $taskIdsToSchedule = array_map(fn ($t) => $t->getId(), $tasksToSchedule);
         $existingPlannedTasks = array_filter(
-            $existingPlannedTasks,
-            fn ($t) => ! in_array($t->getId(), $taskIdsToSchedule, true)
+            $planningData['plannedTasks'],
+            fn ($t) => !in_array($t->getId(), $taskIdsToSchedule, true)
         );
 
         $schedule = $this->scheduleGenerator->generate(
-            $tasksToSchedule,
-            $events,
+            array_values($tasksToSchedule),
+            $planningData['events'],
             array_values($existingPlannedTasks),
             $today,
             $user->getLanguage()
@@ -215,43 +120,40 @@ class PlanningController extends AbstractController
     public function acceptSchedule(#[CurrentUser] User $user, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $schedule = $data['schedule'] ?? [];
+        $this->planningService->acceptSchedule($user, $data['schedule'] ?? []);
+        return $this->json(['success' => true]);
+    }
 
-        foreach ($schedule as $item) {
-            $task = $this->taskRepository->find($item['taskId']);
-
-            if ($task === null || $task->getDailyNote()?->getUser()?->getId() !== $user->getId()) {
-                continue;
-            }
-
-            if (! empty($item['suggestedTime'])) {
-                $task->setFixedTime(new \DateTimeImmutable($item['suggestedTime']));
-            }
-
-            // Update dueDate to today for overdue tasks
-            $today = new \DateTime('today');
-            $taskDueDate = $task->getDueDate();
-            if ($taskDueDate !== null && $taskDueDate < $today) {
-                $task->setDueDate($today);
-            }
-
-            if (isset($item['duration'])) {
-                $task->setEstimatedMinutes((int) $item['duration']);
-            }
-
-            if (isset($item['combinedWithEventId'])) {
-                $currentCombine = $task->getCanCombineWithEvents() ?? [];
-                if (! in_array($item['combinedWithEventId'], $currentCombine, true)) {
-                    $currentCombine[] = $item['combinedWithEventId'];
-                    $task->setCanCombineWithEvents($currentCombine);
-                }
-            }
-        }
-
-        $this->entityManager->flush();
-
-        return $this->json([
-            'success' => true,
-        ]);
+    /**
+     * @param array<string, mixed>|null $matchingBlock
+     */
+    private function serializeTaskForPlanning(
+        \App\Entity\Task $task,
+        bool $hasConflict,
+        ?\App\Entity\Event $conflictingEvent,
+        ?array $matchingBlock
+    ): array {
+        return [
+            'id' => $task->getId(),
+            'title' => $task->getTitle(),
+            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
+            'category' => $task->getCategory()->value,
+            'estimatedMinutes' => $task->getEstimatedMinutes(),
+            'fixedTime' => $task->getFixedTime()?->format('H:i'),
+            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
+            'needsFullFocus' => $task->isNeedsFullFocus(),
+            'hasConflict' => $hasConflict,
+            'conflictingEvent' => $conflictingEvent ? [
+                'id' => $conflictingEvent->getId(),
+                'title' => $conflictingEvent->getTitle(),
+                'startTime' => $conflictingEvent->getStartTime()?->format('H:i'),
+                'endTime' => $conflictingEvent->getEndTime()?->format('H:i'),
+            ] : null,
+            'matchingBlock' => $matchingBlock ? [
+                'id' => $matchingBlock['id'],
+                'name' => $matchingBlock['name'],
+                'color' => $matchingBlock['color'],
+            ] : null,
+        ];
     }
 }
