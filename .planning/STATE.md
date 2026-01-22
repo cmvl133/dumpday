@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 10 (Backend Services) - IN PROGRESS
-**Activity:** Completed 10-05 (BrainDumpFacade Refactoring)
+**Activity:** Completed 10-04 (Controller Refactoring)
 
-Progress: [Phase 10] 4/? plans | [Milestone v2] 1/5 phases
+Progress: [Phase 10] 5/5 plans | [Milestone v2] 1/5 phases
 
 ## Milestones
 
@@ -41,10 +41,11 @@ Progress: [Phase 10] 4/? plans | [Milestone v2] 1/5 phases
   - [x] 09-04: Schedule & DailyNote Response DTOs
   - [x] 09-05: Controller Integration - Response DTOs
   - [x] 09-06: Controller Integration - Request DTOs
-- Phase 10: Backend Services - IN PROGRESS
+- Phase 10: Backend Services - COMPLETE
   - [x] 10-01: Pure Logic Services (RecurrenceService, DuplicateDetectionService)
   - [x] 10-02: TaskService (task CRUD, completion, tag management)
   - [x] 10-03: PlanningService (planning mode operations)
+  - [x] 10-04: Controller Refactoring (TaskController, PlanningController thin wrappers)
   - [x] 10-05: BrainDumpFacade Refactoring (duplicate detection delegation)
 - Phase 11: Backend Tests (pending)
 - Phase 12: Frontend Slices (pending)
@@ -52,11 +53,16 @@ Progress: [Phase 10] 4/? plans | [Milestone v2] 1/5 phases
 
 ## Next Action
 
-**Continue Phase 10:**
+**Phase 10 Complete. Proceed to Phase 11:**
 
-Check remaining plans for Phase 10 or proceed to Phase 11 (Backend Tests).
+All Phase 10 plans complete:
+- 10-01: Pure logic services (RecurrenceService, DuplicateDetectionService)
+- 10-02: TaskService
+- 10-03: PlanningService
+- 10-04: Controller refactoring (TaskController, PlanningController)
+- 10-05: BrainDumpFacade refactoring
 
-Plan 10-05 complete. BrainDumpFacade now uses DuplicateDetectionService.
+Ready for Phase 11: Backend Tests.
 
 ## Context Notes
 
@@ -113,10 +119,15 @@ Plan 10-05 complete. BrainDumpFacade now uses DuplicateDetectionService.
 - Pass original strings to DuplicateDetectionService - service handles normalization
 - getDailyNoteData() stays in facade - complex aggregation is facade's responsibility
 
+**Key Decisions (10-04):**
+- TaskController reduced to single dependency (TaskService)
+- PlanningController keeps planning-specific serialization (hasConflict, matchingBlock)
+- Line count targets aspirational - key goal was zero EntityManager calls (achieved)
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-05-PLAN.md (BrainDumpFacade Refactoring)
+Stopped at: Completed 10-04-PLAN.md (Controller Refactoring)
 Resume file: None
 
 ---
