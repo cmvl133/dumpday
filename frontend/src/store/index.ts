@@ -6,6 +6,9 @@ import checkInReducer from './checkInSlice';
 import settingsReducer from './settingsSlice';
 import planningReducer from './planningSlice';
 import howAreYouReducer from './howAreYouSlice';
+import checkInFlowReducer from './checkInFlowSlice';
+import planningFlowReducer from './planningFlowSlice';
+import rebuildFlowReducer from './rebuildFlowSlice';
 import recurringReducer from './recurringSlice';
 import tagReducer from './tagSlice';
 import timeBlockReducer from './timeBlockSlice';
@@ -19,6 +22,9 @@ export const store = configureStore({
     settings: settingsReducer,
     planning: planningReducer,
     howAreYou: howAreYouReducer,
+    checkInFlow: checkInFlowReducer,
+    planningFlow: planningFlowReducer,
+    rebuildFlow: rebuildFlowReducer,
     recurring: recurringReducer,
     tags: tagReducer,
     timeBlocks: timeBlockReducer,

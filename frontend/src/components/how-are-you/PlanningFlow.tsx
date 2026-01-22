@@ -8,14 +8,13 @@ import { FixedTimeStep } from '@/components/planning/FixedTimeStep';
 import { CombineEventsStep } from '@/components/planning/CombineEventsStep';
 import { ConflictStep } from '@/components/planning/ConflictStep';
 import { PlanSummary } from '@/components/planning/PlanSummary';
+import { backToSelection, closeModal } from '@/store/howAreYouSlice';
 import {
-  backToSelection,
-  closeModal,
   fetchPlanningTasks,
-  nextPlanningStep,
-  previousPlanningStep,
-  nextPlanningTask,
-  skipPlanningTask,
+  nextStep,
+  previousStep,
+  nextTask,
+  skipTask,
   setEstimation,
   setFixedTime,
   setCombineEvents,
@@ -27,7 +26,7 @@ import {
   resolveConflict,
   nextConflict,
   finishConflictPhase,
-} from '@/store/howAreYouSlice';
+} from '@/store/planningFlowSlice';
 import { fetchDailyNote } from '@/store/dailyNoteSlice';
 import type { RootState, AppDispatch } from '@/store';
 import type { ScheduleSuggestion } from '@/types';
@@ -47,8 +46,8 @@ export function PlanningFlow() {
     stats,
     isLoading,
     isGenerating,
-  } = useSelector((state: RootState) => state.howAreYou.planning);
-  const error = useSelector((state: RootState) => state.howAreYou.error);
+  error,
+  } = useSelector((state: RootState) => state.planningFlow);
   const { currentDate } = useSelector((state: RootState) => state.dailyNote);
 
   const totalTasks = tasks.length;
@@ -75,7 +74,7 @@ export function PlanningFlow() {
     (minutes: number) => {
       if (!currentTask) return;
       dispatch(setEstimation({ taskId: currentTask.id, minutes }));
-      dispatch(nextPlanningStep());
+      dispatch(nextStep());
     },
     [currentTask, dispatch]
   );
@@ -84,7 +83,7 @@ export function PlanningFlow() {
     (time: string | null) => {
       if (!currentTask) return;
       dispatch(setFixedTime({ taskId: currentTask.id, time }));
-      dispatch(nextPlanningStep());
+      dispatch(nextStep());
     },
     [currentTask, dispatch]
   );
@@ -104,7 +103,7 @@ export function PlanningFlow() {
       await dispatch(savePlanningTask({ taskId: currentTask.id, data: dataToSave }));
 
       dispatch(markTaskPlanned());
-      dispatch(nextPlanningTask());
+      dispatch(nextTask());
     },
     [currentTask, dispatch, taskPlanData]
   );
@@ -123,15 +122,15 @@ export function PlanningFlow() {
     await dispatch(savePlanningTask({ taskId: currentTask.id, data: dataToSave }));
 
     dispatch(markTaskPlanned());
-    dispatch(nextPlanningTask());
+    dispatch(nextTask());
   }, [currentTask, dispatch, taskPlanData]);
 
   const handleSkip = useCallback(() => {
-    dispatch(skipPlanningTask());
+    dispatch(skipTask());
   }, [dispatch]);
 
   const handleStepBack = useCallback(() => {
-    dispatch(previousPlanningStep());
+    dispatch(previousStep());
   }, [dispatch]);
 
   const handleKeepConflict = useCallback(() => {

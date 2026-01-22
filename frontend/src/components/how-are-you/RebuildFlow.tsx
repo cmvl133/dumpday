@@ -5,18 +5,17 @@ import { ArrowLeft, Check, Pencil, Clock, Calendar, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { backToSelection, closeModal } from '@/store/howAreYouSlice';
 import {
-  backToSelection,
-  closeModal,
   fetchRebuildData,
-  setRebuildStep,
+  setStep,
   toggleTaskSelection,
   toggleEventSelection,
   setAdditionalInput,
   setWorkUntilTime,
   generateRebuild,
   acceptRebuild,
-} from '@/store/howAreYouSlice';
+} from '@/store/rebuildFlowSlice';
 import { fetchDailyNote } from '@/store/dailyNoteSlice';
 import type { RootState, AppDispatch } from '@/store';
 
@@ -42,8 +41,8 @@ export function RebuildFlow() {
     generatedSchedule,
     isLoading,
     isGenerating,
-  } = useSelector((state: RootState) => state.howAreYou.rebuild);
-  const error = useSelector((state: RootState) => state.howAreYou.error);
+  error,
+  } = useSelector((state: RootState) => state.rebuildFlow);
   const { currentDate } = useSelector((state: RootState) => state.dailyNote);
 
   const [customTime, setCustomTime] = useState('');
@@ -69,19 +68,19 @@ export function RebuildFlow() {
     if (step === 'whats_happening') {
       dispatch(backToSelection());
     } else if (step === 'anything_else') {
-      dispatch(setRebuildStep('whats_happening'));
+      dispatch(setStep('whats_happening'));
     } else if (step === 'work_until') {
-      dispatch(setRebuildStep('anything_else'));
+      dispatch(setStep('anything_else'));
     } else if (step === 'preview') {
-      dispatch(setRebuildStep('work_until'));
+      dispatch(setStep('work_until'));
     }
   }, [dispatch, step]);
 
   const handleContinue = useCallback(() => {
     if (step === 'whats_happening') {
-      dispatch(setRebuildStep('anything_else'));
+      dispatch(setStep('anything_else'));
     } else if (step === 'anything_else') {
-      dispatch(setRebuildStep('work_until'));
+      dispatch(setStep('work_until'));
     } else if (step === 'work_until') {
       dispatch(generateRebuild());
     }

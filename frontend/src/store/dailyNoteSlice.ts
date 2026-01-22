@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
 import { calculateTopPercent, calculateHeightPercent } from '@/lib/utils';
-import { performTaskAction } from './howAreYouSlice';
+import { performTaskAction } from './checkInFlowSlice';
 import type { DailyNoteData, AnalysisResponse, TaskCategory } from '@/types';
 
 interface DailyNoteState {

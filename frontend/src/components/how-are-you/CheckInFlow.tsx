@@ -7,17 +7,16 @@ import { Progress } from '@/components/ui/progress';
 import { TaskCard } from '@/components/check-in/TaskCard';
 import { ComboCounter } from '@/components/check-in/ComboCounter';
 import { SummaryScreen } from '@/components/check-in/SummaryScreen';
+import { backToSelection, closeModal } from '@/store/howAreYouSlice';
 import {
-  backToSelection,
-  closeModal,
   fetchCheckInTasks,
   performTaskAction,
   completeCheckIn,
-  nextCheckInTask,
+  nextTask,
   incrementCombo,
   resetCombo,
   incrementStat,
-} from '@/store/howAreYouSlice';
+} from '@/store/checkInFlowSlice';
 import { fetchDailyNote } from '@/store/dailyNoteSlice';
 import type { RootState, AppDispatch } from '@/store';
 import type { CheckInTask } from '@/types';
@@ -25,10 +24,9 @@ import type { CheckInTask } from '@/types';
 export function CheckInFlow() {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks, currentIndex, combo, stats, isLoading } = useSelector(
-    (state: RootState) => state.howAreYou.checkIn
+  const { tasks, currentIndex, combo, stats, isLoading, error } = useSelector(
+    (state: RootState) => state.checkInFlow
   );
-  const error = useSelector((state: RootState) => state.howAreYou.error);
   const { zenMode } = useSelector((state: RootState) => state.settings);
   const { currentDate } = useSelector((state: RootState) => state.dailyNote);
 
@@ -147,7 +145,7 @@ export function CheckInFlow() {
           }
         }
 
-        dispatch(nextCheckInTask());
+        dispatch(nextTask());
       } catch {
         // Error handled by Redux
       }
