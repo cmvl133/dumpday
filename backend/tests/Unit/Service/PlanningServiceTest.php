@@ -362,4 +362,331 @@ final class PlanningServiceTest extends TestCase
 
         $this->assertSame($task, $result);
     }
+
+    // ================================================================
+    // acceptSchedule() tests
+    // ================================================================
+
+    #[Test]
+    public function acceptScheduleUpdatesTasksFromScheduleItems(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository
+            ->method('find')
+            ->with(1)
+            ->willReturn($task);
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $scheduleItems = [
+            [
+                'taskId' => 1,
+                'suggestedTime' => '09:00',
+                'duration' => 45,
+            ],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertSame('09:00', $task->getFixedTime()->format('H:i'));
+        $this->assertSame(45, $task->getEstimatedMinutes());
+    }
+
+    #[Test]
+    public function acceptScheduleSkipsOtherUsersTasks(): void
+    {
+        $requestingUser = $this->createMock(User::class);
+        $requestingUser->method('getId')->willReturn(1);
+
+        $taskOwner = $this->createMock(User::class);
+        $taskOwner->method('getId')->willReturn(2);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($taskOwner);
+
+        $task = new Task();
+        $task->setEstimatedMinutes(30); // Original value
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository
+            ->method('find')
+            ->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'duration' => 60],
+        ];
+
+        $this->service->acceptSchedule($requestingUser, $scheduleItems);
+
+        // Task should not be modified
+        $this->assertSame(30, $task->getEstimatedMinutes());
+    }
+
+    #[Test]
+    public function acceptScheduleAddsCombinedEventIdToArray(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        $task->setCanCombineWithEvents([5]); // Existing event ID
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'combinedWithEventId' => 10],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertContains(5, $task->getCanCombineWithEvents());
+        $this->assertContains(10, $task->getCanCombineWithEvents());
+    }
+
+    #[Test]
+    public function acceptScheduleDoesNotDuplicateCombinedEventId(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        $task->setCanCombineWithEvents([10]); // Already has the ID
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'combinedWithEventId' => 10],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertCount(1, $task->getCanCombineWithEvents()); // Still just one
+    }
+
+    #[Test]
+    public function acceptScheduleUpdatesOverdueDueDateToToday(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        $task->setDueDate(new \DateTime('-1 week')); // Overdue
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'suggestedTime' => '10:00'],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertSame(
+            (new \DateTime('today'))->format('Y-m-d'),
+            $task->getDueDate()->format('Y-m-d')
+        );
+    }
+
+    #[Test]
+    public function acceptScheduleDoesNotChangeFutureDueDate(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $futureDate = new \DateTime('+1 week');
+        $task = new Task();
+        $task->setDueDate($futureDate);
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'suggestedTime' => '10:00'],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertSame(
+            $futureDate->format('Y-m-d'),
+            $task->getDueDate()->format('Y-m-d')
+        );
+    }
+
+    #[Test]
+    public function acceptScheduleSkipsNonExistentTasks(): void
+    {
+        $user = $this->createMock(User::class);
+
+        $this->taskRepository
+            ->method('find')
+            ->with(999)
+            ->willReturn(null);
+
+        // Should not throw, just skip
+        $this->entityManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $scheduleItems = [
+            ['taskId' => 999, 'suggestedTime' => '10:00'],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+    }
+
+    #[Test]
+    public function acceptScheduleSkipsTasksWithNullDailyNote(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $task = new Task();
+        $task->setEstimatedMinutes(30);
+        // dailyNote is null by default
+
+        $this->taskRepository
+            ->method('find')
+            ->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'duration' => 60],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        // Task should not be modified since dailyNote is null
+        $this->assertSame(30, $task->getEstimatedMinutes());
+    }
+
+    #[Test]
+    public function acceptScheduleProcessesMultipleTasks(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task1 = new Task();
+        $this->setTaskDailyNote($task1, $dailyNote);
+
+        $task2 = new Task();
+        $this->setTaskDailyNote($task2, $dailyNote);
+
+        $this->taskRepository
+            ->method('find')
+            ->willReturnCallback(function ($id) use ($task1, $task2) {
+                return match ($id) {
+                    1 => $task1,
+                    2 => $task2,
+                    default => null,
+                };
+            });
+
+        $this->entityManager
+            ->expects($this->once())
+            ->method('flush');
+
+        $scheduleItems = [
+            ['taskId' => 1, 'suggestedTime' => '09:00', 'duration' => 30],
+            ['taskId' => 2, 'suggestedTime' => '10:00', 'duration' => 45],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertSame('09:00', $task1->getFixedTime()->format('H:i'));
+        $this->assertSame(30, $task1->getEstimatedMinutes());
+        $this->assertSame('10:00', $task2->getFixedTime()->format('H:i'));
+        $this->assertSame(45, $task2->getEstimatedMinutes());
+    }
+
+    #[Test]
+    public function acceptScheduleHandlesNullCanCombineWithEvents(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        // canCombineWithEvents is null by default
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'combinedWithEventId' => 5],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        $this->assertSame([5], $task->getCanCombineWithEvents());
+    }
+
+    #[Test]
+    public function acceptScheduleDoesNotSetFixedTimeWhenSuggestedTimeEmpty(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('getId')->willReturn(1);
+
+        $dailyNote = $this->createMock(DailyNote::class);
+        $dailyNote->method('getUser')->willReturn($user);
+
+        $task = new Task();
+        $task->setFixedTime(new \DateTimeImmutable('08:00')); // Original
+        $this->setTaskDailyNote($task, $dailyNote);
+
+        $this->taskRepository->method('find')->willReturn($task);
+
+        $scheduleItems = [
+            ['taskId' => 1, 'suggestedTime' => '', 'duration' => 30],
+        ];
+
+        $this->service->acceptSchedule($user, $scheduleItems);
+
+        // fixedTime should be unchanged
+        $this->assertSame('08:00', $task->getFixedTime()->format('H:i'));
+        // duration should still be set
+        $this->assertSame(30, $task->getEstimatedMinutes());
+    }
+
+    // ================================================================
+    // Helper methods
+    // ================================================================
+
+    /**
+     * Helper to set private dailyNote property on Task.
+     */
+    private function setTaskDailyNote(Task $task, DailyNote $dailyNote): void
+    {
+        $reflection = new \ReflectionClass($task);
+        $prop = $reflection->getProperty('dailyNote');
+        $prop->setAccessible(true);
+        $prop->setValue($task, $dailyNote);
+    }
 }
