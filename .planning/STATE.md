@@ -7,14 +7,15 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Struktura z elastycznoscia — AI sugeruje, uzytkownik decyduje
-**Current focus:** Planning next milestone
+**Current focus:** v2 Architecture Refactoring
 
 ## Current Status
 
-**Milestone:** v1.1 Bugfixes - SHIPPED
-**Activity:** Milestone archived, ready for next milestone
+**Milestone:** v2 Architecture Refactoring
+**Phase:** 9 (Backend DTOs) - Not started
+**Activity:** Milestone defined, ready to plan
 
-Progress: v1.1 complete (3 phases, 5 plans, 11 requirements)
+Progress: [Phase 09] 0/? plans | [Milestone v2] 0/5 phases
 
 ## Milestones
 
@@ -22,45 +23,52 @@ Progress: v1.1 complete (3 phases, 5 plans, 11 requirements)
 |---------|------|--------|---------|
 | v1 | Time Blocks | Complete | 2026-01-20 |
 | v1.1 | Bugfixes | Complete | 2026-01-22 |
+| v2 | Architecture | In Progress | - |
 
 ## Completed Work
 
 - [x] v1 Time Blocks milestone (5 phases, 15 plans)
 - [x] v1.1 Bugfixes milestone (3 phases, 5 plans)
-  - Phase 6: Notes Panel Fixes (6 requirements)
-  - Phase 7: UI Behavior Fixes (2 requirements)
-  - Phase 8: AI Planning Fixes (3 requirements)
 
 ## Active Work
 
-None - ready for next milestone.
+**v2 Architecture Refactoring:**
+- Phase 9: Backend DTOs (7 requirements)
+- Phase 10: Backend Services (6 requirements)
+- Phase 11: Backend Tests (5 requirements)
+- Phase 12: Frontend Slices (5 requirements)
+- Phase 13: Frontend Storage (5 requirements)
+
+Total: 28 requirements across 5 phases
 
 ## Next Action
 
-**Start next milestone:**
+**Plan Phase 9:**
 
 ```
-/gsd:new-milestone
+/gsd:plan-phase 9
 ```
-
-Options:
-- v1.2 — Minor features/improvements
-- v2.0 — Major new direction
 
 ## Context Notes
 
-**v1.1 Decisions archived:**
-- hideCloseButton prop for DialogContent
-- Cross-slice extraReducer pattern for Redux
-- Event allowOverlap default false
-- dueDate <= today for planning
+**Architecture Analysis (2026-01-22):**
+- Backend: Task serializacja zduplikowana 6+ razy
+- Backend: matchesRecurrencePattern() w 2 miejscach
+- Backend: 30+ EntityManager calls w kontrolerach
+- Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild)
+- Frontend: localStorage rozrzucony po modulach
 
-Full decision log in PROJECT.md.
+**v2 Approach:**
+- DTOs first (foundation for services)
+- Services extract logic (controllers become thin)
+- Tests verify services work
+- Frontend slices split (parallel with backend)
+- Storage centralization last (may need slice changes)
 
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: v1.1 milestone archived
+Stopped at: v2 Architecture milestone defined
 Resume file: None
 
 ---

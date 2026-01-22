@@ -37,7 +37,13 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 
 ### Active
 
-(None - planning next milestone)
+**v2 Architecture Refactoring:**
+- [ ] Backend: Warstwa DTO (Request/Response objects zamiast tablic)
+- [ ] Backend: Serwisy zamiast kontrolerow (wyciagniecie logiki biznesowej)
+- [ ] Backend: Usuniecie duplikacji kodu (recurrence matching, serializacja)
+- [ ] Backend: Unit testy dla nowych serwisow/DTO
+- [ ] Frontend: Rozbicie howAreYouSlice na osobne slice'y
+- [ ] Frontend: Centralizacja localStorage (useStorage hook)
 
 ### Out of Scope
 
@@ -68,6 +74,12 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 **User Feedback (v1.1):**
 - Settings modal getting crowded -> consider tabs in v2
 
+**Architecture Debt (identified for v2):**
+- Backend: Brak warstwy DTO, logika biznesowa w kontrolerach, duplikacja serializacji 6+ razy
+- Backend: matchesRecurrencePattern() zduplikowany w TaskController i RecurringSyncService
+- Frontend: howAreYouSlice (583 linii) miesza CheckIn+Planning+Rebuild
+- Frontend: localStorage rozrzucony po roznych modulach
+
 ## Constraints
 
 - **Tech stack**: Symfony + React + PostgreSQL (bez zmian)
@@ -94,4 +106,4 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 
 ---
 
-*Last updated: 2026-01-22 after v1.1 Bugfixes milestone complete*
+*Last updated: 2026-01-22 after v2 Architecture milestone start*
