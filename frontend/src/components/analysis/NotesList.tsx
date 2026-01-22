@@ -33,6 +33,7 @@ export function NotesList({
   const [justAdded, setJustAdded] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [expandWithNewNote, setExpandWithNewNote] = useState(false);
+  const [expandWithNoteId, setExpandWithNoteId] = useState<number | null>(null);
 
   useEffect(() => {
     if (isAdding && textareaRef.current) {
@@ -96,7 +97,8 @@ export function NotesList({
     setIsExpanded(true);
   };
 
-  const handleEditInExpanded = () => {
+  const handleEditInExpanded = (note: Note) => {
+    setExpandWithNoteId(note.id);
     setIsExpanded(true);
   };
 
@@ -150,7 +152,7 @@ export function NotesList({
             ) : (
               <>
                 <div
-                  className="text-sm flex-1 prose prose-sm dark:prose-invert max-w-none line-clamp-2"
+                  className="text-sm flex-1 prose prose-sm dark:prose-invert max-w-none line-clamp-2 prose-headings:text-sm prose-headings:font-semibold prose-p:my-0 prose-ul:my-0 prose-ol:my-0"
                   dangerouslySetInnerHTML={{ __html: note.content }}
                 />
 
@@ -161,7 +163,7 @@ export function NotesList({
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
-                        onClick={() => handleEditInExpanded()}
+                        onClick={() => handleEditInExpanded(note as Note)}
                       >
                         <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
                       </Button>
@@ -244,6 +246,7 @@ export function NotesList({
         onClose={() => {
           setIsExpanded(false);
           setExpandWithNewNote(false);
+          setExpandWithNoteId(null);
         }}
         notes={notes.filter((n): n is Note => 'id' in n)}
         currentDate={currentDate}
@@ -251,6 +254,7 @@ export function NotesList({
         onDelete={onDelete}
         onAdd={onAdd}
         triggerNewNote={expandWithNewNote}
+        initialSelectedNoteId={expandWithNoteId}
       />
     </div>
   );

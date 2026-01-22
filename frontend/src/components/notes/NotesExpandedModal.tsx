@@ -21,6 +21,7 @@ interface NotesExpandedModalProps {
   onDelete?: (id: number) => void;
   onAdd?: (content: string) => void;
   triggerNewNote?: boolean;
+  initialSelectedNoteId?: number | null;
 }
 
 type SortOrder = 'newest' | 'oldest';
@@ -33,6 +34,7 @@ export function NotesExpandedModal({
   onDelete,
   onAdd,
   triggerNewNote = false,
+  initialSelectedNoteId = null,
 }: NotesExpandedModalProps) {
   const { t } = useTranslation();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -41,6 +43,8 @@ export function NotesExpandedModal({
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [editContent, setEditContent] = useState('');
   const [pendingNewNote, setPendingNewNote] = useState(false);
+  const [isDraft, setIsDraft] = useState(false);
+  const [draftContent, setDraftContent] = useState('');
 
   // Load all notes when modal opens
   useEffect(() => {
@@ -55,15 +59,30 @@ export function NotesExpandedModal({
       setSelectedNote(null);
       setSearchQuery('');
       setEditContent('');
+      setIsDraft(false);
+      setDraftContent('');
     }
   }, [isOpen]);
 
-  // Trigger new note creation when requested from parent
+  // Enter draft mode when requested from parent (don't create note yet)
   useEffect(() => {
     if (isOpen && triggerNewNote) {
-      handleAddNote();
+      setIsDraft(true);
+      setDraftContent('');
+      setSelectedNote(null);
     }
   }, [isOpen, triggerNewNote]);
+
+  // Auto-select note by ID when modal opens
+  useEffect(() => {
+    if (isOpen && initialSelectedNoteId && notes.length > 0) {
+      const noteToSelect = notes.find((n) => n.id === initialSelectedNoteId);
+      if (noteToSelect) {
+        setSelectedNote(noteToSelect);
+        setEditContent(noteToSelect.content);
+      }
+    }
+  }, [isOpen, initialSelectedNoteId, notes]);
 
   const loadNotes = async () => {
     try {
@@ -147,11 +166,25 @@ export function NotesExpandedModal({
   };
 
   const handleAddNote = () => {
-    if (onAdd) {
+    // Enter draft mode instead of creating immediately
+    setIsDraft(true);
+    setDraftContent('');
+    setSelectedNote(null);
+  };
+
+  const handleSaveDraft = () => {
+    if (onAdd && draftContent.trim()) {
       setPendingNewNote(true);
-      onAdd('');
+      onAdd(draftContent.trim());
+      setIsDraft(false);
+      setDraftContent('');
       setTimeout(loadNotes, 150);
     }
+  };
+
+  const handleCancelDraft = () => {
+    setIsDraft(false);
+    setDraftContent('');
   };
 
   const formatDate = (dateStr?: string) => {
@@ -269,7 +302,9 @@ export function NotesExpandedModal({
           <div className="flex-1 flex flex-col h-full">
             {/* Header */}
             <div className="flex items-center justify-between p-3 border-b">
-              <h2 className="font-semibold">{t('notes.title')}</h2>
+              <h2 className="font-semibold">
+                {isDraft ? t('notes.newNote') : t('notes.title')}
+              </h2>
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="h-4 w-4" />
               </Button>
@@ -277,7 +312,25 @@ export function NotesExpandedModal({
 
             {/* Editor */}
             <div className="flex-1 p-4 overflow-y-auto">
-              {selectedNote ? (
+              {isDraft ? (
+                <div className="flex flex-col h-full">
+                  <TiptapEditor
+                    content={draftContent}
+                    onChange={setDraftContent}
+                    placeholder={t('notes.editor.placeholder')}
+                    minHeight="calc(100% - 60px)"
+                    className="flex-1"
+                  />
+                  <div className="flex gap-2 mt-3 pt-3 border-t">
+                    <Button onClick={handleSaveDraft} disabled={!draftContent.trim()}>
+                      {t('common.save')}
+                    </Button>
+                    <Button variant="outline" onClick={handleCancelDraft}>
+                      {t('common.cancel')}
+                    </Button>
+                  </div>
+                </div>
+              ) : selectedNote ? (
                 <TiptapEditor
                   content={editContent}
                   onChange={handleContentChange}

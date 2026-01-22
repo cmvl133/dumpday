@@ -407,6 +407,7 @@
   },
   "notes": {
     "title": "Notatki",
+    "newNote": "Nowa notatka",
     "addNote": "Dodaj notatkę",
     "addQuickNote": "Szybka notatka",
     "expand": "Rozwiń notatki",
