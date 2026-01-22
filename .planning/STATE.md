@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 12 (Frontend Slices) - IN PROGRESS
-**Activity:** Completed 12-01 and 12-02, ready for 12-03
+**Phase:** 12 (Frontend Slices) - COMPLETE
+**Activity:** Completed Phase 12, ready for Phase 13
 
-Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
+Progress: [Phase 12] 3/3 plans | [Milestone v2] 4/5 phases
 
 ## Milestones
 
@@ -32,6 +32,7 @@ Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
 - [x] Phase 9: Backend DTOs (6 plans)
 - [x] Phase 10: Backend Services (5 plans)
 - [x] Phase 11: Backend Tests (5 plans)
+- [x] Phase 12: Frontend Slices (3 plans)
 
 ## Active Work
 
@@ -55,21 +56,21 @@ Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
   - [x] 11-03: Service Unit Tests
   - [x] 11-04: PlanningService Unit Tests
   - [x] 11-05: Task API Integration Tests
-- Phase 12: Frontend Slices - IN PROGRESS
-  - [x] 12-02: Planning and Rebuild Flow Slices
+- Phase 12: Frontend Slices - COMPLETE
   - [x] 12-01: CheckIn Flow Slice and Coordinator Reduction
-  - [ ] 12-03: Component Integration and Store Wiring
+  - [x] 12-02: Planning and Rebuild Flow Slices
+  - [x] 12-03: Component Integration and Store Wiring
 - Phase 13: Frontend Storage (pending)
 
 ## Next Action
 
-**Continue Phase 12:**
+**Start Phase 13:**
 
 ```
-/gsd:execute-phase 12-03
+/gsd:research-phase 13
 ```
 
-Plan 03 will update component imports and integrate slices into store.
+Phase 13 will centralize localStorage access into a dedicated storage module.
 
 ## Context Notes
 
@@ -77,15 +78,15 @@ Plan 03 will update component imports and integrate slices into store.
 - Backend: Task serializacja zduplikowana 6+ razy - RESOLVED (DTOs)
 - Backend: matchesRecurrencePattern() w 2 miejscach - RESOLVED (RecurrenceService)
 - Backend: 30+ EntityManager calls w kontrolerach - RESOLVED (Services)
-- Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild) - IN PROGRESS (slices extracted)
-- Frontend: localStorage rozrzucony po modulach
+- Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild) - RESOLVED (94 lines coordinator)
+- Frontend: localStorage rozrzucony po modulach - PENDING (Phase 13)
 
 **v2 Approach:**
 - DTOs first (foundation for services) - COMPLETE
 - Services extract logic (controllers become thin) - COMPLETE
 - Tests verify services work - COMPLETE
-- Frontend slices split (parallel with backend) - IN PROGRESS
-- Storage centralization last (may need slice changes)
+- Frontend slices split (parallel with backend) - COMPLETE
+- Storage centralization last (may need slice changes) - PENDING
 
 **Patterns Established (09-01 through 09-06):**
 - Response DTO: final readonly class with fromEntity() static factory
@@ -128,11 +129,12 @@ Plan 03 will update component imports and integrate slices into store.
 - Authentication simulation: loginUser() for authenticated requests
 - Run with explicit APP_ENV=test to override Docker container env
 
-**Patterns Established (12-01 through 12-02):**
+**Patterns Established (12-01 through 12-03):**
 - Flow slice pattern: dedicated slice per modal flow (checkInFlowSlice, planningFlowSlice, rebuildFlowSlice)
 - Coordinator import pattern: import selectMode/closeModal from howAreYouSlice for extraReducers
 - State cast pattern: getState() as { sliceName: SliceState } for thunks accessing own state
 - ensureTaskData helper: DRY pattern for task plan data initialization
+- Store cleanup pattern: remove old slice imports when new slices fully integrated
 
 **Key Decisions (09-06):**
 - PlanningController keeps inline serialization - planning-specific fields don't fit base DTOs
@@ -179,18 +181,22 @@ Plan 03 will update component imports and integrate slices into store.
 
 **Key Decisions (12-02):**
 - New thunk action type prefixes: planningFlow/* and rebuildFlow/* for slice isolation
-- RebuildStep exported from rebuildFlowSlice (canonical location, Plan 03 will update imports)
+- RebuildStep exported from rebuildFlowSlice (canonical location)
 - Underscore prefix for unused state params in extraReducers
 
 **Key Decisions (12-01):**
-- Keep RebuildStep export in howAreYouSlice temporarily for backward compatibility
 - checkInFlowSlice imports selectMode/closeModal from howAreYouSlice for extraReducers
 - Components updated immediately to fix TypeScript compilation errors (blocking fix)
+
+**Key Decisions (12-03):**
+- Delete unused CheckInModal, PlanningModal, useAutoCheckIn (not imported anywhere)
+- Remove RebuildStep temporary export from howAreYouSlice
+- Delete old checkInSlice.ts and planningSlice.ts (replaced by flow slices)
 
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 12-01-PLAN.md (CheckIn Flow Slice and Coordinator Reduction)
+Stopped at: Completed 12-03-PLAN.md (Component Integration and Store Wiring)
 Resume file: None
 
 ---
