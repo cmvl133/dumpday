@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v1.1 Bugfixes
 **Phase:** 8 (AI Planning Fixes) - In Progress
-**Activity:** Completed 08-01-PLAN.md (Event overlap control)
+**Activity:** Completed 08-02-PLAN.md (PLAN-02/PLAN-03 investigation)
 
-Progress: [Phase 08] 1/? plans complete
+Progress: [Phase 08] 2/? plans complete
 
 ## Milestones
 
@@ -31,6 +31,7 @@ Progress: [Phase 08] 1/? plans complete
 - [x] Phase 06-02: Gap Closure (empty content API, typography plugin, dual buttons UX)
 - [x] Phase 07-01: UI Behavior Fixes (CHKN-01 modal dismiss, UIST-01 task list sync)
 - [x] Phase 08-01: Event Overlap Control (PLAN-01 - allowOverlap property and AI prompt enforcement)
+- [x] Phase 08-02: PLAN-02/PLAN-03 Investigation (task splitting verified OK, overdue tasks bug fixed)
 
 ## Active Work
 
@@ -38,18 +39,26 @@ Phase 08: AI Planning Fixes - continuing with remaining plans if any.
 
 ## Next Action
 
-**PLAN 08-01 COMPLETE**
+**PLAN 08-02 COMPLETE**
 
-Event overlap control implemented:
-1. Event entity has allowOverlap property (default false)
-2. AI prompts show overlap status and enforce constraints
-3. Frontend Event type updated
+Investigation results:
+1. PLAN-02 (task splitting): Works as designed - no changes needed
+2. PLAN-03 (scheduled tasks): Bug fixed - overdue tasks now included in planning view
+
+Fix applied:
+- Changed `dueDate = :today` to `dueDate <= :today` in TaskRepository queries
+- Affects findUnplannedTasksForToday() and findPlannedTasksForToday()
 
 Ready for:
-1. Manual testing of AI scheduling with events
+1. Manual testing of planning with overdue tasks
 2. Continue to next plan in Phase 08 if any
 
 ## Context Notes
+
+**Decisions from 08-02:**
+- Use dueDate <= today to include overdue tasks in planning view
+- Apply consistent fix to both planned and unplanned task queries
+- Task splitting works as designed - no changes needed
 
 **Decisions from 08-01:**
 - Default allowOverlap=false (conservative - events block tasks unless explicitly allowed)
@@ -76,7 +85,7 @@ Ready for:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 08-01-PLAN.md
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
 
 ---
