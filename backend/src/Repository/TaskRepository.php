@@ -89,8 +89,10 @@ class TaskRepository extends ServiceEntityRepository
     }
 
     /**
-     * Find all incomplete tasks for today that don't have a fixed time set yet (for Planning Mode).
-     * Includes overdue tasks (dueDate <= today) so they appear in planning.
+     * Find all incomplete tasks for today that need planning (for Planning Mode).
+     * Includes:
+     * - Overdue tasks (dueDate < today) regardless of fixedTime - need re-planning
+     * - Today's tasks without fixedTime set
      *
      * @return Task[]
      */
@@ -99,10 +101,13 @@ class TaskRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->join('t.dailyNote', 'dn')
             ->where('dn.user = :user')
-            ->andWhere('(t.dueDate <= :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('(
+                (t.dueDate < :today)
+                OR
+                ((t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today)) AND t.fixedTime IS NULL)
+            )')
             ->andWhere('t.isCompleted = false')
             ->andWhere('t.isDropped = false')
-            ->andWhere('t.fixedTime IS NULL')
             ->setParameter('user', $user)
             ->setParameter('today', $today->format('Y-m-d'))
             ->setParameter('todayCategory', TaskCategory::TODAY->value)
@@ -113,7 +118,7 @@ class TaskRepository extends ServiceEntityRepository
 
     /**
      * Find all incomplete tasks for today that HAVE a fixed time set (for conflict detection).
-     * Includes overdue tasks (dueDate <= today) for consistent behavior with findUnplannedTasksForToday.
+     * Only today's tasks - overdue tasks with fixedTime are stale and don't block today's slots.
      *
      * @return Task[]
      */
@@ -122,7 +127,7 @@ class TaskRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->join('t.dailyNote', 'dn')
             ->where('dn.user = :user')
-            ->andWhere('(t.dueDate <= :today OR (t.category = :todayCategory AND dn.date = :today))')
+            ->andWhere('(t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today))')
             ->andWhere('t.isCompleted = false')
             ->andWhere('t.isDropped = false')
             ->andWhere('t.fixedTime IS NOT NULL')
