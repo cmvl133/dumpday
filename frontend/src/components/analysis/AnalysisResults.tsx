@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
@@ -17,29 +17,10 @@ import { NotesList } from './NotesList';
 import { JournalSection } from './JournalSection';
 import { TagFilterBar } from '@/components/tags/TagFilterBar';
 import { useTagFilter } from '@/hooks/useTagFilter';
+import { useStorage } from '@/hooks/useStorage';
+import { STORAGE_KEYS, type BoxId } from '@/lib/storage';
 import { cn } from '@/lib/utils';
 import type { AnalysisResponse, DailyNoteData } from '@/types';
-
-const COLLAPSED_BOXES_KEY = 'dopaminder_collapsed_boxes';
-
-type BoxId = 'scheduled' | 'someday' | 'notes' | 'journal';
-
-function getCollapsedBoxes(): BoxId[] {
-  try {
-    const stored = localStorage.getItem(COLLAPSED_BOXES_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveCollapsedBoxes(boxes: BoxId[]): void {
-  try {
-    localStorage.setItem(COLLAPSED_BOXES_KEY, JSON.stringify(boxes));
-  } catch {
-    // Ignore storage errors
-  }
-}
 
 interface AnalysisResultsProps {
   data: AnalysisResponse | DailyNoteData;
@@ -137,21 +118,14 @@ export function AnalysisResults({
   onAddJournal,
 }: AnalysisResultsProps) {
   const { t } = useTranslation();
-  const [collapsedBoxes, setCollapsedBoxes] = useState<BoxId[]>([]);
+  const [collapsedBoxes, setCollapsedBoxes] = useStorage(STORAGE_KEYS.COLLAPSED_BOXES, []);
   const { filterTasks } = useTagFilter();
 
-  useEffect(() => {
-    setCollapsedBoxes(getCollapsedBoxes());
-  }, []);
-
   const toggleBox = (boxId: BoxId) => {
-    setCollapsedBoxes((prev) => {
-      const newBoxes = prev.includes(boxId)
-        ? prev.filter((id) => id !== boxId)
-        : [...prev, boxId];
-      saveCollapsedBoxes(newBoxes);
-      return newBoxes;
-    });
+    const newBoxes = collapsedBoxes.includes(boxId)
+      ? collapsedBoxes.filter((id) => id !== boxId)
+      : [...collapsedBoxes, boxId];
+    setCollapsedBoxes(newBoxes);
   };
 
   const isCollapsed = (boxId: BoxId) => collapsedBoxes.includes(boxId);
