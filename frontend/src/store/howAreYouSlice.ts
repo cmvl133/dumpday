@@ -31,10 +31,6 @@ function storeLastModal(value: string | null): void {
 
 export type ModalMode = 'selection' | 'checkin' | 'planning' | 'rebuild';
 
-// Temporary: Keep RebuildStep export for backward compatibility until Plan 03
-// Will be removed after Plan 02 creates rebuildFlowSlice and re-exports it
-export type RebuildStep = 'whats_happening' | 'anything_else' | 'work_until' | 'preview';
-
 interface HowAreYouState {
   isOpen: boolean;
   mode: ModalMode;
