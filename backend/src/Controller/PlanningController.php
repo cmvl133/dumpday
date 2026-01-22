@@ -226,6 +226,13 @@ class PlanningController extends AbstractController
                 $task->setFixedTime(new \DateTimeImmutable($item['suggestedTime']));
             }
 
+            // Update dueDate to today for overdue tasks
+            $today = new \DateTime('today');
+            $taskDueDate = $task->getDueDate();
+            if ($taskDueDate !== null && $taskDueDate < $today) {
+                $task->setDueDate($today);
+            }
+
             if (isset($item['duration'])) {
                 $task->setEstimatedMinutes((int) $item['duration']);
             }
