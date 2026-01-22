@@ -50,9 +50,9 @@ class NoteController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (empty($data['content']) || empty($data['date'])) {
+        if (!isset($data['content']) || empty($data['date'])) {
             return $this->json([
-                'error' => 'Content and date are required',
+                'error' => 'Date is required',
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -67,7 +67,7 @@ class NoteController extends AbstractController
         }
 
         $note = new Note();
-        $note->setContent((string) $data['content']);
+        $note->setContent($data['content'] ?? '');
         $note->setDailyNote($dailyNote);
 
         if (isset($data['title'])) {
