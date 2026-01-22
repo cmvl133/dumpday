@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 10 (Backend Services) - IN PROGRESS
-**Activity:** Completed 10-03 (PlanningService)
+**Activity:** Completed 10-02 (TaskService)
 
-Progress: [Phase 10] 2/? plans | [Milestone v2] 1/5 phases
+Progress: [Phase 10] 3/? plans | [Milestone v2] 1/5 phases
 
 ## Milestones
 
@@ -43,7 +43,7 @@ Progress: [Phase 10] 2/? plans | [Milestone v2] 1/5 phases
   - [x] 09-06: Controller Integration - Request DTOs
 - Phase 10: Backend Services - IN PROGRESS
   - [x] 10-01: Pure Logic Services (RecurrenceService, DuplicateDetectionService)
-  - [ ] 10-02: BrainDumpFacade refactor (pending)
+  - [x] 10-02: TaskService (task CRUD, completion, tag management)
   - [x] 10-03: PlanningService (planning mode operations)
 - Phase 11: Backend Tests (pending)
 - Phase 12: Frontend Slices (pending)
@@ -53,11 +53,9 @@ Progress: [Phase 10] 2/? plans | [Milestone v2] 1/5 phases
 
 **Continue Phase 10:**
 
-```
-/gsd:execute-phase 10-02
-```
+Check remaining plans for Phase 10 or proceed to controller refactoring.
 
-Plan 10-03 complete. PlanningService ready for PlanningController integration.
+Plan 10-02 complete. TaskService ready for TaskController integration.
 
 ## Context Notes
 
@@ -99,6 +97,11 @@ Plan 10-03 complete. PlanningService ready for PlanningController integration.
 - DuplicateDetectionService extracts timesOverlap and duplicate checks from BrainDumpFacade
 - TaskController also refactored to use RecurrenceService (not just RecurringSyncService)
 
+**Key Decisions (10-02):**
+- TaskService handles all task CRUD, completion, and tag management
+- TaskUpdateResult returns task + optional generatedNextTask for complex updates
+- PATCH semantics use array_key_exists() to distinguish null vs missing fields
+
 **Key Decisions (10-03):**
 - PlanningService returns raw entities/arrays - controller handles serialization with planning-specific fields
 - PATCH semantics via array_key_exists for explicit null vs missing field distinction
@@ -107,7 +110,7 @@ Plan 10-03 complete. PlanningService ready for PlanningController integration.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-03-PLAN.md (PlanningService)
+Stopped at: Completed 10-02-PLAN.md (TaskService)
 Resume file: None
 
 ---
