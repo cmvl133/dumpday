@@ -125,6 +125,7 @@ export interface Event {
   startTime: string;
   endTime: string | null;
   date: string;
+  allowOverlap?: boolean;
 }
 
 export interface ScheduleEvent extends Event {
