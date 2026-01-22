@@ -13,7 +13,7 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 12 (Frontend Slices) - IN PROGRESS
-**Activity:** Completed 12-02, ready for 12-03
+**Activity:** Completed 12-01 and 12-02, ready for 12-03
 
 Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
 
@@ -56,8 +56,8 @@ Progress: [Phase 12] 2/3 plans | [Milestone v2] 3/5 phases
   - [x] 11-04: PlanningService Unit Tests
   - [x] 11-05: Task API Integration Tests
 - Phase 12: Frontend Slices - IN PROGRESS
-  - [x] 12-01: CheckIn Flow Slice Extraction
   - [x] 12-02: Planning and Rebuild Flow Slices
+  - [x] 12-01: CheckIn Flow Slice and Coordinator Reduction
   - [ ] 12-03: Component Integration and Store Wiring
 - Phase 13: Frontend Storage (pending)
 
@@ -182,10 +182,15 @@ Plan 03 will update component imports and integrate slices into store.
 - RebuildStep exported from rebuildFlowSlice (canonical location, Plan 03 will update imports)
 - Underscore prefix for unused state params in extraReducers
 
+**Key Decisions (12-01):**
+- Keep RebuildStep export in howAreYouSlice temporarily for backward compatibility
+- checkInFlowSlice imports selectMode/closeModal from howAreYouSlice for extraReducers
+- Components updated immediately to fix TypeScript compilation errors (blocking fix)
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 12-02-PLAN.md (Planning and Rebuild Flow Slices)
+Stopped at: Completed 12-01-PLAN.md (CheckIn Flow Slice and Coordinator Reduction)
 Resume file: None
 
 ---
