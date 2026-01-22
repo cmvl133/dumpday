@@ -133,6 +133,13 @@ Plans:
 
 **Goal:** Split monolithic howAreYouSlice into focused slices
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 12-01-PLAN.md - Create coordinator slice and checkInFlowSlice
+- [ ] 12-02-PLAN.md - Create planningFlowSlice and rebuildFlowSlice
+- [ ] 12-03-PLAN.md - Update store, imports, and cleanup unused slices
+
 **Requirements:**
 - SLC-01: checkInFlowSlice (modal state, task actions)
 - SLC-02: planningFlowSlice (planning wizard)
