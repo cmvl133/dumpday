@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 9 (Backend DTOs) - Not started
-**Activity:** Milestone defined, ready to plan
+**Phase:** 9 (Backend DTOs) - In progress
+**Activity:** Completed plan 09-02
 
-Progress: [Phase 09] 0/? plans | [Milestone v2] 0/5 phases
+Progress: [Phase 09] 1/6 plans | [Milestone v2] 0/5 phases
 
 ## Milestones
 
@@ -33,21 +33,22 @@ Progress: [Phase 09] 0/? plans | [Milestone v2] 0/5 phases
 ## Active Work
 
 **v2 Architecture Refactoring:**
-- Phase 9: Backend DTOs (7 requirements)
-- Phase 10: Backend Services (6 requirements)
-- Phase 11: Backend Tests (5 requirements)
-- Phase 12: Frontend Slices (5 requirements)
-- Phase 13: Frontend Storage (5 requirements)
-
-Total: 28 requirements across 5 phases
+- Phase 9: Backend DTOs (6 plans)
+  - [x] 09-02: Task Request DTOs
+- Phase 10: Backend Services (TBD)
+- Phase 11: Backend Tests (TBD)
+- Phase 12: Frontend Slices (TBD)
+- Phase 13: Frontend Storage (TBD)
 
 ## Next Action
 
-**Plan Phase 9:**
+**Execute next plan:**
 
 ```
-/gsd:plan-phase 9
+/gsd:execute-phase 09-01
 ```
+
+Or continue with 09-03 (depends on 09-01).
 
 ## Context Notes
 
@@ -65,10 +66,15 @@ Total: 28 requirements across 5 phases
 - Frontend slices split (parallel with backend)
 - Storage centralization last (may need slice changes)
 
+**Patterns Established (09-02):**
+- Request DTO: final readonly class with #[Assert\*] attributes
+- String types for dates in DTOs (convert in service layer)
+- HH:MM regex for time validation
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: v2 Architecture milestone defined
+Stopped at: Completed 09-02-PLAN.md (Task Request DTOs)
 Resume file: None
 
 ---
