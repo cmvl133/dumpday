@@ -146,7 +146,10 @@ export function NotesList({
               </div>
             ) : (
               <>
-                <p className="text-sm flex-1">{note.content}</p>
+                <div
+                  className="text-sm flex-1 prose prose-sm dark:prose-invert max-w-none line-clamp-2"
+                  dangerouslySetInnerHTML={{ __html: note.content }}
+                />
 
                 {!isPreview && noteId !== null && (
                   <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
