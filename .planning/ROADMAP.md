@@ -9,7 +9,7 @@
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
 | 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Complete |
-| 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Planned |
+| 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Complete |
 | 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Pending |
 | 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Pending |
 | 13 | Frontend Storage | Centralize localStorage handling | STR-01 to STR-05 | Pending |
@@ -61,11 +61,11 @@ Plans:
 **Plans:** 5 plans
 
 Plans:
-- [ ] 10-01-PLAN.md - Create RecurrenceService and DuplicateDetectionService (pure logic)
-- [ ] 10-02-PLAN.md - Create TaskService with CRUD and completion logic
-- [ ] 10-03-PLAN.md - Create PlanningService for planning mode operations
-- [ ] 10-04-PLAN.md - Refactor controllers to thin wrappers
-- [ ] 10-05-PLAN.md - Refactor BrainDumpFacade to use DuplicateDetectionService
+- [x] 10-01-PLAN.md - Create RecurrenceService and DuplicateDetectionService (pure logic)
+- [x] 10-02-PLAN.md - Create TaskService with CRUD and completion logic
+- [x] 10-03-PLAN.md - Create PlanningService for planning mode operations
+- [x] 10-04-PLAN.md - Refactor controllers to thin wrappers
+- [x] 10-05-PLAN.md - Refactor BrainDumpFacade to use DuplicateDetectionService
 
 **Requirements:**
 - SVC-01: TaskService handles CRUD

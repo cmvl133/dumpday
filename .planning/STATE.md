@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 10 (Backend Services) - IN PROGRESS
-**Activity:** Completed 10-04 (Controller Refactoring)
+**Phase:** 10 (Backend Services) - VERIFIED COMPLETE
+**Activity:** Phase 10 verified and complete, ready for Phase 11
 
-Progress: [Phase 10] 5/5 plans | [Milestone v2] 1/5 phases
+Progress: [Phase 10] 5/5 plans ✓ | [Milestone v2] 2/5 phases
 
 ## Milestones
 
@@ -41,7 +41,7 @@ Progress: [Phase 10] 5/5 plans | [Milestone v2] 1/5 phases
   - [x] 09-04: Schedule & DailyNote Response DTOs
   - [x] 09-05: Controller Integration - Response DTOs
   - [x] 09-06: Controller Integration - Request DTOs
-- Phase 10: Backend Services - COMPLETE
+- Phase 10: Backend Services - VERIFIED ✓
   - [x] 10-01: Pure Logic Services (RecurrenceService, DuplicateDetectionService)
   - [x] 10-02: TaskService (task CRUD, completion, tag management)
   - [x] 10-03: PlanningService (planning mode operations)
@@ -53,16 +53,13 @@ Progress: [Phase 10] 5/5 plans | [Milestone v2] 1/5 phases
 
 ## Next Action
 
-**Phase 10 Complete. Proceed to Phase 11:**
+**Ready for Phase 11:**
 
-All Phase 10 plans complete:
-- 10-01: Pure logic services (RecurrenceService, DuplicateDetectionService)
-- 10-02: TaskService
-- 10-03: PlanningService
-- 10-04: Controller refactoring (TaskController, PlanningController)
-- 10-05: BrainDumpFacade refactoring
+```
+/gsd:plan-phase 11-backend-tests
+```
 
-Ready for Phase 11: Backend Tests.
+Phase 10 complete with 5 services created. Next: Add unit and integration tests.
 
 ## Context Notes
 
@@ -75,8 +72,8 @@ Ready for Phase 11: Backend Tests.
 
 **v2 Approach:**
 - DTOs first (foundation for services) - COMPLETE
-- Services extract logic (controllers become thin) - IN PROGRESS
-- Tests verify services work
+- Services extract logic (controllers become thin) - COMPLETE
+- Tests verify services work - NEXT
 - Frontend slices split (parallel with backend)
 - Storage centralization last (may need slice changes)
 

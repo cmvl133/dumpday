@@ -9,22 +9,22 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 
 ### Backend DTOs
 
-- [ ] **DTO-01**: Task serialization uses TaskResponse DTO instead of inline arrays (eliminates 6+ duplications)
-- [ ] **DTO-02**: Event serialization uses EventResponse DTO
-- [ ] **DTO-03**: TimeBlock serialization uses TimeBlockResponse DTO
-- [ ] **DTO-04**: Task creation uses TaskCreateRequest DTO with validation
-- [ ] **DTO-05**: Task update uses TaskUpdateRequest DTO with validation
-- [ ] **DTO-06**: Planning schedule items use ScheduleItemResponse DTO
-- [ ] **DTO-07**: DailyNote response uses DailyNoteResponse DTO (replaces 20+ field arrays)
+- [x] **DTO-01**: Task serialization uses TaskResponse DTO instead of inline arrays (eliminates 6+ duplications)
+- [x] **DTO-02**: Event serialization uses EventResponse DTO
+- [x] **DTO-03**: TimeBlock serialization uses TimeBlockResponse DTO
+- [x] **DTO-04**: Task creation uses TaskCreateRequest DTO with validation
+- [x] **DTO-05**: Task update uses TaskUpdateRequest DTO with validation
+- [x] **DTO-06**: Planning schedule items use ScheduleItemResponse DTO
+- [x] **DTO-07**: DailyNote response uses DailyNoteResponse DTO (replaces 20+ field arrays)
 
 ### Backend Services
 
-- [ ] **SVC-01**: TaskService handles task CRUD operations (extracted from TaskController)
-- [ ] **SVC-02**: TaskService handles task completion with recurring task generation
-- [ ] **SVC-03**: RecurrenceService consolidates matchesRecurrencePattern() logic (removes duplication)
-- [ ] **SVC-04**: PlanningService handles schedule acceptance logic (extracted from PlanningController)
-- [ ] **SVC-05**: Controllers only handle HTTP concerns (request/response, no EntityManager calls)
-- [ ] **SVC-06**: BrainDumpFacade split into smaller focused services (DuplicateDetectionService, etc.)
+- [x] **SVC-01**: TaskService handles task CRUD operations (extracted from TaskController)
+- [x] **SVC-02**: TaskService handles task completion with recurring task generation
+- [x] **SVC-03**: RecurrenceService consolidates matchesRecurrencePattern() logic (removes duplication)
+- [x] **SVC-04**: PlanningService handles schedule acceptance logic (extracted from PlanningController)
+- [x] **SVC-05**: Controllers only handle HTTP concerns (request/response, no EntityManager calls)
+- [x] **SVC-06**: BrainDumpFacade split into smaller focused services (DuplicateDetectionService, etc.)
 
 ### Backend Tests
 
@@ -65,19 +65,19 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DTO-01 | 9 | Pending |
-| DTO-02 | 9 | Pending |
-| DTO-03 | 9 | Pending |
-| DTO-04 | 9 | Pending |
-| DTO-05 | 9 | Pending |
-| DTO-06 | 9 | Pending |
-| DTO-07 | 9 | Pending |
-| SVC-01 | 10 | Pending |
-| SVC-02 | 10 | Pending |
-| SVC-03 | 10 | Pending |
-| SVC-04 | 10 | Pending |
-| SVC-05 | 10 | Pending |
-| SVC-06 | 10 | Pending |
+| DTO-01 | 9 | Complete |
+| DTO-02 | 9 | Complete |
+| DTO-03 | 9 | Complete |
+| DTO-04 | 9 | Complete |
+| DTO-05 | 9 | Complete |
+| DTO-06 | 9 | Complete |
+| DTO-07 | 9 | Complete |
+| SVC-01 | 10 | Complete |
+| SVC-02 | 10 | Complete |
+| SVC-03 | 10 | Complete |
+| SVC-04 | 10 | Complete |
+| SVC-05 | 10 | Complete |
+| SVC-06 | 10 | Complete |
 | TST-01 | 11 | Pending |
 | TST-02 | 11 | Pending |
 | TST-03 | 11 | Pending |
