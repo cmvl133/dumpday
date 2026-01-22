@@ -8,7 +8,7 @@
 
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
-| 6 | Notes Panel Fixes | Fix all notes-related bugs + UX improvements | NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06 | In Progress |
+| 6 | Notes Panel Fixes | Fix all notes-related bugs + UX improvements | NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06 | Complete ✓ |
 | 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Pending |
 | 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Pending |
 
@@ -38,7 +38,7 @@
 
 Plans:
 - [x] 06-01-PLAN.md — Fix Notes panel bugs (duplicate close button, add note flow, HTML preview)
-- [ ] 06-02-PLAN.md — Fix note creation API, install typography plugin, improve main screen UX
+- [x] 06-02-PLAN.md — Fix note creation API, install typography plugin, improve main screen UX
 
 ---
 
@@ -100,4 +100,4 @@ All 11 requirements mapped:
 ---
 
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 after adding 06-02 gap closure plan*
+*Last updated: 2026-01-22 after Phase 6 complete*
