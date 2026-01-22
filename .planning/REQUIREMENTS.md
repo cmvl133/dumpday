@@ -36,11 +36,11 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 
 ### Frontend Slices
 
-- [ ] **SLC-01**: howAreYouSlice split into separate checkInFlowSlice (modal, task actions)
-- [ ] **SLC-02**: howAreYouSlice split into separate planningFlowSlice (planning wizard state)
-- [ ] **SLC-03**: howAreYouSlice split into separate rebuildFlowSlice (rebuild day state)
-- [ ] **SLC-04**: Duplicate CheckInState definitions consolidated (single source of truth)
-- [ ] **SLC-05**: Cross-slice dependencies use Redux middleware instead of extraReducers where cleaner
+- [x] **SLC-01**: howAreYouSlice split into separate checkInFlowSlice (modal, task actions)
+- [x] **SLC-02**: howAreYouSlice split into separate planningFlowSlice (planning wizard state)
+- [x] **SLC-03**: howAreYouSlice split into separate rebuildFlowSlice (rebuild day state)
+- [x] **SLC-04**: Duplicate CheckInState definitions consolidated (single source of truth)
+- [x] **SLC-05**: Cross-slice dependencies use Redux middleware instead of extraReducers where cleaner
 
 ### Frontend Storage
 
@@ -83,11 +83,11 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 | TST-03 | 11 | Complete |
 | TST-04 | 11 | Complete |
 | TST-05 | 11 | Complete |
-| SLC-01 | 12 | Pending |
-| SLC-02 | 12 | Pending |
-| SLC-03 | 12 | Pending |
-| SLC-04 | 12 | Pending |
-| SLC-05 | 12 | Pending |
+| SLC-01 | 12 | Complete |
+| SLC-02 | 12 | Complete |
+| SLC-03 | 12 | Complete |
+| SLC-04 | 12 | Complete |
+| SLC-05 | 12 | Complete |
 | STR-01 | 13 | Pending |
 | STR-02 | 13 | Pending |
 | STR-03 | 13 | Pending |

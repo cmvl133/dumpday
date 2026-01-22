@@ -11,7 +11,7 @@
 | 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Complete |
 | 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Complete |
 | 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Complete |
-| 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Pending |
+| 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Complete |
 | 13 | Frontend Storage | Centralize localStorage handling | STR-01 to STR-05 | Pending |
 
 ## Phase Details
@@ -136,9 +136,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 12-01-PLAN.md - Create coordinator slice and checkInFlowSlice
-- [ ] 12-02-PLAN.md - Create planningFlowSlice and rebuildFlowSlice
-- [ ] 12-03-PLAN.md - Update store, imports, and cleanup unused slices
+- [x] 12-01-PLAN.md - Create coordinator slice and checkInFlowSlice
+- [x] 12-02-PLAN.md - Create planningFlowSlice and rebuildFlowSlice
+- [x] 12-03-PLAN.md - Update store, imports, and cleanup unused slices
 
 **Requirements:**
 - SLC-01: checkInFlowSlice (modal state, task actions)
