@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 10 (Backend Services) - VERIFIED COMPLETE
-**Activity:** Phase 10 verified and complete, ready for Phase 11
+**Phase:** 11 (Backend Tests) - IN PROGRESS
+**Activity:** Completed 11-01-PLAN.md (Testing Infrastructure Setup)
 
-Progress: [Phase 10] 5/5 plans ✓ | [Milestone v2] 2/5 phases
+Progress: [Phase 11] 1/4 plans | [Milestone v2] 2/5 phases
 
 ## Milestones
 
@@ -47,19 +47,23 @@ Progress: [Phase 10] 5/5 plans ✓ | [Milestone v2] 2/5 phases
   - [x] 10-03: PlanningService (planning mode operations)
   - [x] 10-04: Controller Refactoring (TaskController, PlanningController thin wrappers)
   - [x] 10-05: BrainDumpFacade Refactoring (duplicate detection delegation)
-- Phase 11: Backend Tests (pending)
+- Phase 11: Backend Tests - IN PROGRESS
+  - [x] 11-01: Testing Infrastructure Setup (Pure Logic Services)
+  - [ ] 11-02: TaskService Unit Tests
+  - [ ] 11-03: PlanningService Unit Tests
+  - [ ] 11-04: Integration Tests
 - Phase 12: Frontend Slices (pending)
 - Phase 13: Frontend Storage (pending)
 
 ## Next Action
 
-**Ready for Phase 11:**
+**Continue Phase 11:**
 
 ```
-/gsd:plan-phase 11-backend-tests
+/gsd:execute-phase 11-02
 ```
 
-Phase 10 complete with 5 services created. Next: Add unit and integration tests.
+11-01 complete with 98 unit tests for pure logic services. Next: TaskService unit tests with mocked dependencies.
 
 ## Context Notes
 
@@ -121,12 +125,18 @@ Phase 10 complete with 5 services created. Next: Add unit and integration tests.
 - PlanningController keeps planning-specific serialization (hasConflict, matchingBlock)
 - Line count targets aspirational - key goal was zero EntityManager calls (achieved)
 
+**Patterns Established (11-01):**
+- PHPUnit 11 attributes: #[Test] and #[DataProvider] instead of annotations
+- Static data provider methods with iterable return type and yield syntax
+- Direct entity instantiation for pure logic service tests (no mocks needed)
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-04-PLAN.md (Controller Refactoring)
+Stopped at: Completed 11-01-PLAN.md (Testing Infrastructure Setup)
 Resume file: None
 
 ---
 
 *Last updated: 2026-01-22*
+
