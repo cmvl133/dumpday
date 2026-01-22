@@ -157,7 +157,7 @@ export function NotesExpandedModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl h-[80vh] p-0 gap-0">
+      <DialogContent className="max-w-5xl h-[80vh] p-0 gap-0" hideCloseButton>
         <div className="flex h-full">
           {/* Left Sidebar - Note List */}
           <div className="w-72 border-r flex flex-col h-full">
