@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 9 (Backend DTOs) - In progress
-**Activity:** Completed plan 09-01 (Base Response DTOs)
+**Activity:** Completed plan 09-04 (Schedule & DailyNote Response DTOs)
 
-Progress: [Phase 09] 2/6 plans | [Milestone v2] 0/5 phases
+Progress: [Phase 09] 4/6 plans | [Milestone v2] 0/5 phases
 
 ## Milestones
 
@@ -36,6 +36,7 @@ Progress: [Phase 09] 2/6 plans | [Milestone v2] 0/5 phases
 - Phase 9: Backend DTOs (6 plans)
   - [x] 09-01: Base Response DTOs (Tag, Event, Note, JournalEntry)
   - [x] 09-02: Task Request DTOs
+  - [x] 09-03: Task and TimeBlock Response DTOs
 - Phase 10: Backend Services (TBD)
 - Phase 11: Backend Tests (TBD)
 - Phase 12: Frontend Slices (TBD)
@@ -46,10 +47,10 @@ Progress: [Phase 09] 2/6 plans | [Milestone v2] 0/5 phases
 **Execute next plan:**
 
 ```
-/gsd:execute-phase 09-03
+/gsd:execute-phase 09-04
 ```
 
-(09-03 depends on 09-01, now ready)
+(09-04: Event and TimeBlock Request DTOs)
 
 ## Context Notes
 
@@ -67,16 +68,17 @@ Progress: [Phase 09] 2/6 plans | [Milestone v2] 0/5 phases
 - Frontend slices split (parallel with backend)
 - Storage centralization last (may need slice changes)
 
-**Patterns Established (09-01, 09-02):**
+**Patterns Established (09-01, 09-02, 09-03):**
 - Response DTO: final readonly class with fromEntity() static factory
 - Request DTO: final readonly class with #[Assert\*] attributes
 - String types for dates in DTOs (convert in service layer)
 - HH:MM regex for time validation
+- Nested DTO composition: Use array_map with ChildDTO::fromEntity() for nested collections
 
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 09-01-PLAN.md (Base Response DTOs)
+Stopped at: Completed 09-03-PLAN.md (Task and TimeBlock Response DTOs)
 Resume file: None
 
 ---
