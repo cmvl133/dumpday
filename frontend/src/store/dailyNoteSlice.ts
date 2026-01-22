@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
 import { calculateTopPercent, calculateHeightPercent } from '@/lib/utils';
+import { performTaskAction } from './howAreYouSlice';
 import type { DailyNoteData, AnalysisResponse, TaskCategory } from '@/types';
 
 interface DailyNoteState {
@@ -546,6 +547,50 @@ const dailyNoteSlice = createSlice({
                 break;
               }
             }
+          }
+        }
+      })
+
+      // Cross-slice: Update task when check-in actions are performed
+      .addCase(performTaskAction.fulfilled, (state, action) => {
+        if (!state.dailyNote) return;
+
+        const { action: taskAction, result } = action.payload;
+        const updatedTask = result.task;
+        const categories = ['today', 'scheduled', 'someday', 'overdue'] as const;
+
+        // Find the task in any category
+        for (const category of categories) {
+          const taskList = state.dailyNote.tasks[category];
+          if (!taskList) continue;
+
+          const index = taskList.findIndex((t) => t.id === updatedTask.id);
+          if (index !== -1) {
+            if (taskAction === 'done') {
+              // Mark as completed in place
+              taskList[index] = {
+                ...taskList[index],
+                isCompleted: true,
+                completedAt: updatedTask.completedAt,
+              };
+            } else if (taskAction === 'tomorrow') {
+              // Remove from current category, add to scheduled
+              const [task] = taskList.splice(index, 1);
+              state.dailyNote.tasks.scheduled.push({
+                ...task,
+                dueDate: updatedTask.dueDate,
+              });
+            } else if (taskAction === 'today') {
+              // Update dueDate in place (task stays in current category for now)
+              taskList[index] = {
+                ...taskList[index],
+                dueDate: updatedTask.dueDate,
+              };
+            } else if (taskAction === 'drop') {
+              // Remove from list entirely
+              taskList.splice(index, 1);
+            }
+            break;
           }
         }
       });
