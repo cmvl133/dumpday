@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v1.1 Bugfixes
-**Phase:** 6 (Notes Panel Fixes) - Gap Closure
-**Activity:** Executing gap closure plan 06-02
+**Phase:** 6 (Notes Panel Fixes) - Complete
+**Activity:** Phase 06 completed
 
-Progress: [Phase 06] 1/2 plans complete
+Progress: [Phase 06] 2/2 plans complete
 
 ## Milestones
 
@@ -28,29 +28,26 @@ Progress: [Phase 06] 1/2 plans complete
 
 - [x] v1 Time Blocks milestone (5 phases, 15 plans)
 - [x] Phase 06-01: Fix Notes Panel Bugs (NOTE-01 through NOTE-04)
+- [x] Phase 06-02: Gap Closure (empty content API, typography plugin, dual buttons UX)
 
 ## Active Work
 
-**Phase 06-02 (Gap Closure):** Fix remaining issues found in manual testing:
-1. Backend accepts empty content for new notes (API fix)
-2. Install @tailwindcss/typography for prose classes (HTML rendering fix)
-3. Main screen Notes UX improvements (dual add buttons, expanded edit)
+None - Phase 06 complete. Awaiting next milestone planning.
 
 ## Next Action
 
-**EXECUTE 06-02-PLAN.md**
+**PHASE 06 COMPLETE**
 
-Execute gap closure plan to fix:
-- API validation error on empty content
-- HTML preview not rendering correctly
-- UX improvements for main screen Notes section
+All Notes Panel bugs fixed. Ready for:
+1. Manual testing of notes functionality
+2. Planning next bugfix phase or new milestone
 
 ## Context Notes
 
-**Bugs discovered in manual testing (06-02):**
-1. `onAdd('')` fails with "Content and date are required" — backend rejects empty content
-2. HTML preview shows only <b> correctly — @tailwindcss/typography not installed
-3. Main screen UX needs improvement — dual add buttons, edit in expanded panel
+**Decisions from 06-02:**
+- Use isset() instead of empty() for content validation - allows empty string
+- Add triggerNewNote prop to NotesExpandedModal for auto-creation on open
+- Keep inline 'Quick note' and expanded 'Add Note' as separate UX flows
 
 **Decisions from 06-01:**
 - hideCloseButton prop for DialogContent when using custom close button
@@ -63,8 +60,8 @@ Execute gap closure plan to fix:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Created 06-02-PLAN.md (gap closure)
-Resume file: .planning/phases/06-notes-panel-fixes/06-02-PLAN.md
+Stopped at: Completed 06-02-PLAN.md
+Resume file: None
 
 ---
 
