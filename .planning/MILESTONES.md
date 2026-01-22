@@ -1,5 +1,32 @@
 # Project Milestones: Dopaminder
 
+## v1.1 Bugfixes (Shipped: 2026-01-22)
+
+**Delivered:** Bug fixes and polish for v1 Time Blocks release - Notes panel, check-in modal, and AI planning improvements.
+
+**Phases completed:** 6-8 (5 plans total)
+
+**Key accomplishments:**
+
+- Notes panel fixes: single close button, auto-select, WYSIWYG, HTML preview, empty content, dual buttons UX
+- Check-in modal respects user dismiss intent (updates lastModalAt timestamp)
+- Cross-slice Redux pattern for immediate task list updates
+- Event allowOverlap property for AI scheduling control
+- Overdue tasks now included in planning view
+
+**Stats:**
+
+- 39 files modified
+- ~3,005 lines added (PHP + TypeScript)
+- 3 phases, 5 plans, 21 commits
+- 1 day from start to ship
+
+**Git range:** `d43fcf0` → `92a71a1`
+
+**What's next:** Planning v1.2 or v2 features
+
+---
+
 ## v1 Time Blocks (Shipped: 2026-01-20)
 
 **Delivered:** Time blocks for organizing the day into contexts (work, relax, family) with automatic task-block matching via tags.

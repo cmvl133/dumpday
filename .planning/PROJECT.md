@@ -30,14 +30,14 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 - Exception handling (skip/modify/restore per day) — v1
 - Task-Block matching via tags z "first available block" — v1
 - AI awareness blokow przy brain dump — v1
+- Notes panel fixes (6 bugs: add button, close button, WYSIWYG, HTML preview, empty content, dual UX) — v1.1
+- Check-in modal respects manual close until next interval — v1.1
+- AI planning fixes (event overlap, overdue tasks in planning) — v1.1
+- UI state updates without refresh (cross-slice Redux pattern) — v1.1
 
 ### Active
 
-**v1.1 Bugfixes:**
-- [ ] Notes panel fixes (add button, double X, WYSIWYG, HTML preview)
-- [ ] Check-in modal respects manual close until next interval
-- [ ] AI planning fixes (event overlap, task splitting, scheduled tasks in planning)
-- [ ] UI state updates without refresh (Later/overdue)
+(None - planning next milestone)
 
 ### Out of Scope
 
@@ -50,20 +50,22 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 
 ## Context
 
-**Current State (v1 shipped):**
+**Current State (v1.1 shipped):**
 - Backend: Symfony 7.4 + Doctrine ORM + PostgreSQL
 - Frontend: React 19 + Redux Toolkit + Tailwind CSS + shadcn/ui
 - AI: OpenAI GPT-4o-mini (brain dump analysis, schedule optimization)
-- ~9,750 LOC added in v1 milestone
-- 5 phases, 15 plans, 67 commits
+- ~12,750 LOC (v1: 9,750 + v1.1: 3,005)
+- 8 phases, 20 plans total
 
 **Tech Stack:**
 - DailyNote jako aggregate root dla taskow, eventow, notatek
 - TimeBlock jako template (recurrence-based, not instance)
 - TimeBlockException dla per-day overrides
 - Tag-based task-block matching
+- Cross-slice Redux pattern for state sync (v1.1)
+- Event allowOverlap for AI scheduling constraints (v1.1)
 
-**User Feedback (v1):**
+**User Feedback (v1.1):**
 - Settings modal getting crowded -> consider tabs in v2
 
 ## Constraints
@@ -85,7 +87,11 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 | Soft delete dla TimeBlock | isActive=false zamiast hard delete | Good |
 | Skipped blocks excluded from response | Prostsze API, mniej logiki na froncie | Good |
 | EventBlock leftOffset 84px | Unikniecie overlap z TimeBlockStrip | Good |
+| hideCloseButton prop dla DialogContent | Custom close buttons bez duplikatow | Good |
+| Cross-slice extraReducer pattern | Unika circular imports w Redux | Good |
+| Event allowOverlap default false | Konserwatywne — eventy blokuja taski | Good |
+| dueDate <= today dla planning | Overdue tasks wchodza do planowania | Good |
 
 ---
 
-*Last updated: 2026-01-22 after v1.1 Bugfixes milestone start*
+*Last updated: 2026-01-22 after v1.1 Bugfixes milestone complete*
