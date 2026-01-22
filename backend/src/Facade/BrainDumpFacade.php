@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Repository\DailyNoteRepository;
 use App\Repository\TaskRepository;
 use App\Service\BrainDumpAnalyzer;
+use App\Service\DuplicateDetectionService;
 use App\Service\EventExtractor;
 use App\Service\JournalExtractor;
 use App\Service\NoteExtractor;
@@ -31,6 +32,7 @@ class BrainDumpFacade
         private readonly DailyNoteRepository $dailyNoteRepository,
         private readonly TaskRepository $taskRepository,
         private readonly TimeBlockService $timeBlockService,
+        private readonly DuplicateDetectionService $duplicateDetectionService,
     ) {
     }
 
@@ -94,74 +96,63 @@ class BrainDumpFacade
 
         // Add new items WITHOUT clearing existing ones, with duplicate detection
         $existingTaskTitles = array_map(
-            fn ($t) => mb_strtolower(trim($t->getTitle())),
+            fn ($t) => $t->getTitle(),
             $dailyNote->getTasks()->toArray()
         );
 
         foreach ($this->taskExtractor->extract($analysisResult, $dailyNote) as $task) {
-            $normalizedTitle = mb_strtolower(trim($task->getTitle()));
-            if (! in_array($normalizedTitle, $existingTaskTitles, true)) {
+            if (!$this->duplicateDetectionService->isTaskDuplicate($task->getTitle(), $existingTaskTitles)) {
                 $dailyNote->addTask($task);
-                $existingTaskTitles[] = $normalizedTitle;
+                $existingTaskTitles[] = $task->getTitle();
             }
         }
 
         // For events, check title + overlapping time
-        $existingEvents = $dailyNote->getEvents()->toArray();
+        $existingEvents = array_map(fn ($e) => [
+            'title' => $e->getTitle(),
+            'startTime' => $e->getStartTime(),
+            'endTime' => $e->getEndTime(),
+        ], $dailyNote->getEvents()->toArray());
 
         foreach ($this->eventExtractor->extract($analysisResult, $dailyNote) as $event) {
-            $isDuplicate = false;
-            $newTitle = mb_strtolower(trim($event->getTitle()));
-            $newStart = $event->getStartTime();
-            $newEnd = $event->getEndTime();
-
-            foreach ($existingEvents as $existing) {
-                $existingTitle = mb_strtolower(trim($existing->getTitle()));
-
-                // Check if same title
-                if ($newTitle === $existingTitle) {
-                    // Check if times overlap
-                    $existingStart = $existing->getStartTime();
-                    $existingEnd = $existing->getEndTime();
-
-                    if ($this->timesOverlap($newStart, $newEnd, $existingStart, $existingEnd)) {
-                        $isDuplicate = true;
-                        break;
-                    }
-                }
-            }
-
-            if (! $isDuplicate) {
+            if (!$this->duplicateDetectionService->isEventDuplicate(
+                $event->getTitle(),
+                $event->getStartTime(),
+                $event->getEndTime(),
+                $existingEvents
+            )) {
                 $dailyNote->addEvent($event);
-                $existingEvents[] = $event;
+                $existingEvents[] = [
+                    'title' => $event->getTitle(),
+                    'startTime' => $event->getStartTime(),
+                    'endTime' => $event->getEndTime(),
+                ];
             }
         }
 
         // For journal entries, check content similarity
         $existingJournalContents = array_map(
-            fn ($j) => mb_strtolower(trim($j->getContent())),
+            fn ($j) => $j->getContent(),
             $dailyNote->getJournalEntries()->toArray()
         );
 
         foreach ($this->journalExtractor->extract($analysisResult, $dailyNote) as $journalEntry) {
-            $normalizedContent = mb_strtolower(trim($journalEntry->getContent()));
-            if (! in_array($normalizedContent, $existingJournalContents, true)) {
+            if (!$this->duplicateDetectionService->isContentDuplicate($journalEntry->getContent(), $existingJournalContents)) {
                 $dailyNote->addJournalEntry($journalEntry);
-                $existingJournalContents[] = $normalizedContent;
+                $existingJournalContents[] = $journalEntry->getContent();
             }
         }
 
         // For notes, check content similarity
         $existingNoteContents = array_map(
-            fn ($n) => mb_strtolower(trim($n->getContent())),
+            fn ($n) => $n->getContent(),
             $dailyNote->getNotes()->toArray()
         );
 
         foreach ($this->noteExtractor->extract($analysisResult, $dailyNote) as $note) {
-            $normalizedContent = mb_strtolower(trim($note->getContent()));
-            if (! in_array($normalizedContent, $existingNoteContents, true)) {
+            if (!$this->duplicateDetectionService->isContentDuplicate($note->getContent(), $existingNoteContents)) {
                 $dailyNote->addNote($note);
-                $existingNoteContents[] = $normalizedContent;
+                $existingNoteContents[] = $note->getContent();
             }
         }
 
@@ -305,29 +296,4 @@ class BrainDumpFacade
         ];
     }
 
-    /**
-     * Check if two time ranges overlap.
-     */
-    private function timesOverlap(
-        ?\DateTimeInterface $start1,
-        ?\DateTimeInterface $end1,
-        ?\DateTimeInterface $start2,
-        ?\DateTimeInterface $end2
-    ): bool {
-        if ($start1 === null || $start2 === null) {
-            return false;
-        }
-
-        // If no end time, assume 1 hour duration
-        $end1 = $end1 ?? (clone $start1)->modify('+1 hour');
-        $end2 = $end2 ?? (clone $start2)->modify('+1 hour');
-
-        // Convert to minutes for comparison
-        $s1 = (int) $start1->format('H') * 60 + (int) $start1->format('i');
-        $e1 = (int) $end1->format('H') * 60 + (int) $end1->format('i');
-        $s2 = (int) $start2->format('H') * 60 + (int) $start2->format('i');
-        $e2 = (int) $end2->format('H') * 60 + (int) $end2->format('i');
-
-        return $s1 < $e2 && $s2 < $e1;
-    }
 }
