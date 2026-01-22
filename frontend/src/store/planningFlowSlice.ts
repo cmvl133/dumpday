@@ -122,7 +122,7 @@ const planningFlowSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(selectMode, (state, action) => { if (action.payload === 'planning') return { ...initialState }; })
+      .addCase(selectMode, (_state, action) => { if (action.payload === 'planning') return { ...initialState }; })
       .addCase(closeModal, () => {})
       .addCase(fetchPlanningTasks.pending, (state) => { state.isLoading = true; state.error = null; })
       .addCase(fetchPlanningTasks.fulfilled, (state, action) => {

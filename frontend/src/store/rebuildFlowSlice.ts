@@ -80,7 +80,7 @@ const rebuildFlowSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(selectMode, (state, action) => { if (action.payload === 'rebuild') return { ...initialState }; })
+      .addCase(selectMode, (_state, action) => { if (action.payload === 'rebuild') return { ...initialState }; })
       .addCase(closeModal, () => {})
       .addCase(fetchRebuildData.pending, (state) => { state.isLoading = true; state.error = null; })
       .addCase(fetchRebuildData.fulfilled, (state, action) => {
