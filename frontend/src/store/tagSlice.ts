@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@/lib/storage';
 import type { Tag, TagFilterMode } from '@/types';
 
 interface TagState {
@@ -10,22 +11,9 @@ interface TagState {
   error: string | null;
 }
 
-// Load filter state from localStorage
-const loadFilterState = (): { activeFilters: number[]; filterMode: TagFilterMode } => {
-  try {
-    const saved = localStorage.getItem('tagFilter');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return {
-        activeFilters: parsed.activeFilters || [],
-        filterMode: parsed.filterMode || 'or',
-      };
-    }
-  } catch {
-    // Ignore parse errors
-  }
-  return { activeFilters: [], filterMode: 'or' };
-};
+// Load filter state from storage
+const loadFilterState = () =>
+  getStorageItem(STORAGE_KEYS.TAG_FILTER, { activeFilters: [] as number[], filterMode: 'or' as const });
 
 const savedFilterState = loadFilterState();
 
@@ -37,14 +25,9 @@ const initialState: TagState = {
   error: null,
 };
 
-// Persist filter state to localStorage
-const saveFilterState = (activeFilters: number[], filterMode: TagFilterMode) => {
-  try {
-    localStorage.setItem('tagFilter', JSON.stringify({ activeFilters, filterMode }));
-  } catch {
-    // Ignore storage errors
-  }
-};
+// Persist filter state to storage
+const saveFilterState = (activeFilters: number[], filterMode: TagFilterMode) =>
+  setStorageItem(STORAGE_KEYS.TAG_FILTER, { activeFilters, filterMode });
 
 export const fetchTags = createAsyncThunk('tags/fetch', async () => {
   const result = await api.tag.list();
