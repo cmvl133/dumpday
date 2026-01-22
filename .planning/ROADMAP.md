@@ -8,7 +8,7 @@
 
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
-| 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Pending |
+| 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Planned |
 | 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Pending |
 | 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Pending |
 | 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Pending |
@@ -19,6 +19,16 @@
 ### Phase 9: Backend DTOs
 
 **Goal:** Replace inline array serialization with typed DTO classes
+
+**Plans:** 6 plans
+
+Plans:
+- [ ] 09-01-PLAN.md - Create base Response DTOs (TagResponse, EventResponse, NoteResponse, JournalEntryResponse)
+- [ ] 09-02-PLAN.md - Create Request DTOs (TaskCreateRequest, TaskUpdateRequest)
+- [ ] 09-03-PLAN.md - Create TaskResponse and TimeBlockResponse DTOs
+- [ ] 09-04-PLAN.md - Create ScheduleItemResponse and DailyNoteResponse DTOs
+- [ ] 09-05-PLAN.md - Integrate Response DTOs into controllers
+- [ ] 09-06-PLAN.md - Integrate Request DTOs and complete BrainDumpFacade migration
 
 **Requirements:**
 - DTO-01: TaskResponse DTO (eliminates 6+ duplications)
