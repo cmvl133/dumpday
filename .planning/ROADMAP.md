@@ -9,7 +9,7 @@
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
 | 6 | Notes Panel Fixes | Fix all notes-related bugs + UX improvements | NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06 | Complete |
-| 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Planned |
+| 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Complete ✓ |
 | 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Pending |
 
 ## Phase Details
@@ -58,7 +58,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 07-01-PLAN.md — Fix modal dismiss timestamp and cross-slice task updates
+- [x] 07-01-PLAN.md — Fix modal dismiss timestamp and cross-slice task updates
 
 ---
 
@@ -103,4 +103,4 @@ All 11 requirements mapped:
 ---
 
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 after Phase 7 planned*
+*Last updated: 2026-01-22 after Phase 7 complete*

@@ -18,7 +18,7 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ### Check-in Modal
 
-- [ ] **CHKN-01**: Check-in modal stays closed until next scheduled interval after manual dismiss
+- [x] **CHKN-01**: Check-in modal stays closed until next scheduled interval after manual dismiss
 
 ### AI Planning
 
@@ -28,7 +28,7 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ### UI State
 
-- [ ] **UIST-01**: Marking task as Later/overdue updates list immediately (no refresh needed)
+- [x] **UIST-01**: Marking task as Later/overdue updates list immediately (no refresh needed)
 
 ## Out of Scope
 
@@ -48,8 +48,8 @@ Bugfixes and polish for v1 Time Blocks release.
 | NOTE-04 | 6 | Complete |
 | NOTE-05 | 6 | Complete |
 | NOTE-06 | 6 | Complete |
-| CHKN-01 | 7 | Pending |
-| UIST-01 | 7 | Pending |
+| CHKN-01 | 7 | Complete |
+| UIST-01 | 7 | Complete |
 | PLAN-01 | 8 | Pending |
 | PLAN-02 | 8 | Pending |
 | PLAN-03 | 8 | Pending |
@@ -61,4 +61,4 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after Phase 6 gap closure*
+*Last updated: 2026-01-22 after Phase 7 complete*
