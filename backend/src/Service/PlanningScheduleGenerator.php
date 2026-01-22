@@ -56,6 +56,7 @@ class PlanningScheduleGenerator
             'title' => $event->getTitle(),
             'startTime' => $event->getStartTime()?->format('H:i'),
             'endTime' => $event->getEndTime()?->format('H:i'),
+            'allowOverlap' => $event->isAllowOverlap(),
         ], $events);
 
         $existingPlannedData = array_map(fn (Task $task) => [
@@ -152,6 +153,7 @@ class PlanningScheduleGenerator
             'title' => $event->getTitle(),
             'startTime' => $event->getStartTime()?->format('H:i'),
             'endTime' => $event->getEndTime()?->format('H:i'),
+            'allowOverlap' => $event->isAllowOverlap(),
         ], $events);
 
         $existingPlannedData = array_map(fn (Task $task) => [
