@@ -276,6 +276,11 @@ const howAreYouSlice = createSlice({
     },
     closeModal: (state) => {
       state.isOpen = false;
+      // Update lastModalAt on close to prevent immediate reopen
+      // This ensures the next interval counts from dismiss time, not open time
+      const now = new Date().toISOString();
+      state.lastModalAt = now;
+      storeLastModal(now);
     },
     selectMode: (state, action: PayloadAction<ModalMode>) => {
       state.mode = action.payload;
