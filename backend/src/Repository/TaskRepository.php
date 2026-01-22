@@ -92,6 +92,7 @@ class TaskRepository extends ServiceEntityRepository
      * Find all incomplete tasks for today that need planning (for Planning Mode).
      * Includes:
      * - Overdue tasks (dueDate < today) regardless of fixedTime - need re-planning
+     * - Overdue tasks with no dueDate but category='today' from past daily notes
      * - Today's tasks without fixedTime set
      *
      * @return Task[]
@@ -103,6 +104,8 @@ class TaskRepository extends ServiceEntityRepository
             ->where('dn.user = :user')
             ->andWhere('(
                 (t.dueDate < :today)
+                OR
+                (t.category = :todayCategory AND dn.date < :today AND t.dueDate IS NULL)
                 OR
                 ((t.dueDate = :today OR (t.category = :todayCategory AND dn.date = :today)) AND t.fixedTime IS NULL)
             )')
