@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 10 (Backend Services) - IN PROGRESS
-**Activity:** Completed 10-02 (TaskService)
+**Activity:** Completed 10-05 (BrainDumpFacade Refactoring)
 
-Progress: [Phase 10] 3/? plans | [Milestone v2] 1/5 phases
+Progress: [Phase 10] 4/? plans | [Milestone v2] 1/5 phases
 
 ## Milestones
 
@@ -45,6 +45,7 @@ Progress: [Phase 10] 3/? plans | [Milestone v2] 1/5 phases
   - [x] 10-01: Pure Logic Services (RecurrenceService, DuplicateDetectionService)
   - [x] 10-02: TaskService (task CRUD, completion, tag management)
   - [x] 10-03: PlanningService (planning mode operations)
+  - [x] 10-05: BrainDumpFacade Refactoring (duplicate detection delegation)
 - Phase 11: Backend Tests (pending)
 - Phase 12: Frontend Slices (pending)
 - Phase 13: Frontend Storage (pending)
@@ -53,9 +54,9 @@ Progress: [Phase 10] 3/? plans | [Milestone v2] 1/5 phases
 
 **Continue Phase 10:**
 
-Check remaining plans for Phase 10 or proceed to controller refactoring.
+Check remaining plans for Phase 10 or proceed to Phase 11 (Backend Tests).
 
-Plan 10-02 complete. TaskService ready for TaskController integration.
+Plan 10-05 complete. BrainDumpFacade now uses DuplicateDetectionService.
 
 ## Context Notes
 
@@ -107,10 +108,15 @@ Plan 10-02 complete. TaskService ready for TaskController integration.
 - PATCH semantics via array_key_exists for explicit null vs missing field distinction
 - Single flush at end of acceptSchedule for atomic batch updates
 
+**Key Decisions (10-05):**
+- BrainDumpFacade at 299 lines acceptable - target was 200 but remaining is orchestration logic
+- Pass original strings to DuplicateDetectionService - service handles normalization
+- getDailyNoteData() stays in facade - complex aggregation is facade's responsibility
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-02-PLAN.md (TaskService)
+Stopped at: Completed 10-05-PLAN.md (BrainDumpFacade Refactoring)
 Resume file: None
 
 ---
