@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Response\EventResponse;
+use App\DTO\Response\TaskResponse;
 use App\Entity\User;
 use App\Repository\EventRepository;
 use App\Repository\TaskRepository;
