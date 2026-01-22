@@ -1,33 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-const LAST_MODAL_KEY = 'dopaminder_last_modal';
-
-function getStoredLastModal(): string | null {
-  try {
-    const stored = localStorage.getItem(LAST_MODAL_KEY);
-    if (stored) {
-      const date = new Date(stored);
-      if (!isNaN(date.getTime())) {
-        return stored;
-      }
-    }
-  } catch {
-    // Ignore localStorage errors
-  }
-  return null;
-}
-
-function storeLastModal(value: string | null): void {
-  try {
-    if (value) {
-      localStorage.setItem(LAST_MODAL_KEY, value);
-    } else {
-      localStorage.removeItem(LAST_MODAL_KEY);
-    }
-  } catch {
-    // Ignore localStorage errors
-  }
-}
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@/lib/storage';
 
 export type ModalMode = 'selection' | 'checkin' | 'planning' | 'rebuild';
 
@@ -41,7 +13,7 @@ interface HowAreYouState {
 const initialState: HowAreYouState = {
   isOpen: false,
   mode: 'selection',
-  lastModalAt: getStoredLastModal(),
+  lastModalAt: getStorageItem(STORAGE_KEYS.LAST_MODAL, null),
   error: null,
 };
 
@@ -56,14 +28,14 @@ const howAreYouSlice = createSlice({
       // Update lastModalAt when opening to prevent immediate re-open if dismissed
       const now = new Date().toISOString();
       state.lastModalAt = now;
-      storeLastModal(now);
+      setStorageItem(STORAGE_KEYS.LAST_MODAL, now);
     },
     closeModal: (state) => {
       state.isOpen = false;
       // Update lastModalAt on close to prevent immediate reopen
       const now = new Date().toISOString();
       state.lastModalAt = now;
-      storeLastModal(now);
+      setStorageItem(STORAGE_KEYS.LAST_MODAL, now);
     },
     selectMode: (state, action: PayloadAction<ModalMode>) => {
       state.mode = action.payload;

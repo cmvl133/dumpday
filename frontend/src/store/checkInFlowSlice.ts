@@ -1,37 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/lib/api';
+import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@/lib/storage';
 import { selectMode, closeModal } from './howAreYouSlice';
 import type { CheckInTask, CheckInStats } from '@/types';
-
-// localStorage helpers for lastCheckInAt sync
-const LAST_MODAL_KEY = 'dopaminder_last_modal';
-
-function getStoredLastModal(): string | null {
-  try {
-    const stored = localStorage.getItem(LAST_MODAL_KEY);
-    if (stored) {
-      const date = new Date(stored);
-      if (!isNaN(date.getTime())) {
-        return stored;
-      }
-    }
-  } catch {
-    // Ignore localStorage errors
-  }
-  return null;
-}
-
-function storeLastModal(value: string | null): void {
-  try {
-    if (value) {
-      localStorage.setItem(LAST_MODAL_KEY, value);
-    } else {
-      localStorage.removeItem(LAST_MODAL_KEY);
-    }
-  } catch {
-    // Ignore localStorage errors
-  }
-}
 
 // State interface
 export interface CheckInFlowState {
@@ -59,7 +30,7 @@ const initialState: CheckInFlowState = {
     bestCombo: 0,
   },
   isLoading: false,
-  lastCheckInAt: getStoredLastModal(),
+  lastCheckInAt: getStorageItem(STORAGE_KEYS.LAST_MODAL, null),
   error: null,
 };
 
@@ -155,7 +126,7 @@ const checkInFlowSlice = createSlice({
           const localDate = state.lastCheckInAt ? new Date(state.lastCheckInAt).getTime() : 0;
           if (apiDate > localDate) {
             state.lastCheckInAt = apiLastModal;
-            storeLastModal(apiLastModal);
+            setStorageItem(STORAGE_KEYS.LAST_MODAL, apiLastModal);
           }
         }
       })
@@ -167,7 +138,7 @@ const checkInFlowSlice = createSlice({
       .addCase(completeCheckIn.fulfilled, (state, action) => {
         const completedAt = action.payload.checkIn.completedAt;
         state.lastCheckInAt = completedAt;
-        storeLastModal(completedAt);
+        setStorageItem(STORAGE_KEYS.LAST_MODAL, completedAt);
       });
   },
 });
