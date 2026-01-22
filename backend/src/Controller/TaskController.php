@@ -7,14 +7,13 @@ namespace App\Controller;
 use App\DTO\Request\TaskCreateRequest;
 use App\DTO\Response\TaskResponse;
 use App\Entity\DailyNote;
-use App\Entity\RecurringTask;
 use App\Entity\Task;
 use App\Entity\User;
-use App\Enum\RecurrenceType;
 use App\Enum\TaskCategory;
 use App\Repository\DailyNoteRepository;
 use App\Repository\TagRepository;
 use App\Repository\TaskRepository;
+use App\Service\RecurrenceService;
 use App\Service\RecurringSyncService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +33,7 @@ class TaskController extends AbstractController
         private readonly TagRepository $tagRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly RecurringSyncService $recurringSyncService,
+        private readonly RecurrenceService $recurrenceService,
     ) {
     }
 
@@ -106,7 +106,7 @@ class TaskController extends AbstractController
             // Generate next occurrence if completing a recurring task
             if ($isCompleted && ! $wasCompleted && $task->getRecurringTask() !== null) {
                 $recurringTask = $task->getRecurringTask();
-                $nextDate = $this->findNextOccurrenceDate($recurringTask);
+                $nextDate = $this->recurrenceService->findNextOccurrenceDate($recurringTask);
                 if ($nextDate !== null) {
                     $generatedNextTask = $this->recurringSyncService->generateTask($recurringTask, $nextDate);
                     if ($generatedNextTask !== null) {
@@ -272,49 +272,5 @@ class TaskController extends AbstractController
         }
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Find the next occurrence date for a recurring task.
-     */
-    private function findNextOccurrenceDate(RecurringTask $recurringTask): ?\DateTimeInterface
-    {
-        $today = new \DateTime('today');
-        $endDate = $recurringTask->getEndDate();
-
-        // Check up to 365 days ahead
-        for ($i = 1; $i <= 365; $i++) {
-            $date = (clone $today)->modify("+{$i} days");
-
-            // Stop if we're past the end date
-            if ($endDate !== null && $date > $endDate) {
-                return null;
-            }
-
-            if ($this->matchesRecurrencePattern($recurringTask, $date)) {
-                return $date;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Check if a date matches the recurrence pattern.
-     */
-    private function matchesRecurrencePattern(RecurringTask $recurringTask, \DateTimeInterface $date): bool
-    {
-        $dayOfWeek = (int) $date->format('w'); // 0 = Sunday, 6 = Saturday
-        $dayOfMonth = (int) $date->format('j');
-        $startDayOfWeek = (int) $recurringTask->getStartDate()->format('w');
-        $startDayOfMonth = (int) $recurringTask->getStartDate()->format('j');
-
-        return match ($recurringTask->getRecurrenceType()) {
-            RecurrenceType::DAILY => true,
-            RecurrenceType::WEEKLY => $dayOfWeek === $startDayOfWeek,
-            RecurrenceType::WEEKDAYS => $dayOfWeek >= 1 && $dayOfWeek <= 5,
-            RecurrenceType::MONTHLY => $dayOfMonth === $startDayOfMonth,
-            RecurrenceType::CUSTOM => in_array($dayOfWeek, $recurringTask->getRecurrenceDays() ?? [], true),
-        };
     }
 }

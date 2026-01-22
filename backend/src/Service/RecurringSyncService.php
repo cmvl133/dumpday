@@ -8,7 +8,6 @@ use App\Entity\DailyNote;
 use App\Entity\RecurringTask;
 use App\Entity\Task;
 use App\Entity\User;
-use App\Enum\RecurrenceType;
 use App\Repository\DailyNoteRepository;
 use App\Repository\RecurringTaskRepository;
 use App\Repository\TaskRepository;
@@ -21,6 +20,7 @@ class RecurringSyncService
         private readonly DailyNoteRepository $dailyNoteRepository,
         private readonly TaskRepository $taskRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly RecurrenceService $recurrenceService,
     ) {
     }
 
@@ -75,41 +75,8 @@ class RecurringSyncService
             return false;
         }
 
-        // Check recurrence pattern
-        return $this->matchesRecurrencePattern($recurringTask, $date);
-    }
-
-    /**
-     * Check if a date matches the recurrence pattern.
-     */
-    private function matchesRecurrencePattern(RecurringTask $recurringTask, \DateTimeInterface $date): bool
-    {
-        $dayOfWeek = (int) $date->format('w'); // 0 = Sunday, 6 = Saturday
-        $dayOfMonth = (int) $date->format('j');
-        $startDayOfWeek = (int) $recurringTask->getStartDate()->format('w');
-        $startDayOfMonth = (int) $recurringTask->getStartDate()->format('j');
-
-        return match ($recurringTask->getRecurrenceType()) {
-            RecurrenceType::DAILY => true,
-            RecurrenceType::WEEKLY => $dayOfWeek === $startDayOfWeek,
-            RecurrenceType::WEEKDAYS => $dayOfWeek >= 1 && $dayOfWeek <= 5, // Mon-Fri
-            RecurrenceType::MONTHLY => $dayOfMonth === $startDayOfMonth,
-            RecurrenceType::CUSTOM => $this->matchesCustomPattern($recurringTask, $dayOfWeek),
-        };
-    }
-
-    /**
-     * Check if a day of week matches the custom recurrence pattern.
-     */
-    private function matchesCustomPattern(RecurringTask $recurringTask, int $dayOfWeek): bool
-    {
-        $customDays = $recurringTask->getRecurrenceDays();
-
-        if ($customDays === null || empty($customDays)) {
-            return false;
-        }
-
-        return in_array($dayOfWeek, $customDays, true);
+        // Check recurrence pattern using RecurrenceService
+        return $this->recurrenceService->matchesPattern($recurringTask, $date);
     }
 
     /**
