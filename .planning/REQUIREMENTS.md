@@ -9,10 +9,10 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ### Notes Panel
 
-- [ ] **NOTE-01**: "Add new note" button creates a new note when clicked
-- [ ] **NOTE-02**: Notes panel has single close button (remove duplicate X)
-- [ ] **NOTE-03**: WYSIWYG editor displays content correctly in edit mode
-- [ ] **NOTE-04**: Note preview renders formatted content (not raw HTML)
+- [x] **NOTE-01**: "Add new note" button creates a new note when clicked
+- [x] **NOTE-02**: Notes panel has single close button (remove duplicate X)
+- [x] **NOTE-03**: WYSIWYG editor displays content correctly in edit mode
+- [x] **NOTE-04**: Note preview renders formatted content (not raw HTML)
 
 ### Check-in Modal
 
@@ -40,10 +40,10 @@ Bugfixes and polish for v1 Time Blocks release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NOTE-01 | 6 | Pending |
-| NOTE-02 | 6 | Pending |
-| NOTE-03 | 6 | Pending |
-| NOTE-04 | 6 | Pending |
+| NOTE-01 | 6 | Complete |
+| NOTE-02 | 6 | Complete |
+| NOTE-03 | 6 | Complete |
+| NOTE-04 | 6 | Complete |
 | CHKN-01 | 7 | Pending |
 | UIST-01 | 7 | Pending |
 | PLAN-01 | 8 | Pending |
@@ -57,4 +57,4 @@ Bugfixes and polish for v1 Time Blocks release.
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after initial definition*
+*Last updated: 2026-01-22 after Phase 6 completion*
