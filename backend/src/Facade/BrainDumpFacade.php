@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Facade;
 
+use App\DTO\Response\TaskResponse;
 use App\Entity\DailyNote;
 use App\Entity\User;
 use App\Repository\DailyNoteRepository;
@@ -199,7 +200,7 @@ class BrainDumpFacade
             $overdueTasks = $this->taskRepository->findOverdueTasks($user, $today);
             foreach ($overdueTasks as $task) {
                 $overdueTaskIds[] = $task->getId();
-                $tasks['overdue'][] = $this->serializeTask($task);
+                $tasks['overdue'][] = TaskResponse::fromEntity($task);
             }
         }
 
@@ -211,23 +212,11 @@ class BrainDumpFacade
                 continue;
             }
             $scheduledTaskIds[] = $task->getId();
-            $tasks['today'][] = $this->serializeTask($task);
+            $tasks['today'][] = TaskResponse::fromEntity($task);
         }
 
-        // Get active time blocks for this date
-        $timeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $date);
-        $serializedTimeBlocks = array_map(fn ($tb) => [
-            'id' => $tb->getId(),
-            'name' => $tb->getName(),
-            'color' => $tb->getColor(),
-            'startTime' => $tb->getStartTime()?->format('H:i'),
-            'endTime' => $tb->getEndTime()?->format('H:i'),
-            'tags' => array_map(fn ($tag) => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'color' => $tag->getColor(),
-            ], $tb->getTags()->toArray()),
-        ], $timeBlocks);
+        // Get active time blocks for this date (already serialized by TimeBlockService)
+        $serializedTimeBlocks = $this->timeBlockService->getActiveBlocksForDate($user, $date);
 
         // If no DailyNote exists but we have scheduled tasks or time blocks, return minimal data
         if ($dailyNote === null) {
@@ -266,7 +255,7 @@ class BrainDumpFacade
             }
 
             $category = $task->getCategory()->value;
-            $tasks[$category][] = $this->serializeTask($task);
+            $tasks[$category][] = TaskResponse::fromEntity($task);
         }
 
         $events = [];
@@ -313,35 +302,6 @@ class BrainDumpFacade
             'timeBlocks' => $serializedTimeBlocks,
             'createdAt' => $dailyNote->getCreatedAt()?->format('c'),
             'updatedAt' => $dailyNote->getUpdatedAt()?->format('c'),
-        ];
-    }
-
-    /**
-     * Serialize a task to array including subtask fields.
-     */
-    private function serializeTask($task): array
-    {
-        return [
-            'id' => $task->getId(),
-            'title' => $task->getTitle(),
-            'isCompleted' => $task->isCompleted(),
-            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-            'reminderTime' => $task->getReminderTime()?->format('H:i'),
-            'estimatedMinutes' => $task->getEstimatedMinutes(),
-            'fixedTime' => $task->getFixedTime()?->format('H:i'),
-            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-            'needsFullFocus' => $task->isNeedsFullFocus(),
-            'recurringTaskId' => $task->getRecurringTask()?->getId(),
-            'parentTaskId' => $task->getParentTask()?->getId(),
-            'isPart' => $task->isPart(),
-            'partNumber' => $task->getPartNumber(),
-            'progress' => $task->getProgress(),
-            'hasSubtasks' => $task->hasSubtasks(),
-            'tags' => array_map(fn ($tag) => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'color' => $tag->getColor(),
-            ], $task->getTags()->toArray()),
         ];
     }
 
