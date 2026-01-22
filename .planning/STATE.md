@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v1.1 Bugfixes
-**Phase:** 6 (Notes Panel Fixes) - Complete
-**Activity:** Phase 06 completed
+**Phase:** 7 (UI Behavior Fixes) - Plan 01 Complete
+**Activity:** Completed 07-01-PLAN.md
 
-Progress: [Phase 06] 2/2 plans complete
+Progress: [Phase 07] 1/? plans complete
 
 ## Milestones
 
@@ -29,20 +29,29 @@ Progress: [Phase 06] 2/2 plans complete
 - [x] v1 Time Blocks milestone (5 phases, 15 plans)
 - [x] Phase 06-01: Fix Notes Panel Bugs (NOTE-01 through NOTE-04)
 - [x] Phase 06-02: Gap Closure (empty content API, typography plugin, dual buttons UX)
+- [x] Phase 07-01: UI Behavior Fixes (CHKN-01 modal dismiss, UIST-01 task list sync)
 
 ## Active Work
 
-None - Phase 06 complete. Awaiting next milestone planning.
+Phase 07 Plan 01 complete. Additional plans in phase may exist.
 
 ## Next Action
 
-**PHASE 06 COMPLETE**
+**PHASE 07-01 COMPLETE**
 
-All Notes Panel bugs fixed. Ready for:
-1. Manual testing of notes functionality
-2. Planning next bugfix phase or new milestone
+UI behavior fixes implemented:
+1. Check-in modal respects user dismiss intent
+2. Task list updates immediately on check-in actions
+
+Ready for:
+1. Manual testing of check-in modal behavior
+2. Continuation with next plan if phase has more plans
 
 ## Context Notes
+
+**Decisions from 07-01:**
+- Use extraReducer addCase pattern for cross-slice coordination (no circular imports)
+- Update lastModalAt on close, not just on open/complete, to respect dismiss intent
 
 **Decisions from 06-02:**
 - Use isset() instead of empty() for content validation - allows empty string
@@ -60,7 +69,7 @@ All Notes Panel bugs fixed. Ready for:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 06-02-PLAN.md
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
 
 ---
