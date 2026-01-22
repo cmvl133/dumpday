@@ -33,7 +33,11 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 
 ### Active
 
-(Brak — oczekuje na nowy milestone)
+**v1.1 Bugfixes:**
+- [ ] Notes panel fixes (add button, double X, WYSIWYG, HTML preview)
+- [ ] Check-in modal respects manual close until next interval
+- [ ] AI planning fixes (event overlap, task splitting, scheduled tasks in planning)
+- [ ] UI state updates without refresh (Later/overdue)
 
 ### Out of Scope
 
@@ -84,4 +88,4 @@ Dopaminder to aplikacja do planowania dnia dla osob z ADHD. Pozwala na "brain du
 
 ---
 
-*Last updated: 2026-01-22 after v1 Time Blocks milestone*
+*Last updated: 2026-01-22 after v1.1 Bugfixes milestone start*
