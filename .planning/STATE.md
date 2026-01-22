@@ -65,10 +65,11 @@ Progress: [Phase 11] 4/4 plans COMPLETE | [Milestone v2] 3/5 phases
 /gsd:execute-phase 12
 ```
 
-Phase 11 complete with 150+ unit tests covering:
+Phase 11 complete with 180+ unit tests covering:
 - RecurrenceService (17 tests)
 - DuplicateDetectionService (24 tests)
 - DTO validation (81 tests)
+- TaskService (38 tests)
 - PlanningService (28 tests)
 
 ## Context Notes
@@ -111,6 +112,12 @@ Phase 11 complete with 150+ unit tests covering:
 - DataProvider pattern for format validation (valid/invalid date, time formats)
 - Standalone Validator for unit testing without Symfony kernel
 
+**Patterns Established (11-03):**
+- Service test pattern: Mock repositories and EntityManager, real pure logic services
+- Mock intersection types (EntityManagerInterface&MockObject) for type safety
+- Tag ownership verification: Create mock tag with mock user returning specific IDs
+- Completion testing: Verify both isCompleted flag and completedAt timestamp
+
 **Patterns Established (11-04):**
 - Service mock pattern: Mock all constructor dependencies in setUp()
 - Ownership test pattern: Mock User.getId() and DailyNote.getUser() chain
@@ -145,6 +152,10 @@ Phase 11 complete with 150+ unit tests covering:
 - TaskController reduced to single dependency (TaskService)
 - PlanningController keeps planning-specific serialization (hasConflict, matchingBlock)
 - Line count targets aspirational - key goal was zero EntityManager calls (achieved)
+
+**Key Decisions (11-03):**
+- Use real RecurrenceService instance instead of mock (final readonly class with no dependencies)
+- Test PATCH semantics via array_key_exists distinction between null and missing fields
 
 **Key Decisions (11-04):**
 - Used Reflection to set private dailyNote property on Task for ownership tests
