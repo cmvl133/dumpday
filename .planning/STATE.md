@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v2 Architecture Refactoring
-**Phase:** 13 (Frontend Storage) - IN PROGRESS
-**Activity:** Completed 13-01 (Storage Infrastructure)
+**Phase:** 13 (Frontend Storage) - COMPLETE
+**Activity:** Completed 13-02 (Redux Slice Storage Migration)
 
-Progress: [Phase 13] 1/2 plans | [Milestone v2] 4/5 phases
+Progress: [Phase 13] 2/2 plans | [Milestone v2] 5/5 phases - COMPLETE
 
 ## Milestones
 
@@ -60,18 +60,22 @@ Progress: [Phase 13] 1/2 plans | [Milestone v2] 4/5 phases
   - [x] 12-01: CheckIn Flow Slice and Coordinator Reduction
   - [x] 12-02: Planning and Rebuild Flow Slices
   - [x] 12-03: Component Integration and Store Wiring
-- Phase 13: Frontend Storage - IN PROGRESS
+- Phase 13: Frontend Storage - COMPLETE
   - [x] 13-01: Storage Infrastructure (typed constants and useStorage hook)
+  - [x] 13-02: Redux Slice Storage Migration (tagSlice, howAreYouSlice, checkInFlowSlice)
 
 ## Next Action
 
-**Continue Phase 13:**
+**v2 Milestone Complete:**
 
-```
-/gsd:execute-phase 13
-```
+Phase 13 (Frontend Storage) is the final phase of the v2 Architecture milestone. All phases are now complete:
+- Phase 9: Backend DTOs
+- Phase 10: Backend Services
+- Phase 11: Backend Tests
+- Phase 12: Frontend Slices
+- Phase 13: Frontend Storage
 
-Execute plan 13-02 to migrate existing localStorage consumers to use new storage utilities.
+Ready for v2 milestone verification and closure.
 
 ## Context Notes
 
@@ -80,14 +84,14 @@ Execute plan 13-02 to migrate existing localStorage consumers to use new storage
 - Backend: matchesRecurrencePattern() w 2 miejscach - RESOLVED (RecurrenceService)
 - Backend: 30+ EntityManager calls w kontrolerach - RESOLVED (Services)
 - Frontend: howAreYouSlice 583 linii (CheckIn+Planning+Rebuild) - RESOLVED (94 lines coordinator)
-- Frontend: localStorage rozrzucony po modulach - PENDING (Phase 13)
+- Frontend: localStorage rozrzucony po modulach - RESOLVED (centralized storage)
 
 **v2 Approach:**
 - DTOs first (foundation for services) - COMPLETE
 - Services extract logic (controllers become thin) - COMPLETE
 - Tests verify services work - COMPLETE
 - Frontend slices split (parallel with backend) - COMPLETE
-- Storage centralization last (may need slice changes) - PENDING
+- Storage centralization last (may need slice changes) - COMPLETE
 
 **Patterns Established (09-01 through 09-06):**
 - Response DTO: final readonly class with fromEntity() static factory
@@ -204,10 +208,19 @@ Execute plan 13-02 to migrate existing localStorage consumers to use new storage
 - Exported BoxId type from storage module for AnalysisResults.tsx to import
 - Silent failure in catch blocks for storage operations (storage full or disabled)
 
+**Patterns Established (13-02):**
+- Slice storage migration pattern: import utilities from @/lib/storage, replace local helpers
+- Type assertion pattern: use 'or' as const for TagFilterMode default value
+
+**Key Decisions (13-02):**
+- Kept function names loadFilterState/saveFilterState in tagSlice to minimize reducer changes
+- howAreYouSlice and checkInFlowSlice share LAST_MODAL key - intentional for sync
+- Removed date validation from getStoredLastModal - JSON.parse fallback handles invalid data
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 13-01-PLAN.md (Storage Infrastructure)
+Stopped at: Completed 13-02-PLAN.md (Redux Slice Storage Migration) - Phase 13 COMPLETE
 Resume file: None
 
 ---
