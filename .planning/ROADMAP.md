@@ -168,6 +168,13 @@ Plans:
 
 **Goal:** Centralize localStorage with typed useStorage hook
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 13-01-PLAN.md - Create storage constants and useStorage hook (STR-01, STR-05)
+- [ ] 13-02-PLAN.md - Migrate Redux slices (tagSlice, howAreYouSlice, checkInFlowSlice) (STR-02, STR-03)
+- [ ] 13-03-PLAN.md - Migrate hooks and components (useReminders, useAutoModal, AnalysisResults) (STR-04)
+
 **Requirements:**
 - STR-01: useStorage hook with typed keys
 - STR-02: Migrate tagSlice
@@ -183,10 +190,10 @@ Plans:
 5. TypeScript catches storage key typos
 
 **Approach:**
-- Create `frontend/src/hooks/useStorage.ts` with generic typed API
-- Create `frontend/src/lib/storageKeys.ts` with all keys
+- Create `frontend/src/lib/storage.ts` with typed key constants and utility functions
+- Create `frontend/src/hooks/useStorage.ts` with generic typed hook
 - Migrate modules one by one, testing each
-- Handle migration of existing data formats if needed
+- Keep existing key names for backward compatibility
 
 **Dependencies:** Phase 12 (may need updated slice structure)
 
