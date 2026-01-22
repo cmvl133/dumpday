@@ -20,6 +20,7 @@ interface NotesExpandedModalProps {
   onUpdate?: (id: number, content: string) => void;
   onDelete?: (id: number) => void;
   onAdd?: (content: string) => void;
+  triggerNewNote?: boolean;
 }
 
 type SortOrder = 'newest' | 'oldest';
@@ -31,6 +32,7 @@ export function NotesExpandedModal({
   onUpdate,
   onDelete,
   onAdd,
+  triggerNewNote = false,
 }: NotesExpandedModalProps) {
   const { t } = useTranslation();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -55,6 +57,13 @@ export function NotesExpandedModal({
       setEditContent('');
     }
   }, [isOpen]);
+
+  // Trigger new note creation when requested from parent
+  useEffect(() => {
+    if (isOpen && triggerNewNote) {
+      handleAddNote();
+    }
+  }, [isOpen, triggerNewNote]);
 
   const loadNotes = async () => {
     try {

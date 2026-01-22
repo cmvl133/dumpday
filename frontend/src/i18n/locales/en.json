@@ -408,6 +408,7 @@
   "notes": {
     "title": "Notes",
     "addNote": "Add note",
+    "addQuickNote": "Quick note",
     "expand": "Expand notes",
     "search": "Search notes...",
     "noNotes": "No notes yet",

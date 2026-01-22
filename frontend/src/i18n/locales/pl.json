@@ -408,6 +408,7 @@
   "notes": {
     "title": "Notatki",
     "addNote": "Dodaj notatkę",
+    "addQuickNote": "Szybka notatka",
     "expand": "Rozwiń notatki",
     "search": "Szukaj notatek...",
     "noNotes": "Brak notatek",

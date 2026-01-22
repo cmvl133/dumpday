@@ -32,19 +32,13 @@ export function NotesList({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [expandWithNewNote, setExpandWithNewNote] = useState(false);
 
   useEffect(() => {
     if (isAdding && textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [isAdding]);
-
-  const handleEdit = (note: Note) => {
-    if (note.id !== undefined) {
-      setEditingId(note.id);
-      setEditValue(note.content);
-    }
-  };
 
   const handleSave = () => {
     if (editingId !== null && onUpdate && editValue.trim()) {
@@ -95,6 +89,15 @@ export function NotesList({
     } else if (e.key === 'Escape') {
       handleCancelAdding();
     }
+  };
+
+  const handleAddInExpanded = () => {
+    setExpandWithNewNote(true);
+    setIsExpanded(true);
+  };
+
+  const handleEditInExpanded = () => {
+    setIsExpanded(true);
   };
 
   return (
@@ -158,7 +161,7 @@ export function NotesList({
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
-                        onClick={() => handleEdit(note as Note)}
+                        onClick={() => handleEditInExpanded()}
                       >
                         <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
                       </Button>
@@ -198,19 +201,30 @@ export function NotesList({
         </div>
       )}
 
-      {/* Add note and expand buttons */}
+      {/* Add note buttons and expand */}
       {!isPreview && (
         <div className="flex gap-2 mt-2">
           {onAdd && !isAdding && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex-1 text-muted-foreground hover:text-foreground"
-              onClick={handleStartAdding}
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              {t('tasks.addNote')}
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={handleStartAdding}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('notes.addQuickNote')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-muted-foreground hover:text-foreground"
+                onClick={handleAddInExpanded}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                {t('tasks.addNote')}
+              </Button>
+            </>
           )}
           <Button
             variant="ghost"
@@ -227,12 +241,16 @@ export function NotesList({
       {/* Expanded Modal */}
       <NotesExpandedModal
         isOpen={isExpanded}
-        onClose={() => setIsExpanded(false)}
+        onClose={() => {
+          setIsExpanded(false);
+          setExpandWithNewNote(false);
+        }}
         notes={notes.filter((n): n is Note => 'id' in n)}
         currentDate={currentDate}
         onUpdate={onUpdate}
         onDelete={onDelete}
         onAdd={onAdd}
+        triggerNewNote={expandWithNewNote}
       />
     </div>
   );
