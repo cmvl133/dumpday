@@ -159,42 +159,19 @@ class TaskController extends AbstractController
 
         $this->entityManager->flush();
 
-        $response = [
-            'id' => $task->getId(),
-            'title' => $task->getTitle(),
-            'isCompleted' => $task->isCompleted(),
-            'isDropped' => $task->isDropped(),
-            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-            'category' => $task->getCategory()->value,
-            'completedAt' => $task->getCompletedAt()?->format('c'),
-            'reminderTime' => $task->getReminderTime()?->format('H:i'),
-            'estimatedMinutes' => $task->getEstimatedMinutes(),
-            'fixedTime' => $task->getFixedTime()?->format('H:i'),
-            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-            'needsFullFocus' => $task->isNeedsFullFocus(),
-            'recurringTaskId' => $task->getRecurringTask()?->getId(),
-            'parentTaskId' => $task->getParentTask()?->getId(),
-            'isPart' => $task->isPart(),
-            'partNumber' => $task->getPartNumber(),
-            'progress' => $task->getProgress(),
-            'hasSubtasks' => $task->hasSubtasks(),
-            'tags' => array_map(fn ($tag) => [
-                'id' => $tag->getId(),
-                'name' => $tag->getName(),
-                'color' => $tag->getColor(),
-            ], $task->getTags()->toArray()),
-        ];
+        // Use DTO for task serialization, handle generatedNextTask separately for backward compatibility
+        $taskData = json_decode(json_encode(TaskResponse::fromEntity($task)), true);
 
         // Include generated next task info if one was created
         if ($generatedNextTask !== null) {
-            $response['generatedNextTask'] = [
+            $taskData['generatedNextTask'] = [
                 'id' => $generatedNextTask->getId(),
                 'title' => $generatedNextTask->getTitle(),
                 'date' => $generatedNextTask->getDailyNote()?->getDate()?->format('Y-m-d'),
             ];
         }
 
-        return $this->json($response);
+        return $this->json($taskData);
     }
 
     #[Route('/{id}', name: 'task_delete', methods: ['DELETE'])]
