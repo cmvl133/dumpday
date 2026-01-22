@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 11 (Backend Tests) - IN PROGRESS
-**Activity:** Completed 11-01-PLAN.md (Testing Infrastructure Setup)
+**Activity:** Completed 11-02-PLAN.md (DTO Request Validation Tests)
 
-Progress: [Phase 11] 1/4 plans | [Milestone v2] 2/5 phases
+Progress: [Phase 11] 2/4 plans | [Milestone v2] 2/5 phases
 
 ## Milestones
 
@@ -49,8 +49,8 @@ Progress: [Phase 11] 1/4 plans | [Milestone v2] 2/5 phases
   - [x] 10-05: BrainDumpFacade Refactoring (duplicate detection delegation)
 - Phase 11: Backend Tests - IN PROGRESS
   - [x] 11-01: Testing Infrastructure Setup (Pure Logic Services)
-  - [ ] 11-02: TaskService Unit Tests
-  - [ ] 11-03: PlanningService Unit Tests
+  - [x] 11-02: DTO Request Validation Tests
+  - [ ] 11-03: Service Unit Tests
   - [ ] 11-04: Integration Tests
 - Phase 12: Frontend Slices (pending)
 - Phase 13: Frontend Storage (pending)
@@ -60,10 +60,10 @@ Progress: [Phase 11] 1/4 plans | [Milestone v2] 2/5 phases
 **Continue Phase 11:**
 
 ```
-/gsd:execute-phase 11-02
+/gsd:execute-phase 11-03
 ```
 
-11-01 complete with 98 unit tests for pure logic services. Next: TaskService unit tests with mocked dependencies.
+11-02 complete with 81 DTO validation tests. Next: Service unit tests (TaskService, PlanningService).
 
 ## Context Notes
 
@@ -130,10 +130,15 @@ Progress: [Phase 11] 1/4 plans | [Milestone v2] 2/5 phases
 - Static data provider methods with iterable return type and yield syntax
 - Direct entity instantiation for pure logic service tests (no mocks needed)
 
+**Patterns Established (11-02):**
+- DTO validation test pattern: Validation::createValidatorBuilder()->enableAttributeMapping()
+- DataProvider pattern for format validation (valid/invalid date, time formats)
+- Standalone Validator for unit testing without Symfony kernel
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 11-01-PLAN.md (Testing Infrastructure Setup)
+Stopped at: Completed 11-02-PLAN.md (DTO Request Validation Tests)
 Resume file: None
 
 ---
