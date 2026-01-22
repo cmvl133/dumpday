@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\DTO\Request\TaskCreateRequest;
+use App\DTO\Response\TaskResponse;
 use App\Entity\DailyNote;
 use App\Entity\RecurringTask;
 use App\Entity\Task;
@@ -19,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -35,17 +38,14 @@ class TaskController extends AbstractController
     }
 
     #[Route('', name: 'task_create', methods: ['POST'])]
-    public function create(#[CurrentUser] User $user, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
+    public function create(
+        #[CurrentUser] User $user,
+        #[MapRequestPayload] TaskCreateRequest $request
+    ): JsonResponse {
+        // No manual json_decode needed - MapRequestPayload handles it
+        // No manual validation needed - constraints are checked automatically (returns 422 on failure)
 
-        if (empty($data['title']) || empty($data['date'])) {
-            return $this->json([
-                'error' => 'Title and date are required',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $date = new \DateTime($data['date']);
+        $date = new \DateTime($request->date);
         $dailyNote = $this->dailyNoteRepository->findByUserAndDate($user, $date);
 
         if ($dailyNote === null) {
@@ -56,41 +56,21 @@ class TaskController extends AbstractController
         }
 
         $task = new Task();
-        $task->setTitle((string) $data['title']);
+        $task->setTitle($request->title);
         $task->setDailyNote($dailyNote);
 
-        if (isset($data['category']) && TaskCategory::tryFrom($data['category']) !== null) {
-            $task->setCategory(TaskCategory::from($data['category']));
+        if ($request->category !== null && TaskCategory::tryFrom($request->category) !== null) {
+            $task->setCategory(TaskCategory::from($request->category));
         }
 
-        if (isset($data['dueDate']) && $data['dueDate'] !== null && $data['dueDate'] !== '') {
-            $task->setDueDate(new \DateTime($data['dueDate']));
+        if ($request->dueDate !== null) {
+            $task->setDueDate(new \DateTime($request->dueDate));
         }
 
         $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        return $this->json([
-            'id' => $task->getId(),
-            'title' => $task->getTitle(),
-            'isCompleted' => $task->isCompleted(),
-            'isDropped' => $task->isDropped(),
-            'dueDate' => $task->getDueDate()?->format('Y-m-d'),
-            'category' => $task->getCategory()->value,
-            'completedAt' => $task->getCompletedAt()?->format('c'),
-            'reminderTime' => $task->getReminderTime()?->format('H:i'),
-            'estimatedMinutes' => $task->getEstimatedMinutes(),
-            'fixedTime' => $task->getFixedTime()?->format('H:i'),
-            'canCombineWithEvents' => $task->getCanCombineWithEvents(),
-            'needsFullFocus' => $task->isNeedsFullFocus(),
-            'recurringTaskId' => $task->getRecurringTask()?->getId(),
-            'parentTaskId' => $task->getParentTask()?->getId(),
-            'isPart' => $task->isPart(),
-            'partNumber' => $task->getPartNumber(),
-            'progress' => $task->getProgress(),
-            'hasSubtasks' => $task->hasSubtasks(),
-            'tags' => [],
-        ], Response::HTTP_CREATED);
+        return $this->json(TaskResponse::fromEntity($task), Response::HTTP_CREATED);
     }
 
     #[Route('/{id}', name: 'task_update', methods: ['PATCH'])]
