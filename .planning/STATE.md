@@ -37,6 +37,7 @@ Progress: [Phase 09] 4/6 plans | [Milestone v2] 0/5 phases
   - [x] 09-01: Base Response DTOs (Tag, Event, Note, JournalEntry)
   - [x] 09-02: Task Request DTOs
   - [x] 09-03: Task and TimeBlock Response DTOs
+  - [x] 09-04: Schedule & DailyNote Response DTOs
 - Phase 10: Backend Services (TBD)
 - Phase 11: Backend Tests (TBD)
 - Phase 12: Frontend Slices (TBD)
@@ -47,10 +48,10 @@ Progress: [Phase 09] 4/6 plans | [Milestone v2] 0/5 phases
 **Execute next plan:**
 
 ```
-/gsd:execute-phase 09-04
+/gsd:execute-phase 09-05
 ```
 
-(09-04: Event and TimeBlock Request DTOs)
+(09-05: Controller Integration - Response DTOs)
 
 ## Context Notes
 
@@ -68,17 +69,19 @@ Progress: [Phase 09] 4/6 plans | [Milestone v2] 0/5 phases
 - Frontend slices split (parallel with backend)
 - Storage centralization last (may need slice changes)
 
-**Patterns Established (09-01, 09-02, 09-03):**
+**Patterns Established (09-01 through 09-04):**
 - Response DTO: final readonly class with fromEntity() static factory
 - Request DTO: final readonly class with #[Assert\*] attributes
 - String types for dates in DTOs (convert in service layer)
 - HH:MM regex for time validation
 - Nested DTO composition: Use array_map with ChildDTO::fromEntity() for nested collections
+- fromArray() factory: Use for DTOs created from AI/service output (not entities)
+- Complex container DTOs: Let facade/service handle assembly, DTO is typed container
 
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 09-03-PLAN.md (Task and TimeBlock Response DTOs)
+Stopped at: Completed 09-04-PLAN.md (Schedule & DailyNote Response DTOs)
 Resume file: None
 
 ---
