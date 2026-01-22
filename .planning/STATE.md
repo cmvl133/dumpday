@@ -12,10 +12,10 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Status
 
 **Milestone:** v1.1 Bugfixes
-**Phase:** 6 (Notes Panel Fixes) - Complete
-**Activity:** Phase complete, ready for next phase
+**Phase:** 6 (Notes Panel Fixes) - Gap Closure
+**Activity:** Executing gap closure plan 06-02
 
-Progress: [Phase 06] 1/1 plans complete
+Progress: [Phase 06] 1/2 plans complete
 
 ## Milestones
 
@@ -29,22 +29,28 @@ Progress: [Phase 06] 1/1 plans complete
 - [x] v1 Time Blocks milestone (5 phases, 15 plans)
 - [x] Phase 06-01: Fix Notes Panel Bugs (NOTE-01 through NOTE-04)
 
+## Active Work
+
+**Phase 06-02 (Gap Closure):** Fix remaining issues found in manual testing:
+1. Backend accepts empty content for new notes (API fix)
+2. Install @tailwindcss/typography for prose classes (HTML rendering fix)
+3. Main screen Notes UX improvements (dual add buttons, expanded edit)
+
 ## Next Action
 
-**CONTINUE v1.1 BUGFIXES**
+**EXECUTE 06-02-PLAN.md**
 
-Phase 6 (Notes Panel Fixes) complete. Continue with remaining issues:
-- Check-in modal: respects close until next interval
-- AI planning: event overlap, task splitting, scheduled tasks
-- UI state: Later/overdue updates without refresh
+Execute gap closure plan to fix:
+- API validation error on empty content
+- HTML preview not rendering correctly
+- UX improvements for main screen Notes section
 
 ## Context Notes
 
-**Issues to fix:**
-1. ~~Notes panel: add button, double X, WYSIWYG display, HTML preview~~ DONE
-2. Check-in modal: respects close until next interval
-3. AI planning: event overlap, task splitting, scheduled tasks
-4. UI state: Later/overdue updates without refresh
+**Bugs discovered in manual testing (06-02):**
+1. `onAdd('')` fails with "Content and date are required" — backend rejects empty content
+2. HTML preview shows only <b> correctly — @tailwindcss/typography not installed
+3. Main screen UX needs improvement — dual add buttons, edit in expanded panel
 
 **Decisions from 06-01:**
 - hideCloseButton prop for DialogContent when using custom close button
@@ -57,8 +63,8 @@ Phase 6 (Notes Panel Fixes) complete. Continue with remaining issues:
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 06-01-PLAN.md
-Resume file: None
+Stopped at: Created 06-02-PLAN.md (gap closure)
+Resume file: .planning/phases/06-notes-panel-fixes/06-02-PLAN.md
 
 ---
 
