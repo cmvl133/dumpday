@@ -10,7 +10,7 @@
 |-------|------|------|--------------|--------|
 | 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Complete |
 | 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Complete |
-| 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Pending |
+| 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Planned |
 | 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Pending |
 | 13 | Frontend Storage | Centralize localStorage handling | STR-01 to STR-05 | Pending |
 
@@ -95,6 +95,15 @@ Plans:
 ### Phase 11: Backend Tests
 
 **Goal:** Test coverage for new architecture
+
+**Plans:** 5 plans
+
+Plans:
+- [ ] 11-01-PLAN.md - Pure logic service tests (RecurrenceService, DuplicateDetectionService)
+- [ ] 11-02-PLAN.md - DTO validation tests (TaskCreateRequest, TaskUpdateRequest)
+- [ ] 11-03-PLAN.md - TaskService unit tests (mocked dependencies)
+- [ ] 11-04-PLAN.md - PlanningService unit tests (mocked dependencies)
+- [ ] 11-05-PLAN.md - Integration tests for Task API
 
 **Requirements:**
 - TST-01: Unit tests for TaskService
