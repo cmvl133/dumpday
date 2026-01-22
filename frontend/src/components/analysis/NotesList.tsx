@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StickyNote, Pencil, Trash2, Check, X, Plus, Maximize2 } from 'lucide-react';
+import { StickyNote, Trash2, Check, X, Plus, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { NotesExpandedModal } from '@/components/notes/NotesExpandedModal';
@@ -151,34 +151,26 @@ export function NotesList({
               </div>
             ) : (
               <>
-                <div
-                  className="text-sm flex-1 prose prose-sm dark:prose-invert max-w-none line-clamp-2 prose-headings:text-sm prose-headings:font-semibold prose-p:my-0 prose-ul:my-0 prose-ol:my-0"
-                  dangerouslySetInnerHTML={{ __html: note.content }}
-                />
+                <button
+                  type="button"
+                  className="text-sm flex-1 text-left text-muted-foreground hover:text-foreground line-clamp-2 cursor-pointer"
+                  onClick={() => !isPreview && noteId !== null && handleEditInExpanded(note as Note)}
+                >
+                  {note.content.replace(/<[^>]*>/g, '').trim() || t('notes.emptyNote', 'Empty note')}
+                </button>
 
-                {!isPreview && noteId !== null && (
-                  <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                    {onUpdate && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handleEditInExpanded(note as Note)}
-                      >
-                        <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
-                      </Button>
-                    )}
-                    {onDelete && noteId !== null && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handleDelete(noteId)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                      </Button>
-                    )}
-                  </div>
+                {!isPreview && noteId !== null && onDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(noteId);
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                  </Button>
                 )}
               </>
             )}
