@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StickyNote, Trash2, Check, X, Plus, Maximize2 } from 'lucide-react';
+import { StickyNote, Check, X, Plus, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { NotesExpandedModal } from '@/components/notes/NotesExpandedModal';
@@ -52,12 +52,6 @@ export function NotesList({
   const handleCancel = () => {
     setEditingId(null);
     setEditValue('');
-  };
-
-  const handleDelete = (id: number) => {
-    if (onDelete) {
-      onDelete(id);
-    }
   };
 
   const handleStartAdding = () => {
@@ -150,29 +144,13 @@ export function NotesList({
                 </div>
               </div>
             ) : (
-              <>
-                <button
-                  type="button"
-                  className="text-sm flex-1 text-left text-muted-foreground hover:text-foreground line-clamp-2 cursor-pointer"
-                  onClick={() => !isPreview && noteId !== null && handleEditInExpanded(note as Note)}
-                >
-                  {note.content.replace(/<[^>]*>/g, '').trim() || t('notes.emptyNote', 'Empty note')}
-                </button>
-
-                {!isPreview && noteId !== null && onDelete && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(noteId);
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                  </Button>
-                )}
-              </>
+              <button
+                type="button"
+                className="text-sm flex-1 text-left text-muted-foreground hover:text-foreground line-clamp-2 cursor-pointer"
+                onClick={() => !isPreview && noteId !== null && handleEditInExpanded(note as Note)}
+              >
+                {note.content.replace(/<[^>]*>/g, '').trim() || t('notes.emptyNote', 'Empty note')}
+              </button>
             )}
           </div>
         );
