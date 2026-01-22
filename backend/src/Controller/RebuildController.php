@@ -131,12 +131,6 @@ class RebuildController extends AbstractController
 
             if (! empty($item['suggestedTime'])) {
                 $task->setFixedTime(new \DateTimeImmutable($item['suggestedTime']));
-
-                // Update dueDate to today for overdue tasks being scheduled
-                $today = new \DateTimeImmutable('today');
-                if ($task->getDueDate() !== null && $task->getDueDate() < $today) {
-                    $task->setDueDate($today);
-                }
             }
 
             if (isset($item['duration'])) {
