@@ -8,8 +8,8 @@
 
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
-| 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Planned |
-| 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Pending |
+| 9 | Backend DTOs | Eliminate array duplication with typed DTOs | DTO-01 to DTO-07 | Complete |
+| 10 | Backend Services | Extract business logic from controllers | SVC-01 to SVC-06 | Planned |
 | 11 | Backend Tests | Add unit and integration tests | TST-01 to TST-05 | Pending |
 | 12 | Frontend Slices | Split monolithic howAreYouSlice | SLC-01 to SLC-05 | Pending |
 | 13 | Frontend Storage | Centralize localStorage handling | STR-01 to STR-05 | Pending |
@@ -23,12 +23,12 @@
 **Plans:** 6 plans
 
 Plans:
-- [ ] 09-01-PLAN.md - Create base Response DTOs (TagResponse, EventResponse, NoteResponse, JournalEntryResponse)
-- [ ] 09-02-PLAN.md - Create Request DTOs (TaskCreateRequest, TaskUpdateRequest)
-- [ ] 09-03-PLAN.md - Create TaskResponse and TimeBlockResponse DTOs
-- [ ] 09-04-PLAN.md - Create ScheduleItemResponse and DailyNoteResponse DTOs
-- [ ] 09-05-PLAN.md - Integrate Response DTOs into controllers
-- [ ] 09-06-PLAN.md - Integrate Request DTOs and complete BrainDumpFacade migration
+- [x] 09-01-PLAN.md - Create base Response DTOs (TagResponse, EventResponse, NoteResponse, JournalEntryResponse)
+- [x] 09-02-PLAN.md - Create Request DTOs (TaskCreateRequest, TaskUpdateRequest)
+- [x] 09-03-PLAN.md - Create TaskResponse and TimeBlockResponse DTOs
+- [x] 09-04-PLAN.md - Create ScheduleItemResponse and DailyNoteResponse DTOs
+- [x] 09-05-PLAN.md - Integrate Response DTOs into controllers
+- [x] 09-06-PLAN.md - Integrate Request DTOs and complete BrainDumpFacade migration
 
 **Requirements:**
 - DTO-01: TaskResponse DTO (eliminates 6+ duplications)
@@ -58,6 +58,15 @@ Plans:
 
 **Goal:** Controllers only handle HTTP, all business logic in services
 
+**Plans:** 5 plans
+
+Plans:
+- [ ] 10-01-PLAN.md - Create RecurrenceService and DuplicateDetectionService (pure logic)
+- [ ] 10-02-PLAN.md - Create TaskService with CRUD and completion logic
+- [ ] 10-03-PLAN.md - Create PlanningService for planning mode operations
+- [ ] 10-04-PLAN.md - Refactor controllers to thin wrappers
+- [ ] 10-05-PLAN.md - Refactor BrainDumpFacade to use DuplicateDetectionService
+
 **Requirements:**
 - SVC-01: TaskService handles CRUD
 - SVC-02: TaskService handles completion + recurring generation
@@ -67,8 +76,8 @@ Plans:
 - SVC-06: Split BrainDumpFacade
 
 **Success Criteria:**
-1. TaskController under 100 lines (from 363)
-2. PlanningController under 80 lines (from 255)
+1. TaskController under 100 lines (from 320)
+2. PlanningController under 80 lines (from 257)
 3. No `$this->entityManager->persist()` or `flush()` in controllers
 4. matchesRecurrencePattern() exists in exactly one place
 5. BrainDumpFacade under 200 lines
@@ -77,7 +86,7 @@ Plans:
 - Create `TaskService` with methods matching controller actions
 - Move recurrence logic to `RecurrenceService`
 - Extract `DuplicateDetectionService` from BrainDumpFacade
-- Controllers become thin wrappers: validate → call service → return DTO
+- Controllers become thin wrappers: validate -> call service -> return DTO
 
 **Dependencies:** Phase 9 (uses DTOs for input/output)
 
@@ -187,16 +196,16 @@ All 28 requirements mapped:
 
 ```
 Phase 9 (DTOs)
-    ↓
-Phase 10 (Services) ──────→ Phase 11 (Tests)
-                                  ↓
-Phase 12 (Slices) ←───────────────┘ (can run parallel)
-    ↓
+    |
+Phase 10 (Services) ---------> Phase 11 (Tests)
+                                      |
+Phase 12 (Slices) <-------------------+ (can run parallel)
+    |
 Phase 13 (Storage)
 ```
 
-- Phase 9 → 10: Services use DTOs
-- Phase 10 → 11: Tests verify services
+- Phase 9 -> 10: Services use DTOs
+- Phase 10 -> 11: Tests verify services
 - Phase 12: Can start after Phase 10, parallel with 11
 - Phase 13: After Phase 12 (may use new slice structure)
 
