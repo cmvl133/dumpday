@@ -9,8 +9,8 @@
 | Phase | Name | Goal | Requirements | Status |
 |-------|------|------|--------------|--------|
 | 6 | Notes Panel Fixes | Fix all notes-related bugs + UX improvements | NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06 | Complete |
-| 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Complete ✓ |
-| 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Pending |
+| 7 | UI Behavior Fixes | Fix check-in modal and state updates | CHKN-01, UIST-01 | Complete |
+| 8 | AI Planning Fixes | Fix planning logic issues | PLAN-01, PLAN-02, PLAN-03 | Planned |
 
 ## Phase Details
 
@@ -76,7 +76,11 @@ Plans:
 2. AI task splitting follows documented behavior (or behavior is documented and implemented)
 3. Tasks with `scheduledDate` matching today appear in planning view
 
-**Estimated Plans:** 2-3
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Add allowOverlap property to Event entity, update AI prompts (PLAN-01)
+- [ ] 08-02-PLAN.md — Investigate task splitting (PLAN-02), verify scheduled tasks (PLAN-03)
 
 ---
 
@@ -103,4 +107,4 @@ All 11 requirements mapped:
 ---
 
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 after Phase 7 complete*
+*Last updated: 2026-01-22 after Phase 8 planning*
