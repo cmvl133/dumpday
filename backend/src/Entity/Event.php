@@ -33,6 +33,9 @@ class Event
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $allowOverlap = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -94,6 +97,18 @@ class Event
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function isAllowOverlap(): bool
+    {
+        return $this->allowOverlap ?? false;
+    }
+
+    public function setAllowOverlap(bool $allowOverlap): static
+    {
+        $this->allowOverlap = $allowOverlap;
 
         return $this;
     }
