@@ -28,11 +28,11 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 
 ### Backend Tests
 
-- [ ] **TST-01**: Unit tests for TaskService (CRUD, completion, recurring generation)
-- [ ] **TST-02**: Unit tests for RecurrenceService (all recurrence patterns)
-- [ ] **TST-03**: Unit tests for DTO validation (TaskCreateRequest, TaskUpdateRequest)
-- [ ] **TST-04**: Unit tests for PlanningService (schedule acceptance)
-- [ ] **TST-05**: Integration tests for Task API endpoints
+- [x] **TST-01**: Unit tests for TaskService (CRUD, completion, recurring generation)
+- [x] **TST-02**: Unit tests for RecurrenceService (all recurrence patterns)
+- [x] **TST-03**: Unit tests for DTO validation (TaskCreateRequest, TaskUpdateRequest)
+- [x] **TST-04**: Unit tests for PlanningService (schedule acceptance)
+- [x] **TST-05**: Integration tests for Task API endpoints
 
 ### Frontend Slices
 
@@ -78,11 +78,11 @@ Architecture refactoring milestone focused on code quality, maintainability, and
 | SVC-04 | 10 | Complete |
 | SVC-05 | 10 | Complete |
 | SVC-06 | 10 | Complete |
-| TST-01 | 11 | Pending |
-| TST-02 | 11 | Pending |
-| TST-03 | 11 | Pending |
-| TST-04 | 11 | Pending |
-| TST-05 | 11 | Pending |
+| TST-01 | 11 | Complete |
+| TST-02 | 11 | Complete |
+| TST-03 | 11 | Complete |
+| TST-04 | 11 | Complete |
+| TST-05 | 11 | Complete |
 | SLC-01 | 12 | Pending |
 | SLC-02 | 12 | Pending |
 | SLC-03 | 12 | Pending |
