@@ -13,9 +13,9 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Milestone:** v2 Architecture Refactoring
 **Phase:** 10 (Backend Services) - IN PROGRESS
-**Activity:** Completed 10-01 (Pure Logic Services)
+**Activity:** Completed 10-03 (PlanningService)
 
-Progress: [Phase 10] 1/? plans | [Milestone v2] 1/5 phases
+Progress: [Phase 10] 2/? plans | [Milestone v2] 1/5 phases
 
 ## Milestones
 
@@ -44,7 +44,7 @@ Progress: [Phase 10] 1/? plans | [Milestone v2] 1/5 phases
 - Phase 10: Backend Services - IN PROGRESS
   - [x] 10-01: Pure Logic Services (RecurrenceService, DuplicateDetectionService)
   - [ ] 10-02: BrainDumpFacade refactor (pending)
-  - [ ] 10-03: TaskService extraction (pending)
+  - [x] 10-03: PlanningService (planning mode operations)
 - Phase 11: Backend Tests (pending)
 - Phase 12: Frontend Slices (pending)
 - Phase 13: Frontend Storage (pending)
@@ -57,7 +57,7 @@ Progress: [Phase 10] 1/? plans | [Milestone v2] 1/5 phases
 /gsd:execute-phase 10-02
 ```
 
-Plan 10-01 complete. RecurrenceService and DuplicateDetectionService ready for use.
+Plan 10-03 complete. PlanningService ready for PlanningController integration.
 
 ## Context Notes
 
@@ -99,10 +99,15 @@ Plan 10-01 complete. RecurrenceService and DuplicateDetectionService ready for u
 - DuplicateDetectionService extracts timesOverlap and duplicate checks from BrainDumpFacade
 - TaskController also refactored to use RecurrenceService (not just RecurringSyncService)
 
+**Key Decisions (10-03):**
+- PlanningService returns raw entities/arrays - controller handles serialization with planning-specific fields
+- PATCH semantics via array_key_exists for explicit null vs missing field distinction
+- Single flush at end of acceptSchedule for atomic batch updates
+
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-01-PLAN.md (Pure Logic Services)
+Stopped at: Completed 10-03-PLAN.md (PlanningService)
 Resume file: None
 
 ---
