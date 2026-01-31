@@ -14,6 +14,10 @@ services:
       - node
     networks:
       - dopaminder-net
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+    dns_search: []
 
   php:
     build:
@@ -29,6 +33,10 @@ services:
         condition: service_healthy
     networks:
       - dopaminder-net
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+    dns_search: []
 
   node:
     build:
@@ -46,10 +54,15 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - npm_config_cache=/app/.npm
+      - VITE_HOST=0.0.0.0
     networks:
       - dopaminder-net
     tty: true
     stdin_open: true
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+    dns_search: []
 
   postgres:
     image: postgres:16-alpine
@@ -69,6 +82,10 @@ services:
       start_period: 30s
     networks:
       - dopaminder-net
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+    dns_search: []
 
   mailpit:
     image: axllent/mailpit
@@ -77,6 +94,10 @@ services:
       - "1125:1025"
     networks:
       - dopaminder-net
+    dns:
+      - 127.0.0.11
+      - 8.8.8.8
+    dns_search: []
 
 networks:
   dopaminder-net:
